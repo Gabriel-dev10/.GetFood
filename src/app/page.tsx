@@ -42,7 +42,7 @@ export default function Inicio() {
           </button>
         </div>
         <nav className="flex flex-col px-4 py-4 space-y-2">
-          <a href="" className="hover:text-blue-400">Pontos</a>
+          <Link href="/pag-pontos" className="hover:text-blue-400">Pontos</Link>
           <a href="" className="hover:text-blue-400">Instagram</a>
           <a href="" className="hover:text-blue-400">whatsapp</a>
           <div className="py-4 border-t mt-5 border-gray-700">
