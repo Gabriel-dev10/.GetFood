@@ -16,10 +16,10 @@ interface ListaProdutosProps {
 const produtos: Record<Categoria, Produto[]> = {
   Lanches: [
     {
-      nome: 'Vegana',
-      descricao: 'brócolis, molho de tomate, tomate em rodelas',
-      preco: 'R$ 56,00',
-      imagem: '/Img/pizzavegana.jpg',
+      nome: 'croissant',
+      descricao: 'delicioso croissant com queijo e presunto',
+      preco: 'R$ 6,00',
+      imagem: '/img/salgado1.png',
     },
     {
       nome: 'Mussarela',
