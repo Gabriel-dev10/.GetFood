@@ -19,7 +19,7 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'croissant',
       descricao: 'delicioso croissant com queijo e presunto',
       preco: 'R$ 6,00',
-      imagem: '/img/salgado1.png',
+      imagem: '/Img/salgado1.jpg',
     },
     {
       nome: 'Mussarela',

@@ -38,16 +38,16 @@ export default function PagPontos() {
 
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos1.png" alt="Promoção 1" layout="fill" className="object-cover" />
+          <Image src="/Img/promo-pontos1.png" alt="Promoção 1" layout="fill" className="object-cover" />
         </div>
         <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos2.png" alt="Promoção 2" layout="fill" className="object-cover" />
+          <Image src="/Img/promo-pontos2.png" alt="Promoção 2" layout="fill" className="object-cover" />
         </div>
         <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos1.png" alt="Promoção 3" layout="fill" className="object-cover" />
+          <Image src="/Img/promo-pontos1.png" alt="Promoção 3" layout="fill" className="object-cover" />
         </div>
         <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos2.png" alt="Promoção 4" layout="fill" className="object-cover" />
+          <Image src="/Img/promo-pontos2.png" alt="Promoção 4" layout="fill" className="object-cover" />
         </div>
       </section>
     </main>
