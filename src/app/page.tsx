@@ -14,7 +14,7 @@ export default function Inicio() {
   const [menuAberto, setMenuAberto] = useState(false);
 
   return (
-    <main className="text-white px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
+    <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
   
       <header className="flex justify-between items-center mb-2 z-30 relative">
         <button onClick={() => setMenuAberto(true)}  className='cursor-pointer'>
@@ -31,7 +31,7 @@ export default function Inicio() {
             </p>
           </div>
         </div>
-        <div className="text-green-400 text-xs font-semibold whitespace-nowrap">● Aberto</div>
+        <div className="text-green-500 text-xs font-semibold whitespace-nowrap">● Aberto</div>
       </header>
 
       <div className={`fixed top-0 left-0 h-full w-64 bg-gray-900 text-white z-50 transform transition-transform duration-300 ${menuAberto ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -68,7 +68,7 @@ export default function Inicio() {
               <SwiperSlide key={index}>
                 <div className="relative w-full h-[200px] md:h-[400px] rounded-lg overflow-hidden">
                   <Image
-                    src="/imgcarrossel.avif"
+                    src="/Img/logocarrossel.png"
                     alt="Banner promocional"
                     fill
                     className="object-cover"
@@ -86,12 +86,12 @@ export default function Inicio() {
           <CreditCard size={18} />
         </div>
         <div>
-          <p className="text-gray-300">Fila</p>
-          <p className="text-green-400 font-semibold">15</p>
+          <p className="text-black">Fila</p>
+          <p className="text-green-500 font-semibold">15</p>
         </div>
         <div>
-          <p className="text-gray-300">Retirada</p>
-          <p className="text-white font-semibold">15min</p>
+          <p className="text-black">Retirada</p>
+          <p className="text-black font-semibold">15min</p>
         </div>
       </section>
 

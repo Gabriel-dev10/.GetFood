@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-type Categoria = 'Lanches' | 'Salgados' | 'Biscoitos' | 'Bebidas' | 'Cervejas';
+type Categoria = 'Café' | 'Lanches' | 'Salgados' | 'Bebidas' | 'Biscoitos';
 
 interface Produto {
   nome: string;
@@ -14,134 +14,122 @@ interface ListaProdutosProps {
 }
 
 const produtos: Record<Categoria, Produto[]> = {
+  Café: [
+    {
+      nome: 'Café',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 5,00',
+      imagem: '/Img/cafepreto.jpg',
+    },
+    {
+      nome: 'Cappuccino',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/cappo.jpg',
+    },
+    ],
   Lanches: [
     {
-      nome: 'Vegana',
-      descricao: 'brócolis, molho de tomate, tomate em rodelas',
-      preco: 'R$ 56,00',
-      imagem: '/Img/pizzavegana.jpg',
+      nome: 'Sanduiche Natural',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 17,00',
+      imagem: '/Img/Sanduiche.jpg',
     },
     {
-      nome: 'Mussarela',
-      descricao: 'queijo mussarela, orégano e tomate',
-      preco: 'R$ 52,00',
-      imagem: '/Img/pizzamussarela.jpg',
+      nome: 'Sanduiche Natural Australiano',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 20,00',
+      imagem: '/Img/Sanduiche-Astraliano.jpg',
     },
       {
-    nome: 'Calabresa',
-    descricao: 'calabresa fatiada, cebola roxa e orégano',
-    preco: 'R$ 58,00',
-    imagem: '/Img/pizzacalabresa.jpg',
+    nome: 'Misto Quente',
+    descricao: 'Especificações do produto',
+    preco: 'R$ 18,00',
+    imagem: '/Img/mistoquente.jpg',
   },
   {
-    nome: 'Quatro Queijos',
-    descricao: 'mussarela, provolone, parmesão e gorgonzola',
-    preco: 'R$ 62,00',
-    imagem: '/Img/pizza4queijo.jpg',
+    nome: 'Queijo Quente',
+    descricao: 'Especificações do produto',
+    preco: 'R$ 18,00',
+    imagem: '/Img/queijoquente.jpg',
   },
   ],
   Salgados: [
     {
-      nome: 'Feijoada',
-      descricao: 'com arroz, farofa e couve',
-      preco: 'R$ 35,00',
-      imagem: '/Img/feijoada.jpg',
+      nome: 'Italiano',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/italiano.jpg',
     },
     {
-      nome: 'Estrogonofe de Frango',
-      descricao: 'com arroz branco e batata palha',
-      preco: 'R$ 32,00',
-      imagem: '/Img/strogonoff.jpg',
+      nome: 'Coxinha',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/coxinha.jpg',
     },
     {
-      nome: 'Lasanha à Bolonhesa',
-      descricao: 'massa fresca com molho bolonhesa e queijo gratinado',
-      preco: 'R$ 39,00',
-      imagem: '/Img/lasanha.jpg',
+      nome: 'Kibe',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/kibe.jpg',
     },
     {
-      nome: 'Prato Executivo',
-      descricao: 'bife grelhado, arroz, feijão e batata frita',
-      preco: 'R$ 29,00',
-      imagem: '/Img/pratoexecutivo.jpg',
+      nome: 'Croissant',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 10,00',
+      imagem: '/Img/croissant.jpg',
     },
   ],
-  Biscoitos: [
+  Bebidas: [
     {
       nome: 'Coca-Cola Lata',
-      descricao: 'Refrigerante 350ml',
+      descricao: 'Especificações do produto',
       preco: 'R$ 6,00',
-      imagem: '/Img/cocacola.jpg',
+      imagem: '/Img/coca.jpg',
     },
     {
       nome: 'Suco Natural de Laranja',
-      descricao: '300ml, feito na hora',
+      descricao: 'Especificações do produto',
       preco: 'R$ 7,50',
       imagem: '/Img/sucolaranja.jpg',
     },
     {
       nome: 'Água com Gás',
-      descricao: 'Garrafa 500ml',
+      descricao: 'Especificações do produto',
       preco: 'R$ 4,00',
       imagem: '/Img/aguagas.jpg',
     },
     {
       nome: 'Guaraná Antártica',
-      descricao: 'Refrigerante 350ml',
+      descricao: 'Especificações do produto',
       preco: 'R$ 6,00',
       imagem: '/Img/guarana.jpg',
     },
   ],
-  Bebidas: [
+  Biscoitos: [
     {
-      nome: 'Pudim de Leite',
-      descricao: 'clássico pudim com calda de caramelo',
-      preco: 'R$ 9,00',
-      imagem: '/pudim.jpg',
-    },
-    {
-      nome: 'Brownie com Sorvete',
-      descricao: 'brownie de chocolate com bola de sorvete',
-      preco: 'R$ 12,00',
-      imagem: '/brownie.jpg',
-    },
-    {
-      nome: 'Mousse de Maracujá',
-      descricao: 'mousse leve e cremosa',
+      nome: 'Doritos',
+      descricao: 'Especificações do produto',
       preco: 'R$ 8,00',
-      imagem: '/mousse.jpg',
+      imagem: '/Img/doritos.jpg',
     },
     {
-      nome: 'Torta de Limão',
-      descricao: 'com merengue gratinado',
-      preco: 'R$ 10,00',
-      imagem: '/torta-limao.jpg',
-    },
-  ],
-  Cervejas: [
-    {
-      nome: 'Batata Frita',
-      descricao: 'porção média com sal e ervas',
-      preco: 'R$ 14,00',
-      imagem: '/batata-frita.jpg',
+      nome: 'Ruffles',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/ruffle.jpg',
     },
     {
-      nome: 'Anéis de Cebola',
-      descricao: 'crocantes e dourados',
-      preco: 'R$ 13,00',
-      imagem: '/aneis-cebola.jpg',
+      nome: 'Cheetos',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 8,00',
+      imagem: '/Img/cheetos.jpg',
     },
     {
-      nome: 'Farofa de Bacon',
-      descricao: 'farofa crocante com bacon artesanal',
-      preco: 'R$ 7,00',
-      imagem: '/farofa.jpg',
-    },
-    {
-      nome: 'Salada Verde',
-      descricao: 'alface, rúcula e tomate cereja',
-      preco: 'R$ 9,00',
-      imagem: '/salada.jpg',
+      nome: 'Torcida',
+      descricao: 'Especificações do produto',
+      preco: 'R$ 6,00',
+      imagem: '/Img/torcida.jpg',
     },
   ],
 };

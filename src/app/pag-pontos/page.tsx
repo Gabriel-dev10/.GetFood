@@ -2,13 +2,13 @@
 
 import { ArrowLeftCircle, Crown } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image'; // Certifique-se de importar a tag corretamente
+import Image from 'next/image';
 
 export default function PagPontos() {
   return (
     <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-md mx-auto">
       <header className="relative flex items-center justify-center mb-4">
-        <Link href="/" className="absolute left-0 text-green-600 hover:text-red-500">
+        <Link href="/" className="absolute left-0 text-green-500 hover:text-red-500">
           <ArrowLeftCircle size={28} />
         </Link>
         <h1 className="text-white text-center font-bold">Pontos</h1>
