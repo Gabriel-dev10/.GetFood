@@ -39,7 +39,7 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'Sanduiche Natural Australiano',
       descricao: 'Especificações do produto',
       preco: 'R$ 20,00',
-      imagem: '/Img/SandA.jpg',
+      imagem: '/Img/sandA.jpg',
     },
       {
     nome: 'Misto Quente',
@@ -71,7 +71,7 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'Kibe',
       descricao: 'Especificações do produto',
       preco: 'R$ 8,00',
-      imagem: '/Img/kibe.jpg',
+      imagem: '/Img/KIBEFRITO.webp',
     },
     {
       nome: 'Croissant',
