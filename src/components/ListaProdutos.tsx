@@ -19,13 +19,13 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'Café',
       descricao: 'Especificações do produto',
       preco: 'R$ 5,00',
-      imagem: '/Img/cafepreto.jpg',
+      imagem: '/Img/cafe.jpg',
     },
     {
       nome: 'Cappuccino',
       descricao: 'Especificações do produto',
       preco: 'R$ 8,00',
-      imagem: '/Img/cappo.jpg',
+      imagem: '/Img/cappuccino.jpg',
     },
     ],
   Lanches: [
@@ -149,13 +149,13 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
           key={item.nome}
           className="flex flex-col sm:flex-row rounded-xl overflow-hidden bg-white text-black shadow-md"
         >
-          <div className="relative w-full sm:w-32 h-40 sm:h-32">
-            <Image
-              src={item.imagem}
-              alt={`Imagem do produto ${item.nome}`}
-              fill
-              className="object-cover"
-            />
+          <div className="relative sm:w-32 w-full aspect-[4/3]">
+              <Image
+                src={item.imagem}
+                alt={`Imagem do produto ${item.nome}`}
+                fill
+                className='object-cover '
+              />
           </div>
           <div className="p-3 flex flex-col justify-between">
             <div>

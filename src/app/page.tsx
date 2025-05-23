@@ -66,7 +66,7 @@ export default function Inicio() {
           <Swiper spaceBetween={10} slidesPerView={1}>
             {[1, 2, 3].map((_, index) => (
               <SwiperSlide key={index}>
-                <div className="relative w-full h-[200px] md:h-[400px] rounded-lg overflow-hidden">
+                <div className="relative w-full h-[200px] md:h-[350px] rounded-lg overflow-hidden">
                   <Image
                     src="/Img/logocarrossel.png"
                     alt="Banner promocional"
