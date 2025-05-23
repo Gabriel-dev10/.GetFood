@@ -19,13 +19,13 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'Café',
       descricao: 'Especificações do produto',
       preco: 'R$ 5,00',
-      imagem: '/Img/cafe.jpg',
+      imagem: '/Img/cafe-preto.webp',
     },
     {
       nome: 'Cappuccino',
       descricao: 'Especificações do produto',
       preco: 'R$ 8,00',
-      imagem: '/Img/cappuccino.jpg',
+      imagem: '/Img/capp.webp',
     },
     ],
   Lanches: [
@@ -39,7 +39,7 @@ const produtos: Record<Categoria, Produto[]> = {
       nome: 'Sanduiche Natural Australiano',
       descricao: 'Especificações do produto',
       preco: 'R$ 20,00',
-      imagem: '/Img/Sanduiche-Astraliano.jpg',
+      imagem: '/Img/SandA.jpg',
     },
       {
     nome: 'Misto Quente',
@@ -51,7 +51,7 @@ const produtos: Record<Categoria, Produto[]> = {
     nome: 'Queijo Quente',
     descricao: 'Especificações do produto',
     preco: 'R$ 18,00',
-    imagem: '/Img/queijoquente.jpg',
+    imagem: '/Img/queijo-quente.jpg',
   },
   ],
   Salgados: [
@@ -147,14 +147,14 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
       {lista.map((item) => (
         <div
           key={item.nome}
-          className="flex flex-col sm:flex-row rounded-xl overflow-hidden bg-white text-black shadow-md"
+          className="flex flex-col sm:flex-row rounded-xl w-full overflow-hidden bg-white text-black shadow-md"
         >
           <div className="relative sm:w-32 w-full aspect-[4/3]">
               <Image
                 src={item.imagem}
                 alt={`Imagem do produto ${item.nome}`}
                 fill
-                className='object-cover '
+                className='object-contain'
               />
           </div>
           <div className="p-3 flex flex-col justify-between">
