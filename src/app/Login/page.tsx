@@ -30,7 +30,6 @@ export default function Login() {
 
   const bgMain = darkMode ? 'bg-[#0F172A]' : 'bg-[#FFFFFF]';
   const cardBg = darkMode ? 'bg-[#1E1E2F]' : 'bg-[#334155]';
-  const textPrimary = 'text-white';
   const textSecondary = darkMode ? 'text-[#94A3B8]' : 'text-[#CBD5E1]';
   const accent = '#3B82F6';
   const border = darkMode ? 'border-[#3B82F6]' : 'border-[#64748B]';
