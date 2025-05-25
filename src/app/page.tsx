@@ -22,13 +22,13 @@ export default function Inicio() {
 
   return (
     <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
-  
+
       <header className="flex justify-between items-center mb-2 z-30 relative">
         <button onClick={() => setMenuAberto(true)} className="cursor-pointer">
           <Menu size={24} />
         </button>
         <div className="text-center text-xs leading-tight">
-          <h1 className="text-base font-bold">GBC Coffee</h1>
+          <h1 className="text-xl sm:text-4xl font-extrabold "> GBC Coffee </h1>
           <div className="flex justify-between items-center gap-1">
             <LocateFixed size={16} />
             <p className="text-blue-400 underline">
