@@ -13,18 +13,23 @@ import Footer from '../components/Footer';
 export default function Inicio() {
   const [menuAberto, setMenuAberto] = useState(false);
 
+  const imagens = [
+    "/Img/logocarrossel.png",
+    // "/Img/banner2.png",
+    // "/Img/banner3.jpg",
+    // "/Img/banner4.webp",
+  ];
+
   return (
     <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
   
       <header className="flex justify-between items-center mb-2 z-30 relative">
-        <button onClick={() => setMenuAberto(true)}  className='cursor-pointer'>
+        <button onClick={() => setMenuAberto(true)} className="cursor-pointer">
           <Menu size={24} />
         </button>
         <div className="text-center text-xs leading-tight">
-          <h1 className="text-base font-bold">
-            GBC Coffee
-          </h1>
-          <div className='flex justify-between items-center gap-1'>
+          <h1 className="text-base font-bold">GBC Coffee</h1>
+          <div className="flex justify-between items-center gap-1">
             <LocateFixed size={16} />
             <p className="text-blue-400 underline">
               R. Ver. Luiz Antonio da Cunha, da, 295
@@ -37,7 +42,7 @@ export default function Inicio() {
       <div className={`fixed top-0 left-0 h-full w-64 bg-gray-900 text-white z-50 transform transition-transform duration-300 ${menuAberto ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex justify-between items-center px-4 py-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold">Menu</h2>
-          <button onClick={() => setMenuAberto(false)} className='cursor-pointer'>
+          <button onClick={() => setMenuAberto(false)} className="cursor-pointer">
             <X size={24} />
           </button>
         </div>
@@ -48,7 +53,9 @@ export default function Inicio() {
           <div className="py-4 border-t mt-5 border-gray-700">
             <div className="flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer">
               <LogIn size={20} />
-              <Link href="/Login"><h1 className="text-sm font-medium">Entrar / Cadastrar</h1></Link>
+              <Link href="/Login">
+                <h1 className="text-sm font-medium">Entrar / Cadastrar</h1>
+              </Link>
             </div>
           </div>
         </nav>
@@ -61,24 +68,22 @@ export default function Inicio() {
         />
       )}
 
-
       <section className="my-4 rounded-xl overflow-hidden w-full">
-          <Swiper spaceBetween={10} slidesPerView={1}>
-            {[1, 2, 3].map((_, index) => (
-              <SwiperSlide key={index}>
-                <div className="relative w-full h-[200px] md:h-[350px] rounded-lg overflow-hidden">
-                  <Image
-                    src="/Img/logocarrossel.png"
-                    alt="Banner promocional"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </section>
-
+        <Swiper spaceBetween={10} slidesPerView={1}>
+          {imagens.map((src, index) => (
+            <SwiperSlide key={index}>
+              <div className="relative w-full h-[200px] md:h-[350px] rounded-lg overflow-hidden">
+                <Image
+                  src={src}
+                  alt={`Banner promocional ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </section>
 
       <section className="flex justify-around text-center border-t border-gray-700 pt-2 text-xs sm:text-sm">
         <div className="flex flex-col items-center">
@@ -97,8 +102,7 @@ export default function Inicio() {
 
       <BarraHorizontal />
       <NavBottom />
-      <Footer/>
-
+      <Footer />
     </main>
   );
 }
