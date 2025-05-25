@@ -56,7 +56,6 @@ export default function Inicio() {
             </div>
           </div>
 
-          {/* Logo da empresa no final do menu */}
           <div className="mt-auto flex justify-center pb-20">
             <Image
               src="/Img/logo.png"
