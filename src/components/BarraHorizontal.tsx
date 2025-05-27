@@ -19,7 +19,7 @@ export default function BarraHorizontal() {
             className={`px-4 py-2 rounded-full transition whitespace-nowrap ${
               categoriaSelecionada === cat
                 ? 'bg-white text-black font-semibold'
-                : 'bg-gray-700 text-white'
+                : 'bg-amber-950 text-white'
             }`}
           >
             {cat}
