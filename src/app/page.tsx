@@ -1,6 +1,6 @@
 'use client';
 
-import { Info, Star, Instagram, LogIn, UserCircle } from 'lucide-react';
+import { Info, Star, Instagram, LogIn } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import Image from 'next/image';
@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 
 export default function Inicio() {
   return (
-    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
+    <main className="min-h-screen px-1 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
 
       <header className="relative flex items-center justify-between mb-8 z-30">
         <div className="text-xs text-green-500 font-bold">● Aberto</div>
@@ -20,25 +20,19 @@ export default function Inicio() {
           GBC Coffee
         </h1>
 
-        <div className="flex items-center">
-          <Link 
-            href="/Login"
-            className="block sm:hidden text-white hover:text-gray-300 transition duration-300"
-          >
-            <UserCircle size={24} />
-          </Link>
+      <div className="flex items-center">
+        <Link 
+          href="/Login"
+          className="flex items-center gap-2 font-bold text-xs cursor-pointer hover:text-gray-300 hover:underline text-gray-100 px-2 py-1 rounded-lg transition duration-300"
+        >
+          <LogIn size={20} />
+          <span>Entrar</span>
+        </Link>
+      </div>
 
-          <Link 
-            href="/Login"
-            className="font-bold hidden sm:flex items-center gap-2 text-xs cursor-pointer hover:text-gray-300 hover:underline text-gray-100 px-2 py-1 rounded-lg transition duration-300"
-          >
-            <LogIn size={20} />
-            <span>Entrar / Cadastrar</span>
-          </Link>
-        </div>
       </header>
 
-      <section className="mb-8 rounded-xl overflow-hidden w-full">
+      <section className="mb-6 rounded-xl overflow-hidden w-full">
         <Swiper spaceBetween={10} slidesPerView={1}>
           {[1, 2, 3].map((_, index) => (
             <SwiperSlide key={index}>
@@ -55,7 +49,7 @@ export default function Inicio() {
         </Swiper>
       </section>
 
-      <section className="mb-8 flex justify-around text-center border-t text-black border-gray-700 pt-4 text-xs sm:text-sm">
+      <section className="mb-6 flex justify-around text-center border-t text-black   border-gray-700 pt-4 text-xs sm:text-sm">
         <a href="#" className="flex flex-col items-center hover:text-gray-800">
           Informações
           <Info size={20} className="cursor-pointer" />
