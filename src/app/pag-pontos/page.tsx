@@ -1,54 +1,110 @@
 'use client';
 
-import { ArrowLeftCircle, Crown } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Gift, TrendingUp, Flame } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+
 
 export default function PagPontos() {
-  return (
-    <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-md mx-auto">
-      <header className="relative flex items-center justify-center mb-4">
-        <Link href="/" className="absolute left-0 text-green-500 hover:text-red-500">
-          <ArrowLeftCircle size={28} />
-        </Link>
-        <h1 className="text-white text-center font-bold">Pontos</h1>
-      </header>
+  const pontos = 1472;
+  const nivel = 2;
+  const meta = 2000;
+  const progresso = (pontos / meta) * 100;
 
-      <section className="bg-white p-4 rounded-xl mb-4 shadow">
-        <div className="mb-2 text-sm text-gray-700">
-          <span className="flex items-center gap-1">
-            Olá <span className="text-black flex items-center gap-1">
-              José <Crown size={16} className="text-yellow-500" />
-            </span>
-          </span>
-          <div className="mt-1 text-left sm:text-auto">
-            <span>Você é cliente <strong className="text-yellow-500">1 coroa</strong></span>
+  return (
+    <main className="px-6 py-8 max-w-4xl mx-auto text-gray-900 dark:text-white">
+
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-center flex-1">Painel de Recompensas</h1>
+      </div>
+
+
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 p-6 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
+      >
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <p className="text-xl font-bold">Olá, <span className="text-yellow-700 dark:text-yellow-300">Rafael</span></p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Nível {nivel}</p>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-gray-600 dark:text-gray-300">Pontos</span>
+            <p className="text-2xl font-extrabold text-green-600 dark:text-green-300">{pontos}</p>
           </div>
         </div>
 
-        <div className="mt-2">
-          <p className="text-2xl font-bold text-green-600">R$ 100,47</p>
-          <p className="text-xs text-gray-600">de R$ 2.000,00</p>
+        <div className="w-full h-3 bg-white/50 dark:bg-black/30 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-green-500"
+            initial={{ width: 0 }}
+            animate={{ width: `${progresso}%` }}
+            transition={{ duration: 1 }}
+          />
         </div>
+        <p className="text-xs text-right mt-1 text-gray-600 dark:text-gray-300">
+          {progresso.toFixed(1)}% até o próximo nível ({meta} pontos)
+        </p>
+      </motion.section>
 
-        <div className="h-2 mt-2 bg-gray-300 rounded-full overflow-hidden">
-          <div className="h-full bg-green-500" style={{ width: '5%' }} />
+
+      <section className="mb-10">
+        <h2 className="text-lg font-semibold mb-4">Conquistas Recentes</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[{
+            icon: <Flame className="text-red-500" />,
+            title: "Combo Semanal",
+            desc: "5 compras em menos de 7 dias"
+          }, {
+            icon: <TrendingUp className="text-blue-500" />,
+            title: "Fidelidade Ouro",
+            desc: "Mais de R$500 em compras"
+          }].map((achieve, i) => (
+            <motion.div
+              key={i}
+              className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow"
+              whileHover={{ scale: 1.03 }}
+            >
+              <div className="text-3xl">{achieve.icon}</div>
+              <div>
+                <p className="font-bold">{achieve.title}</p>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{achieve.desc}</span>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos1.png" alt="Promoção 1" layout="fill" className="object-cover" />
-        </div>
-        <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos2.png" alt="Promoção 2" layout="fill" className="object-cover" />
-        </div>
-        <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos1.png" alt="Promoção 3" layout="fill" className="object-cover" />
-        </div>
-        <div className="w-full h-36 bg-white rounded-xl overflow-hidden shadow relative">
-          <Image src="/img/promo-pontos2.png" alt="Promoção 4" layout="fill" className="object-cover" />
-        </div>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-4">Recompensas Disponíveis</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[{
+            title: "10% Desconto",
+            points: 10000,
+          }, {
+            title: "Café gratis",
+            points: 1000,
+          }, {
+            title: "Ganhe um combo",
+            points: 20000,
+          },].map((promo, i) => (
+            <motion.div
+              key={i}
+              className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
+              whileHover={{ scale: 1.03 }}
+            >
+              <div className="p-3 text-sm">
+                <p className="font-bold mb-1">{promo.title}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <Gift size={14} /> {promo.points} pontos
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div> 
       </section>
     </main>
   );
