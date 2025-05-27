@@ -22,17 +22,17 @@ export default function NavBottom() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 w-full bg-amber-950 text-white flex justify-around items-center h-20 border-t border-gray-800 z-50">
+    <div className="fixed bottom-0 left-0 right-0 w-full bg-amber-950 text-white flex border-t border-gray-800 z-50">
       {menuItems.map(({ id, label, icon: Icon, href }) => (
         <button
           key={id}
           onClick={() => handleClick(id, href)}
-          className={`flex flex-col items-center gap-2 text-xs focus:outline-none cursor-pointer ${
+          className={`flex flex-col items-center justify-center flex-1 py-2 ${
             selected === id ? 'text-orange-500' : 'text-white'
           }`}
         >
-          <Icon size={22} />
-          <span className="leading-none">{label}</span>
+          <Icon size={24} />
+          <span className="text-[10px] leading-none mt-1">{label}</span>
         </button>
       ))}
     </div>
