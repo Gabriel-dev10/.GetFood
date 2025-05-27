@@ -17,13 +17,13 @@ export default function Inicio() {
   return (
     <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
 
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center justify-between mb-6 px-4 py-2 rounded-xl"
+        className="relative flex items-center justify-between mb-6 px-2 py-2 rounded-xl"
       >
+
         <button
           onClick={() => setShowInfo(true)}
           className="text-blue-500 hover:text-blue-400 flex items-center gap-1 text-xs font-bold transition"
@@ -32,18 +32,21 @@ export default function Inicio() {
           Info
         </button>
 
-        <h1 className="text-2xl font-bold text-center flex-1 -ml-5">GBC Coffee</h1>
+
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
+          GBC Coffee
+        </h1>
+
 
         <Link
           href="/Login"
           className="flex items-center gap-2 font-bold text-xs cursor-pointer hover:text-blue-500 hover:underline text-gray-100 px-2 py-1 rounded-lg transition duration-300"
         >
           <LogIn size={20} />
-          <span>Entrar</span>
         </Link>
       </motion.div>
 
-      {/* Carrossel */}
+
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,7 +69,7 @@ export default function Inicio() {
         </Swiper>
       </motion.section>
 
-      {/* Info Modal */}
+
       <AnimatePresence>
         {showInfo && (
           <motion.div
