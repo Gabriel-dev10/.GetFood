@@ -2,7 +2,7 @@
 
 import { Gift, TrendingUp, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
-
+import NavBottom from '../../components/NavBottom';
 
 
 export default function PagPontos() {
@@ -17,7 +17,6 @@ export default function PagPontos() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-center flex-1">Painel de Recompensas</h1>
       </div>
-
 
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -49,7 +48,6 @@ export default function PagPontos() {
         </p>
       </motion.section>
 
-
       <section className="mb-10">
         <h2 className="text-lg font-semibold mb-4">Conquistas Recentes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -77,7 +75,6 @@ export default function PagPontos() {
         </div>
       </section>
 
-
       <section>
         <h2 className="text-lg font-semibold mb-4">Recompensas Disponíveis</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -90,7 +87,7 @@ export default function PagPontos() {
           }, {
             title: "Ganhe um combo",
             points: 20000,
-          },].map((promo, i) => (
+          }].map((promo, i) => (
             <motion.div
               key={i}
               className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
@@ -104,8 +101,10 @@ export default function PagPontos() {
               </div>
             </motion.div>
           ))}
-        </div> 
+        </div>
       </section>
+
+      <NavBottom />
     </main>
   );
 }

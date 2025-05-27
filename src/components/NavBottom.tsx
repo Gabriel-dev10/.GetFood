@@ -1,4 +1,5 @@
 'use client';
+
 import { Home, ShoppingBag, User } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -15,21 +16,23 @@ export default function NavBottom() {
 
   const handleClick = (id: string, href: string) => {
     setSelected(id);
-    router.push(href);
+    if (id !== 'perfil') {
+      router.push(href);
+    }
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 w-full bg-amber-950 text-white flex justify-around items-center h-16 border-t border-gray-800 z-50">
+    <div className="fixed bottom-0 left-0 right-0 w-full bg-amber-950 text-white flex justify-around items-center h-20 border-t border-gray-800 z-50">
       {menuItems.map(({ id, label, icon: Icon, href }) => (
         <button
           key={id}
           onClick={() => handleClick(id, href)}
-          className={`flex flex-col items-center text-xs focus:outline-none cursor-pointer ${
-            selected === id ? 'text-orange-700' : 'text-white'
+          className={`flex flex-col items-center gap-2 text-xs focus:outline-none cursor-pointer ${
+            selected === id ? 'text-orange-500' : 'text-white'
           }`}
         >
-          <Icon size={24} />
-          <span>{label}</span>
+          <Icon size={22} />
+          <span className="leading-none">{label}</span>
         </button>
       ))}
     </div>

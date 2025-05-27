@@ -1,7 +1,7 @@
+// layout.tsx
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import NavBottom from '../components/NavBottom';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,8 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className={poppins.variable}>
-      <body className="antialiased font-sans">{children}
-        <NavBottom />
+      <body className="antialiased font-sans">
+        {children}
       </body>
     </html>
   );
