@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 
 export default function Inicio() {
   return (
-    <main className="min-h-screen px-1 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
 
       <header className="relative flex items-center justify-between mb-8 z-30">
         <div className="text-xs text-green-500 font-bold">● Aberto</div>
