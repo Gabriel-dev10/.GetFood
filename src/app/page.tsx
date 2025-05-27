@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Menu, X, CreditCard, LocateFixed, LogIn } from 'lucide-react';
+import { Info, Star, Instagram, LogIn } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import Image from 'next/image';
@@ -11,71 +10,26 @@ import Link from 'next/link';
 import Footer from '../components/Footer';
 
 export default function Inicio() {
-  const [menuAberto, setMenuAberto] = useState(false);
-
   return (
     <main className="text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
 
-      <header className="flex justify-between items-center mb-2 z-30 relative">
-        <button onClick={() => setMenuAberto(true)} className='cursor-pointer'>
-          <Menu size={24} />
-        </button>
-        <div className="text-center text-xs leading-tight"> </div>
-          <h1 className="text-xl sm:text-4xl font-extrabold "> GBC Coffee </h1>
-          <div className="flex justify-between items-center gap-1">
-          <h1 className="text-base font-bold">
-            GBC Coffee
-          </h1>
-          <div className='flex justify-between items-center gap-1'>
-            <LocateFixed size={16} />
-            <p className="text-blue-400 underline">
-              R. Ver. Luiz Antonio da Cunha, da, 295
-            </p>
-          </div>
+      <header className="relative flex items-center justify-center mb-4 z-30">
+        <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 text-green-500 font-extrabold">
+          ● Aberto
         </div>
-        <div className="text-green-500 text-xs font-semibold whitespace-nowrap">● Aberto</div>
+
+        <h1 className="text-xl text-white sm:text-4xl font-extrabold text-center">
+          GBC Coffee
+        </h1>
+
+        <Link 
+          href="/Login"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 flex items-center gap-2 text-xs cursor-pointer hover:text-gray-800 hover:underline text-gray-800 px-2 py-1 rounded-lg transition duration-300"
+        >
+          <LogIn size={20} />
+          <span>Entrar / Cadastrar</span>
+        </Link>
       </header>
-
-      <div className={`fixed top-0 left-0 h-full w-64 bg-white text-black z-50 transform transition-transform duration-300 ${menuAberto ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex justify-between items-center px-4 py-4 border-b border-gray-700">
-          <h2 className="text-lg font-semibold">Menu</h2>
-          <button onClick={() => setMenuAberto(false)} className='cursor-pointer'>
-            <X size={24} />
-          </button>
-        </div>
-
-        <nav className="flex flex-col px-4 py-4 space-y-2 h-full">
-          <Link href="/pag-pontos" className="hover:text-gray-400">Pontos</Link>
-          <a href="" className="hover:text-gray-400">Instagram</a>
-          <a href="" className="hover:text-gray-400">whatsapp</a>
-          
-          <div className="py-4 border-t mt-5 border-gray-700">
-            <div className="flex items-center gap-2 hover:text-gray-400 transition-colors cursor-pointer">
-              <LogIn size={20} />
-              <Link href="/Login">
-                <h1 className="text-sm font-medium">Entrar / Cadastrar</h1>
-              </Link>
-            </div>
-          </div>
-
-          <div className="mt-auto flex justify-center pb-20">
-            <Image
-              src="/Img/logo.png"
-              alt="Logo da Empresa"
-              width={200}
-              height={40}
-              className="object-contain"
-            />
-          </div>
-        </nav>
-      </div>
-    
-      {menuAberto && (
-        <div
-          className="fixed inset-0 bg-white/10 backdrop-blur-sm z-40"
-          onClick={() => setMenuAberto(false)}
-        />
-      )}
 
       <section className="my-4 rounded-xl overflow-hidden w-full">
         <Swiper spaceBetween={10} slidesPerView={1}>
@@ -95,18 +49,20 @@ export default function Inicio() {
       </section>
 
       <section className="flex justify-around text-center border-t border-gray-700 pt-2 text-xs sm:text-sm">
-        <div className="flex flex-col items-center">
-          <p className="font-medium mt-1">Pagamentos</p>
-          <CreditCard size={18} />
-        </div>
-        <div>
-          <p className="text-black">Fila</p>
-          <p className="text-green-500 font-semibold">15</p>
-        </div>
-        <div>
-          <p className="text-black">Retirada</p>
-          <p className="text-black font-semibold">15min</p>
-        </div>
+        <a href="" className="flex flex-col items-center hover:text-gray-800">
+          Informações
+          <Info size={20} className="hover:text-gray-800 cursor-pointer" />
+        </a>
+
+        <a href="" className="flex flex-col items-center hover:text-gray-800">
+          Fidelidade
+          <Star size={20} className="hover:text-gray-800 cursor-pointer" />
+        </a>
+
+        <a href="" className="flex flex-col items-center hover:text-gray-800">
+          Instagram
+          <Instagram size={20} className="hover:text-gray-800 cursor-pointer" />
+        </a>
       </section>
 
       <BarraHorizontal />
