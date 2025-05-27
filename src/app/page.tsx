@@ -11,38 +11,34 @@ import Footer from '../components/Footer';
 
 export default function Inicio() {
   return (
-    <main className="min-h-screen text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3">
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
 
-      <header className="relative flex items-center justify-between mb-4 z-30">
+      <header className="relative flex items-center justify-between mb-8 z-30">
+        <div className="text-xs text-green-500 font-bold">● Aberto</div>
 
-        <div className="text-xs text-green-500 font-bold">
-          ● Aberto
-        </div>
-
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold text-center">
           GBC Coffee
         </h1>
 
         <div className="flex items-center">
           <Link 
             href="/Login"
-            className="block sm:hidden text-white hover:text-gray-800 transition duration-300"
+            className="block sm:hidden text-white hover:text-gray-300 transition duration-300"
           >
             <UserCircle size={24} />
           </Link>
 
           <Link 
             href="/Login"
-            className="font-bold hidden sm:flex items-center gap-2 text-xs cursor-pointer hover:text-gray-800 hover:underline text-gray-800 px-2 py-1 rounded-lg transition duration-300"
+            className="font-bold hidden sm:flex items-center gap-2 text-xs cursor-pointer hover:text-gray-300 hover:underline text-gray-100 px-2 py-1 rounded-lg transition duration-300"
           >
             <LogIn size={20} />
             <span>Entrar / Cadastrar</span>
           </Link>
         </div>
-
       </header>
 
-      <section className="my-4 rounded-xl overflow-hidden w-full">
+      <section className="mb-8 rounded-xl overflow-hidden w-full">
         <Swiper spaceBetween={10} slidesPerView={1}>
           {[1, 2, 3].map((_, index) => (
             <SwiperSlide key={index}>
@@ -59,26 +55,29 @@ export default function Inicio() {
         </Swiper>
       </section>
 
-      <section className="flex justify-around text-center border-t border-gray-700 pt-2 text-xs sm:text-sm">
-        <a href="" className="flex flex-col items-center hover:text-gray-800">
+      <section className="mb-8 flex justify-around text-center border-t text-black border-gray-700 pt-4 text-xs sm:text-sm">
+        <a href="#" className="flex flex-col items-center hover:text-gray-800">
           Informações
-          <Info size={20} className="hover:text-gray-800 cursor-pointer" />
+          <Info size={20} className="cursor-pointer" />
         </a>
 
-        <a href="" className="flex flex-col items-center hover:text-gray-800">
+        <a href="#" className="flex flex-col items-center hover:text-gray-800">
           Fidelidade
-          <Star size={20} className="hover:text-gray-800 cursor-pointer" />
+          <Star size={20} className="cursor-pointer" />
         </a>
 
-        <a href="" className="flex flex-col items-center hover:text-gray-800">
+        <a href="#" className="flex flex-col items-center hover:text-gray-800">
           Instagram
-          <Instagram size={20} className="hover:text-gray-800 cursor-pointer" />
+          <Instagram size={20} className="cursor-pointer" />
         </a>
       </section>
 
-      <BarraHorizontal />
-      <NavBottom />
+      <div className="mb-8">
+        <BarraHorizontal />
+      </div>
+
       <Footer />
+      <NavBottom />
     </main>
   );
 }

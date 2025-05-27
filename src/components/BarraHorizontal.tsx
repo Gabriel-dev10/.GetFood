@@ -11,15 +11,15 @@ export default function BarraHorizontal() {
 
   return (
     <>
-      <div className="overflow-x-auto whitespace-nowrap flex gap-3 my-4 px-1">
+      <div className="overflow-x-auto whitespace-nowrap flex gap-4 my-4 px-1">
         {categorias.map((cat) => (
           <button
             key={cat}
             onClick={() => setCategoriaSelecionada(cat)}
-            className={`px-4 py-2 rounded-full transition whitespace-nowrap ${
+            className={`px-4 mb-2 py-2 rounded-full transition whitespace-nowrap ${
               categoriaSelecionada === cat
                 ? 'bg-white text-black font-semibold'
-                : 'bg-amber-950 text-white'
+                : 'bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 text-white'
             }`}
           >
             {cat}

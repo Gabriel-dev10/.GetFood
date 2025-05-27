@@ -3,7 +3,7 @@
 import { Gift, TrendingUp, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import NavBottom from '../../components/NavBottom';
-
+import Footer from '@/components/Footer';
 
 export default function PagPontos() {
   const pontos = 1472;
@@ -12,10 +12,11 @@ export default function PagPontos() {
   const progresso = (pontos / meta) * 100;
 
   return (
-    <main className="px-6 py-8 max-w-4xl mx-auto text-gray-900 dark:text-white">
-
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-center flex-1">Painel de Recompensas</h1>
+        <h1 className="text-2xl font-bold text-center flex-1">
+          Painel de Recompensas
+        </h1>
       </div>
 
       <motion.section
@@ -26,7 +27,9 @@ export default function PagPontos() {
       >
         <div className="flex justify-between items-center mb-4">
           <div>
-            <p className="text-xl font-bold">Olá, <span className="text-yellow-700 dark:text-yellow-300">Rafael</span></p>
+            <p className="text-xl font-bold">
+              Olá, <span className="text-yellow-700 dark:text-yellow-300">Rafael</span>
+            </p>
             <p className="text-sm text-gray-700 dark:text-gray-300">Nível {nivel}</p>
           </div>
           <div className="text-right">
@@ -51,15 +54,18 @@ export default function PagPontos() {
       <section className="mb-10">
         <h2 className="text-lg font-semibold mb-4">Conquistas Recentes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[{
-            icon: <Flame className="text-red-500" />,
-            title: "Combo Semanal",
-            desc: "5 compras em menos de 7 dias"
-          }, {
-            icon: <TrendingUp className="text-blue-500" />,
-            title: "Fidelidade Ouro",
-            desc: "Mais de R$500 em compras"
-          }].map((achieve, i) => (
+          {[
+            {
+              icon: <Flame className="text-red-500" aria-label="Conquista: Combo Semanal" />,
+              title: "Combo Semanal",
+              desc: "5 compras em menos de 7 dias",
+            },
+            {
+              icon: <TrendingUp className="text-blue-500" aria-label="Conquista: Fidelidade Ouro" />,
+              title: "Fidelidade Ouro",
+              desc: "Mais de R$500 em compras",
+            },
+          ].map((achieve, i) => (
             <motion.div
               key={i}
               className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow"
@@ -75,19 +81,23 @@ export default function PagPontos() {
         </div>
       </section>
 
-      <section>
+      <section className="mb-10">
         <h2 className="text-lg font-semibold mb-4">Recompensas Disponíveis</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[{
-            title: "10% Desconto",
-            points: 10000,
-          }, {
-            title: "Café gratis",
-            points: 1000,
-          }, {
-            title: "Ganhe um combo",
-            points: 20000,
-          }].map((promo, i) => (
+          {[
+            {
+              title: "10% de Desconto",
+              points: 10000,
+            },
+            {
+              title: "Café Grátis",
+              points: 1000,
+            },
+            {
+              title: "Ganhe um Combo",
+              points: 20000,
+            },
+          ].map((promo, i) => (
             <motion.div
               key={i}
               className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
@@ -96,7 +106,7 @@ export default function PagPontos() {
               <div className="p-3 text-sm">
                 <p className="font-bold mb-1">{promo.title}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                  <Gift size={14} /> {promo.points} pontos
+                  <Gift size={14} aria-label="Ícone de presente" /> {promo.points} pontos
                 </p>
               </div>
             </motion.div>
@@ -104,6 +114,7 @@ export default function PagPontos() {
         </div>
       </section>
 
+      <Footer />
       <NavBottom />
     </main>
   );
