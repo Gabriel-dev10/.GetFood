@@ -18,7 +18,7 @@ export default function Login() {
         <span className="text-orange-600">.</span>Get<span className='text-orange-600'>Food</span>
       </h1>
 
-      <div className="w-full max-w-md bg-gray-100 rounded-xl shadow-md p-8">
+      <div className="w-full max-w-md bg-gray-200 rounded-xl shadow-md p-8">
         <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">Entrar</h2>
 
         <form onSubmit={lidarComLogin} className="space-y-5">
