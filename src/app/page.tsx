@@ -11,31 +11,35 @@ import Footer from '../components/Footer';
 
 export default function Inicio() {
   return (
-    <main className="px-6 py-8 max-w-4xl mx-auto text-gray-900 dark:text-white">
+    <main className="min-h-screen text-black px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-4">
 
-      <header className="relative flex items-center justify-center mb-4 z-30">
-        <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 text-green-500 font-extrabold">
+      <header className="relative flex items-center justify-between mb-4 z-30">
+
+        <div className="text-xs text-green-500 font-bold">
           ● Aberto
         </div>
 
-        <h1 className="text-xl text-white sm:text-4xl font-extrabold text-center">
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
           GBC Coffee
         </h1>
 
-        <Link 
-          href="/Login"
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 block sm:hidden text-white hover:text-gray-800 transition duration-300"
-        >
-          <UserCircle size={24} />
-        </Link>
+        <div className="flex items-center">
+          <Link 
+            href="/Login"
+            className="block sm:hidden text-white hover:text-gray-800 transition duration-300"
+          >
+            <UserCircle size={24} />
+          </Link>
 
-        <Link 
-          href="/Login"
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-2 text-xs cursor-pointer hover:text-gray-800 hover:underline text-gray-800 px-2 py-1 rounded-lg transition duration-300"
-        >
-          <LogIn size={20} />
-          <span>Entrar / Cadastrar</span>
-        </Link>
+          <Link 
+            href="/Login"
+            className="font-bold hidden sm:flex items-center gap-2 text-xs cursor-pointer hover:text-gray-800 hover:underline text-gray-800 px-2 py-1 rounded-lg transition duration-300"
+          >
+            <LogIn size={20} />
+            <span>Entrar / Cadastrar</span>
+          </Link>
+        </div>
+
       </header>
 
       <section className="my-4 rounded-xl overflow-hidden w-full">
