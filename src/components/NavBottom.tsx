@@ -16,9 +16,7 @@ export default function NavBottom() {
 
   const handleClick = (id: string, href: string) => {
     setSelected(id);
-    if (id !== 'perfil') {
-      router.push(href);
-    }
+    router.push(href);  // Sempre navega para a rota correspondente
   };
 
   return (
