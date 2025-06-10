@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model produtos {
+  id         Int     @id @default(autoincrement()) @db.UnsignedInt
+  nome       String? @db.VarChar(60)
+  descricao  String? @db.VarChar(155)
+  preco      Decimal @default(0.00) @db.Decimal(10, 2)
+  imagem_url String? @db.VarChar(255)
+  categoria  String? @db.VarChar(50)
+}
+
+
+model recompensas {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id   Int       @db.UnsignedInt
+  codigo_ponto String    @unique(map: "codigo_ponto") @default("") @db.VarChar(155)
+  quant_pontos Int?
+  data_resgate DateTime? @db.DateTime(0)
+  status       String?   @db.VarChar(50)
+  usuarios     usuarios  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__usuarios")
+
+  @@index([usuario_id], map: "FK__usuarios")
+}
+
+
+model usuarios {
+  id                    Int           @id @default(autoincrement()) @db.UnsignedInt
+  token                 String        @unique(map: "token") @db.VarChar(12)
+  nome                  String?       @db.VarChar(60)
+  dataNascimento        DateTime?     @db.Date
+  email                 String        @unique(map: "email") @db.VarChar(255)
+  senha                 String?       @db.VarChar(64)
+  telefone              String?       @db.VarChar(45)
+  foto                  String?       @db.VarChar(255)
+  status                String        @default("ATIVO") @db.VarChar(15)
+  dataUltimoAcesso      DateTime?     @db.DateTime(0)
+  dataUltimaModificacao DateTime      @default(now()) @db.Timestamp(0)
+  tokenSenha            String?       @db.VarChar(50)
+  dataSenha             DateTime?     @db.Timestamp(0)
+  data                  DateTime      @default(now()) @db.Timestamp(0)
+  dataExclusao          DateTime?     @db.Timestamp(0)
+  recompensas           recompensas[]
+}
