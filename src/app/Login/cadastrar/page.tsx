@@ -1,14 +1,33 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function CriarConta() {
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter();
 
-  const lidarCriarConta = (evento: React.FormEvent<HTMLFormElement>) => {
-    evento.preventDefault();
-    router.push('/Login');
+  const handleRegister = async (e: React.FormEvent) => {
+    
+    e.preventDefault()
+
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ nome, email, senha }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    router.push("/login");
+  } else {
+    // erro
+  }
   };
 
   return (
@@ -21,7 +40,7 @@ export default function CriarConta() {
       <div className="w-full max-w-md bg-gray-100 rounded-xl shadow-md p-8">
         <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">Criar Conta</h2>
 
-        <form onSubmit={lidarCriarConta} className="space-y-5">
+        <form onSubmit={handleRegister} className="space-y-5">
           <div>
             <label htmlFor="nome" className="block text-sm font-medium text-gray-600 mb-1">
               Nome
@@ -31,7 +50,9 @@ export default function CriarConta() {
               type="text"
               placeholder="Digite seu nome"
               className="w-full px-4 py-3 rounded-md border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
-            />
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required />
           </div>
 
           <div>
@@ -43,6 +64,9 @@ export default function CriarConta() {
               type="email"
               placeholder="exemplo@gmail.com"
               className="w-full px-4 py-3 rounded-md border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -55,6 +79,9 @@ export default function CriarConta() {
               type="password"
               placeholder="Digite sua senha"
               className="w-full px-4 py-3 rounded-md border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
             />
           </div>
 

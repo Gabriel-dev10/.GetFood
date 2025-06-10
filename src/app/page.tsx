@@ -48,7 +48,7 @@ export default function Inicio() {
         </h1>
 
         <Link
-          href="/Login"
+          href="/login"
           className="flex items-center gap-2 font-bold text-xs cursor-pointer hover:text-gray-700 hover:underline text-gray-100 px-2 py-1 rounded-lg transition duration-300"
         >
           <LogIn size={20} />
