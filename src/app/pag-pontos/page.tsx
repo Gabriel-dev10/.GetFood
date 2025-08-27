@@ -23,12 +23,12 @@ export default function PagPontos() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 p-6 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
+        className="bg-gradient-to-tr from-[#292929]/85 to-black/65 p-7 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
       >
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="text-xl font-bold">
-              Olá, <span className="text-yellow-700 dark:text-yellow-300">Rafael</span>
+              Olá, <span className="text-yellow-700 dark:text-yellow-300">Rafael!</span>
             </p>
             <p className="text-sm text-gray-700 dark:text-gray-300">Nível {nivel}</p>
           </div>
@@ -52,7 +52,7 @@ export default function PagPontos() {
       </motion.section>
 
       <section className="mb-10">
-        <h2 className="text-lg font-semibold mb-4">Conquistas Recentes</h2>
+        <h2 className="text-lg text-amber-950 font-bold mb-4">CONQUISTAS RECENTES</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
@@ -68,7 +68,7 @@ export default function PagPontos() {
           ].map((achieve, i) => (
             <motion.div
               key={i}
-              className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow"
+              className="flex items-center gap-4 p-4 bg-gradient-to-tr from-[#292929]/85 to-black/60 rounded-xl shadow"
               whileHover={{ scale: 1.03 }}
             >
               <div className="text-3xl">{achieve.icon}</div>
@@ -82,7 +82,7 @@ export default function PagPontos() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-lg font-semibold mb-4">Recompensas Disponíveis</h2>
+        <h2 className="text-lg text-amber-950 font-bold mb-4">RECOMPENSAS DISPONÍVEIS</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             {
@@ -100,7 +100,7 @@ export default function PagPontos() {
           ].map((promo, i) => (
             <motion.div
               key={i}
-              className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
+              className="bg-gradient-to-tr from-[#292929]/85 to-black/60 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
               whileHover={{ scale: 1.03 }}
             >
               <div className="p-3 text-sm">
