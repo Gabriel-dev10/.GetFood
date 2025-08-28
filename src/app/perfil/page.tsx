@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserCircle, Award, Star, Coffee } from 'lucide-react';
+import { UserCircle, Award, Star, Coffee, PencilIcon } from 'lucide-react';
 import NavBottom from '@/components/NavBottom';
 
 export default function PerfilPage() {
@@ -10,15 +10,15 @@ export default function PerfilPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [modalAberto, setModalAberto] = useState(false);
-  const [nome, setNome] = useState('Rafael');
-  const [email, setEmail] = useState('rafael@exemplo.com');
+  const [nome, setNome] = useState('UserName');
+  const [email, setEmail] = useState('User@exemplo.com');
 
-  const cuponsUsados = 12;
+  const cuponsUsados = 35;
 
   const getTituloFidelidade = (cupons: number) => {
     if (cupons >= 50) return { titulo: '🔥 Café Viciado', restante: 0, proximo: null, total: 50 };
-    if (cupons >= 25) return { titulo: '🏆 Barista Honorário', restante: 50 - cupons, proximo: '🔥 Café Viciado', total: 50 };
-    if (cupons >= 10) return { titulo: '🎯 Cliente de Ouro', restante: 25 - cupons, proximo: '🏆 Barista Honorário', total: 25 };
+    if (cupons >= 25) return { titulo: '🏆 Mestre do Expresso', restante: 50 - cupons, proximo: '🔥 Café Viciado', total: 50 };
+    if (cupons >= 10) return { titulo: '🎯 Cliente de Ouro', restante: 25 - cupons, proximo: '🏆 Mestre do Expresso', total: 25 };
     if (cupons >= 5) return { titulo: '🥐 Degustador de Sabores', restante: 10 - cupons, proximo: '🎯 Cliente de Ouro', total: 10 };
     return { titulo: '☕ Cafézinho Casual', restante: 5 - cupons, proximo: '🥐 Degustador de Sabores', total: 5 };
   };
@@ -47,7 +47,7 @@ export default function PerfilPage() {
   return (
     <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-center flex-1">
+        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">
           Perfil
         </h1>
       </div>
@@ -56,13 +56,13 @@ export default function PerfilPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 p-8 mt-8 rounded-2xl shadow-lg w-full"
+        className="bg-gradient-to-tr from-[#292929]/84 to-black/65 p-8 mt-8 rounded-2xl shadow-lg w-full"
     >
 
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div
             onClick={handleFotoClick}
-            className="cursor-pointer w-28 h-28 rounded-full overflow-hidden border-4 border-green-500 shadow-lg hover:scale-105 transition"
+            className="cursor-pointer w-40 h-40 rounded-full overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
           >
             {foto ? (
               <img src={foto} alt="Foto de perfil" className="object-cover w-full h-full" />
@@ -85,10 +85,10 @@ export default function PerfilPage() {
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">{email}</p>
 
             <div className="bg-white/60 dark:bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
-              <div className="text-lg font-semibold text-yellow-900 dark:text-yellow-100">{titulo}</div>
+              <div className="text-lg font-semibold text-white dark:text-white">{titulo}</div>
               {proximo && (
                 <>
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <p className="text-sm text-white dark:text-white">
                     Faltam <strong>{restante}</strong> cupons para virar <strong>{proximo}</strong>
                   </p>
                   <div className="w-full bg-white/70 dark:bg-black/40 h-3 rounded-full overflow-hidden">
@@ -106,16 +106,16 @@ export default function PerfilPage() {
         </div>
 
         <div className="mt-10">
-          <h2 className="text-xl font-bold text-yellow-900 dark:text-yellow-100 mb-5 text-center">Conquistas</h2>
+          <h2 className="text-xl font-bold text-white dark:text-white mb-5 text-center">Conquistas</h2>
           <div className="flex flex-wrap justify-center gap-6">
             {badges.map(({ icon, label }, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 bg-yellow-50 dark:bg-yellow-900/50 rounded-xl px-4 py-3 shadow-md hover:scale-105 transform transition cursor-default select-none"
+                className="flex items-center gap-3 bg-gray-800 dark:bg-gry-900/50 rounded-xl px-4 py-3 shadow-md hover:scale-105 transform transition cursor-default select-none"
                 title={label}
               >
                 {icon}
-                <span className="font-semibold text-yellow-900 dark:text-yellow-100">{label}</span>
+                <span className="font-semibold text-white-900 dark:text-white-100">{label}</span>
               </div>
             ))}
           </div>
@@ -124,8 +124,9 @@ export default function PerfilPage() {
         <div className="mt-10 flex justify-center">
           <button
             onClick={() => setModalAberto(true)}
-            className="bg-green-600 text-white py-3 px-8 rounded-full hover:bg-green-700 transition text-lg font-semibold shadow-lg"
+            className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#4E2010] transition text-lg font-semibold shadow-lg"
           >
+            <PencilIcon className="inline w-6 h-6 mr-2" />
             Editar Perfil
           </button>
         </div>
@@ -146,7 +147,7 @@ export default function PerfilPage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 p-6 rounded-2xl shadow-lg"
+              className="w-full max-w-md bg-gradient-to-tr from-[#292929]/85 to-black/65 p-6 rounded-2xl shadow-lg"
             >
               <h2 className="text-xl font-bold mb-5 text-center text-gray-800 dark:text-white">
                 Editar Perfil
@@ -178,7 +179,7 @@ export default function PerfilPage() {
                 </button>
                 <button
                   onClick={handleSalvar}
-                  className="px-5 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition font-semibold"
+                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#4E2010] transition font-semibold"
                 >
                   Salvar
                 </button>
