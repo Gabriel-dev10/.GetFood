@@ -18,8 +18,8 @@ export default function BarraHorizontal() {
             onClick={() => setCategoriaSelecionada(cat)}
             className={`px-4 mb-2 py-2 rounded-full transition whitespace-nowrap ${
               categoriaSelecionada === cat
-                ? 'bg-white text-black font-semibold'
-                : 'bg-gradient-to-tr from-yellow-100 to-yellow-300 dark:from-yellow-800 dark:to-yellow-600 text-white'
+                ? 'bg-[#4E2010] text-[#DCBD8F] font-semibold'
+                : 'bg-[#DCBD8F] border-1 border-[#4E2010] rounded-full text-[#4E2010]'
             }`}
           >
             {cat}

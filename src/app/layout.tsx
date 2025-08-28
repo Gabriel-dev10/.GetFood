@@ -1,7 +1,13 @@
 // layout.tsx
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Dancing_Script} from "next/font/google";
 import "./globals.css";
+
+const dancingScript = Dancing_Script({
+  variable: '--font-dancingScript',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+});
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" className={poppins.variable}>
+    <html lang="pt-br" className={`${poppins.variable} ${dancingScript.variable}`}>
       <head>
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="msapplication-navbutton-color" content="#451a03" />
