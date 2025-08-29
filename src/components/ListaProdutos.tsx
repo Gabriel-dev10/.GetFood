@@ -139,33 +139,36 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
   const lista = produtos[categoria];
 
   if (lista.length === 0) {
-    return <p className="text-white">Nenhum item disponível nesta categoria.</p>;
+    return <p className="text-[#4E2010]">Nenhum item disponível nesta categoria.</p>;
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {lista.map((item) => (
-        <div
-          key={item.nome}
-          className="flex flex-col sm:flex-row rounded-xl w-full overflow-hidden bg-white text-black shadow-md"
-        >
-          <div className="relative sm:w-32 w-full aspect-[4/3]">
-              <Image
-                src={item.imagem}
-                alt={`Imagem do produto ${item.nome}`}
-                fill
-                className='object-contain'
-              />
-          </div>
-          <div className="p-3 flex flex-col justify-between">
-            <div>
-              <h2 className="font-bold">{item.nome}</h2>
-              <p className="text-sm text-gray-700">{item.descricao}</p>
-            </div>
-            <p className="text-base font-semibold">{item.preco}</p>
-          </div>
+  <div className="flex flex-col gap-4 max-w-6xl mx-auto w-full">
+    {lista.map((item) => (
+      <div
+        key={item.nome}
+        className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-lg"
+      >
+        <div className="relative w-28 h-28 sm:w-48 sm:h-45 md:w-64 md:h-40 flex-shrink-0">
+          <Image
+            src={item.imagem}
+            alt={`Imagem do produto ${item.nome}`}
+            fill
+            className="object-cover rounded-l-2xl"
+          />
         </div>
-      ))}
-    </div>
-  );
+
+        <div className="p-4 flex flex-col justify-between w-full">
+          <div>
+            <h2 className="font-bold text-xl">{item.nome}</h2>
+            <p className="text-sm text-[#4E2010]/80 line-clamp-2">
+              {item.descricao}
+            </p>
+          </div>
+          <p className="text-lg font-extrabold mt-2">{item.preco}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+);
 }
