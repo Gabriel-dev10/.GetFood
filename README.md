@@ -2,7 +2,7 @@
 
 > Sistema de pedidos e fidelidade para restaurantes, feito com Next.js, TypeScript e Prisma.
 
-## 🚀 Instalação
+## Instalação
 
 ```bash
 git clone https://github.com/Gabriel-dev10/.GetFood.git
@@ -10,7 +10,7 @@ cd .GetFood
 npm install
 ```
 
-## 🏃 Rodando o projeto
+## Rodando o projeto
 
 ```bash
 npm run dev
@@ -26,13 +26,13 @@ npm run docs
 
 Acesse a documentação em `/docs/index.html`.
 
-## 🧹 Rodando o lint
+## Rodando o lint
 
 ```bash
 npm run lint
 ```
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 - Next.js
 - TypeScript
@@ -40,7 +40,7 @@ npm run lint
 - ESLint
 - TSDoc/TypeDoc
 
-## 📝 Como comentar usando TSDoc
+## Como comentar usando TSDoc
 
 Para documentar o código, utilize o padrão TSDoc acima de funções, componentes, tipos e variáveis importantes. Exemplos:
 
