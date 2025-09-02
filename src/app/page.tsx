@@ -30,8 +30,8 @@ export default function Inicio() {
    * Aba ativa do modal de informações.
    * Pode ser 'sobre', 'horario' ou 'pagamento'.
    */
-  const [abaAtiva, setAbaAtiva] = useState<"sobre" | "horario" | "pagamento">(
-    "sobre"
+  const [abaAtiva, setAbaAtiva] = useState<"Sobre" | "Horario" | "Pagamento">(
+    "Sobre"
   );
 
   /**
@@ -130,7 +130,7 @@ export default function Inicio() {
               </div>
 
               <div className="space-y-4 text-sm min-h-[280px]">
-                {abaAtiva === "sobre" && (
+                {abaAtiva === "Sobre" && (
                   <>
                     <div className="flex items-center gap-2 mt-4">
                       <Image
@@ -181,7 +181,7 @@ export default function Inicio() {
                   </>
                 )}
 
-                {abaAtiva === "horario" && (
+                {abaAtiva === "Horario" && (
                   <ul className="text-sm divide-y divide-gray-200 dark:divide-zinc-800">
                     {Object.entries(horarios).map(([dia, hora]) => (
                       <li
@@ -207,7 +207,7 @@ export default function Inicio() {
                   </ul>
                 )}
 
-                {abaAtiva === "pagamento" && (
+                {abaAtiva === "Pagamento" && (
                   <div className="flex flex-col gap-3 text-sm">
                     {[
                       {
