@@ -1,16 +1,23 @@
-'use client';
+"use client";
 
-import { Gift, TrendingUp, Flame, ScanLine} from 'lucide-react';
-import { motion } from 'framer-motion';
-import NavBottom from '../../components/NavBottom';
-import Footer from '@/components/Footer';
+import { Gift, TrendingUp, Flame, ScanLine } from "lucide-react";
+import { motion } from "framer-motion";
+import NavBottom from "../../components/NavBottom";
+import Footer from "@/components/Footer";
 
+/**
+ * Página de painel de pontos e recompensas do usuário.
+ *
+ * Exibe progresso, conquistas e recompensas disponíveis.
+ *
+ * @returns {JSX.Element} Elemento da página de pontos
+ */
 export default function PagPontos() {
   const pontos = 1472;
   const nivel = 2;
   const meta = 2000;
   const progresso = (pontos / meta) * 100;
-  const validade = '26/08/2026';
+  const validade = "26/08/2026";
 
   return (
     <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
@@ -31,10 +38,14 @@ export default function PagPontos() {
             <p className="text-xl font-bold">
               Olá, <span className="text-[#DCBD8F]">User!</span>
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300">Nível {nivel}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              Nível {nivel}
+            </p>
           </div>
           <div className="text-right">
-            <span className="text-xs text-gray-600 dark:text-gray-300">Pontos</span>
+            <span className="text-xs text-gray-600 dark:text-gray-300">
+              Pontos
+            </span>
             <p className="text-2xl font-extrabold text-green-500">{pontos}</p>
             <p className="text-xs mb-1">Válido até {validade}</p>
           </div>
@@ -54,7 +65,9 @@ export default function PagPontos() {
       </motion.section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">RESGATAR CUPOM</h2>
+        <h2 className="text-lg text-amber-950 font-bold mb-4">
+          RESGATAR CUPOM
+        </h2>
         <div className="flex flex-col sm:flex-row w-full max-w-xl bg-gradient-to-tr from-[#292929]/65 to-black/85 rounded-2xl sm:rounded-full shadow p-2 gap-2">
           <input
             type="text"
@@ -73,16 +86,28 @@ export default function PagPontos() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">CONQUISTAS RECENTES</h2>
+        <h2 className="text-lg text-amber-950 font-bold mb-4">
+          CONQUISTAS RECENTES
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
-              icon: <Flame className="text-red-500" aria-label="Conquista: Combo Semanal" />,
+              icon: (
+                <Flame
+                  className="text-red-500"
+                  aria-label="Conquista: Combo Semanal"
+                />
+              ),
               title: "Combo Semanal",
               desc: "5 compras em menos de 7 dias",
             },
             {
-              icon: <TrendingUp className="text-blue-500" aria-label="Conquista: Fidelidade Ouro" />,
+              icon: (
+                <TrendingUp
+                  className="text-blue-500"
+                  aria-label="Conquista: Fidelidade Ouro"
+                />
+              ),
               title: "Fidelidade Ouro",
               desc: "Mais de R$500 em compras",
             },
@@ -95,7 +120,9 @@ export default function PagPontos() {
               <div className="text-3xl">{achieve.icon}</div>
               <div>
                 <p className="font-bold">{achieve.title}</p>
-                <span className="text-sm text-gray-500 dark:text-gray-400">{achieve.desc}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {achieve.desc}
+                </span>
               </div>
             </motion.div>
           ))}
@@ -103,7 +130,9 @@ export default function PagPontos() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">RECOMPENSAS DISPONÍVEIS</h2>
+        <h2 className="text-lg text-amber-950 font-bold mb-4">
+          RECOMPENSAS DISPONÍVEIS
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             {
@@ -127,7 +156,8 @@ export default function PagPontos() {
               <div className="p-3 text-sm">
                 <p className="font-bold mb-1">{promo.title}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                  <Gift size={14} aria-label="Ícone de presente" /> {promo.points} pontos
+                  <Gift size={14} aria-label="Ícone de presente" />{" "}
+                  {promo.points} pontos
                 </p>
               </div>
             </motion.div>
