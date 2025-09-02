@@ -83,4 +83,3 @@ interface Produto {
 }
 ```
 
-**Dica:** Sempre explique o propósito, os parâmetros e o retorno das funções/componentes. Isso facilita a manutenção e a geração de documentação automática.
