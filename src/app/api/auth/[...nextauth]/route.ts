@@ -25,6 +25,11 @@ const handler = NextAuth({
           throw new Error("Usuário não encontrado.");
         }
 
+        // Verifica se o usuário tem senha cadastrada
+        if (!user.senha) {
+          throw new Error("Usuário não possui senha definida.");
+        }
+
         // Verifica a senha utilizando bcrypt
         const passwordMatch = await bcrypt.compare(credentials.senha, user.senha);
 
@@ -44,7 +49,6 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // pages: false,
 });
 
 export { handler as GET, handler as POST };
