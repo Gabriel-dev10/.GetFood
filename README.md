@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# .GetFood
 
-## Getting Started
+> Sistema de pedidos e fidelidade para restaurantes, feito com Next.js, TypeScript e Prisma.
 
-First, run the development server:
+## 🚀 Instalação
+
+```bash
+git clone https://github.com/Gabriel-dev10/.GetFood.git
+cd .GetFood
+npm install
+```
+
+## 🏃 Rodando o projeto
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse em [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📄 Gerando documentação
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run docs
+```
 
-## Learn More
+Acesse a documentação em `/docs/index.html`.
 
-To learn more about Next.js, take a look at the following resources:
+## 🧹 Rodando o lint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tecnologias
 
-## Deploy on Vercel
+- Next.js
+- TypeScript
+- Prisma
+- ESLint
+- TSDoc/TypeDoc
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Como comentar usando TSDoc
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Para documentar o código, utilize o padrão TSDoc acima de funções, componentes, tipos e variáveis importantes. Exemplos:
+
+### Função simples
+
+```typescript
+/**
+ * Soma dois números.
+ * @param a - Primeiro número
+ * @param b - Segundo número
+ * @returns A soma de a e b
+ */
+function soma(a: number, b: number): number {
+  return a + b;
+}
+```
+
+### Componente React
+
+```typescript
+/**
+ * Componente de botão customizado.
+ * @param label - Texto do botão
+ * @returns {JSX.Element} Elemento do botão
+ */
+export function Botao({ label }: { label: string }) {
+  return <button>{label}</button>;
+}
+```
+
+### Interface ou tipo
+
+```typescript
+/**
+ * Representa um produto do cardápio.
+ */
+interface Produto {
+  nome: string;
+  preco: number;
+}
+```
+
+**Dica:** Sempre explique o propósito, os parâmetros e o retorno das funções/componentes. Isso facilita a manutenção e a geração de documentação automática.
