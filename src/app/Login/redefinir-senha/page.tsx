@@ -4,12 +4,41 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function RedefinirSenha() {
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [codigo, setCodigo] = useState('');
+  const [error, setError] = useState('');
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const router = useRouter();
 
-  const lidarComSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMostrarPopup(true);
+
+    if (!novaSenha.trim() || !confirmarSenha.trim() || !codigo.trim()) {
+      setError('Preencha todos os campos.');
+      return;
+    }
+
+    if (novaSenha !== confirmarSenha) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+
+    setError('');
+
+    const res = await fetch('/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ novaSenha, codigo }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setMostrarPopup(true);
+    } else {
+      setError(data?.message || 'Erro ao redefinir senha. Verifique o código.');
+    }
   };
 
   const voltarParaLogin = () => {
@@ -27,13 +56,16 @@ export default function RedefinirSenha() {
         <h2 className="text-2xl font-semibold text-gray-700 mb-2 text-center">Redefinir Senha</h2>
         <p className="text-sm text-gray-600 text-center mb-6">Digite sua nova senha e o código enviado para seu e-mail.</p>
 
-        <form onSubmit={lidarComSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Nova Senha</label>
             <input
               type="password"
               placeholder="Digite sua nova senha"
               className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              value={novaSenha}
+              onChange={e => setNovaSenha(e.target.value)}
+              required
             />
           </div>
 
@@ -43,6 +75,9 @@ export default function RedefinirSenha() {
               type="password"
               placeholder="Repita sua nova senha"
               className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              value={confirmarSenha}
+              onChange={e => setConfirmarSenha(e.target.value)}
+              required
             />
           </div>
 
@@ -52,8 +87,13 @@ export default function RedefinirSenha() {
               type="text"
               placeholder="Insira o código"
               className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              value={codigo}
+              onChange={e => setCodigo(e.target.value)}
+              required
             />
           </div>
+
+          {error && <p className="text-red-600 text-sm">{error}</p>}
 
           <button
             type="submit"
