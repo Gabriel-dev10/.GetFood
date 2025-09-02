@@ -5,6 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { validateForm } from "@/utils/validators";
 
+type FormData = {
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  senha: string;
+  confirmaSenha: string;
+};
+
+type ValidationErrors = Partial<Record<keyof FormData, string>>;
+
 const fields = [
   { id: "nome", label: "Nome", type: "text", placeholder: "Digite seu nome" },
   {
@@ -42,7 +53,7 @@ const fields = [
  * @returns {JSX.Element} Elemento da página de cadastro
  */
 export default function CriarConta() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     nome: "",
     email: "",
     telefone: "",
@@ -50,7 +61,8 @@ export default function CriarConta() {
     senha: "",
     confirmaSenha: "",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [errors, setErrors] = useState<ValidationErrors>({});
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -69,7 +81,9 @@ export default function CriarConta() {
     e.preventDefault();
 
     const { senha, confirmaSenha, ...fieldsToValidate } = form;
-    const validationErrors = validateForm(fieldsToValidate as any);
+
+    // aqui deixamos o validateForm retornar ValidationErrors
+    const validationErrors: ValidationErrors = validateForm(fieldsToValidate);
 
     if (!senha) validationErrors.senha = "A senha é obrigatória.";
     if (!confirmaSenha) validationErrors.confirmaSenha = "Confirme sua senha.";
@@ -90,7 +104,7 @@ export default function CriarConta() {
       headers: { "Content-Type": "application/json" },
     });
 
-    const data = await res.json();
+    const data: { message?: string } = await res.json();
 
     if (res.ok) {
       router.push("/login");
@@ -124,12 +138,14 @@ export default function CriarConta() {
                 type={type}
                 placeholder={placeholder}
                 className="w-full px-4 py-3 rounded-md border border-gray-300"
-                value={form[id as keyof typeof form]}
+                value={form[id as keyof FormData]}
                 onChange={handleChange}
                 required
               />
-              {errors[id] && (
-                <p className="text-red-600 text-sm">{errors[id]}</p>
+              {errors[id as keyof ValidationErrors] && (
+                <p className="text-red-600 text-sm">
+                  {errors[id as keyof ValidationErrors]}
+                </p>
               )}
             </div>
           ))}
