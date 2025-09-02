@@ -2,14 +2,47 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { validateEmail } from '@/utils/validators';
 
 export default function EsqueceuSenha() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const lidarComEsqueceuSenha = (event: React.FormEvent<HTMLFormElement>) => {
+  const lidarComEsqueceuSenha = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push('/Login/RedefinirSenha');
+
+    if (!email) {
+      setError('Por favor, preencha o e-mail.');
+      setSuccess('');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError('Digite um e-mail válido.');
+      setSuccess('');
+      return;
+    }
+
+    setError('');
+    setSuccess('');
+
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setSuccess('Código enviado para seu e-mail!');
+      setTimeout(() => {
+        router.push('/Login/RedefinirSenha');
+      }, 1500);
+    } else {
+      setError(data?.message || 'Erro ao enviar código. Tente novamente.');
+    }
   };
 
   return (
@@ -40,6 +73,9 @@ export default function EsqueceuSenha() {
               className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
             />
           </div>
+
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {success && <p className="text-green-600 text-sm">{success}</p>}
 
           <button
             type="submit"

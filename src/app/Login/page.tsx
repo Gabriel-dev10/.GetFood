@@ -4,17 +4,30 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from "next-auth/react";
+import { validateEmail } from '@/utils/validators';
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [senha, setSenha] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
- const handleLogin = async (e: React.FormEvent) => {
-      e.preventDefault()
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      const res = await signIn("credentials", {
+    if (!email || !senha) {
+      setError('Preencha todos os campos.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('E-mail inválido.');
+      return;
+    }
+
+    setError('');
+
+    const res = await signIn("credentials", {
       redirect: false,
       email,
       senha,
@@ -23,8 +36,7 @@ export default function Login() {
     if (res?.ok) {
       router.push("/");
     } else {
-      setError('Credenciais inválidas!')
-      console.log(error)
+      setError('Credenciais inválidas!');
     }
   };
 
@@ -69,7 +81,8 @@ export default function Login() {
             />
           </div>
 
-          
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+
           <div className="text-right">
             <Link href="/login/esqueceu-senha" className="text-sm text-orange-600 hover:underline">
               Esqueceu a senha?
