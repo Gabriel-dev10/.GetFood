@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
+import { useSession } from "next-auth/react";
 
 /**
  * Componente de página de login do sistema.
@@ -18,6 +19,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
 
   /**
    * Realiza o processo de login do usuário.
@@ -54,6 +56,12 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    if (session) {
+      router.replace("/");
+    }
+  });
+  
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
       <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">
@@ -125,7 +133,7 @@ export default function Login() {
         <p className="mt-6 text-center text-sm text-gray-600">
           Não tem uma conta?{" "}
           <Link
-            href="/login/cadastrar"
+            href="/cadastrar"
             className="text-orange-600 hover:underline"
           >
             Criar

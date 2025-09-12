@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { validateForm } from "@/utils/validators";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   nome: string;
@@ -65,6 +66,7 @@ export default function CriarConta() {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [error, setError] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -113,6 +115,12 @@ export default function CriarConta() {
     }
   };
 
+  useEffect(() => {
+      if (session) {
+        router.replace("/");
+      }
+    });
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
       <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">
@@ -158,7 +166,7 @@ export default function CriarConta() {
           </button>
           <p className="text-center text-sm text-gray-600 mt-6">
             Já tem uma conta?{" "}
-            <Link href="/Login" className="text-orange-600 hover:underline">
+            <Link href="/login" className="text-orange-600 hover:underline">
               Entrar
             </Link>
           </p>

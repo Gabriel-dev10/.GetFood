@@ -1,9 +1,11 @@
 "use client";
 
-import { Gift, TrendingUp, Flame, ScanLine } from "lucide-react";
+import { Gift, TrendingUp, Flame, ScanLine, LogIn, UserCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import NavBottom from "../../components/NavBottom";
 import Footer from "@/components/Footer";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 /**
  * Página de painel de pontos e recompensas do usuário.
@@ -13,9 +15,41 @@ import Footer from "@/components/Footer";
  * @returns {JSX.Element} Elemento da página de pontos
  */
 export default function PagPontos() {
-  const pontos = 1472;
-  const nivel = 2;
-  const meta = 2000;
+
+  const {data:session, status} = useSession();
+
+  //Estado de "loading". Deve ser alterado conforme padrão do site
+  if (status === 'loading'){
+    return(
+      <main className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Carregando...</p>
+      </main>
+    );
+  }
+
+  //Estado de "sessão="unauthenticated"". Também deve ser alterado, codigo provissorio
+  if (!session) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center gap-6 text-gray-900 dark:text-white">
+        <UserCircle size={100} className="text-gray-400 dark:text-gray-500" />
+        <p className="text-xl font-bold">Você não está logado</p>
+        <Link
+          href="/login"
+          className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
+        >
+          <LogIn className="inline w-6 h-6 mr-2" />
+          Fazer Login
+        </Link>
+        <NavBottom />
+      </main>
+    );
+  }
+
+  // Usuário logado → exibir painel de pontos
+  // Como ainda não temos tabela, assumimos "pontos=0"
+  const pontos = 0;
+  const nivel = 1;
+  const meta = 1000;
   const progresso = (pontos / meta) * 100;
   const validade = "26/08/2026";
 
@@ -36,7 +70,7 @@ export default function PagPontos() {
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="text-xl font-bold">
-              Olá, <span className="text-[#DCBD8F]">User!</span>
+              Olá, {" "} <span className="text-[#DCBD8F]">{session.user?.name ?? "Usuário"}</span>
             </p>
             <p className="text-sm text-gray-700 dark:text-gray-300">
               Nível {nivel}

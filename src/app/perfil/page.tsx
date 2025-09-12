@@ -2,8 +2,10 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, Award, Star, Coffee, PencilIcon } from "lucide-react";
+import { UserCircle, PencilIcon, LogIn, LogOut } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
+import { useSession, signOut} from "next-auth/react";
+import Link from "next/link";
 
 /**
  * Página de perfil do usuário.
@@ -13,12 +15,14 @@ import NavBottom from "@/components/NavBottom";
  * @returns {JSX.Element} Elemento da página de perfil
  */
 export default function PerfilPage() {
+  const { data: session, status } = useSession();
   const [foto, setFoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [modalAberto, setModalAberto] = useState(false);
-  const [nome, setNome] = useState("UserName");
-  const [email, setEmail] = useState("User@exemplo.com");
+
+  const nome = session?.user?.name || "UserName";
+  const email = session?.user?.email || "User@exemplo.com";
 
   const cuponsUsados = 35;
 
@@ -65,8 +69,7 @@ export default function PerfilPage() {
     };
   };
 
-  const { titulo, restante, proximo, total } =
-    getTituloFidelidade(cuponsUsados);
+  const { titulo, restante, proximo, total } = getTituloFidelidade(cuponsUsados);
 
   /**
    * Abre o seletor de arquivo para alterar a foto de perfil.
@@ -80,39 +83,46 @@ export default function PerfilPage() {
    */
   const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFoto(URL.createObjectURL(file));
-    }
+    if (file) setFoto(URL.createObjectURL(file));
   };
-
-  /**
+  
+   /**
    * Salva as alterações do perfil e fecha o modal.
    */
-  const handleSalvar = () => {
-    setModalAberto(false);
-  };
+  const handleSalvar = () => setModalAberto(false);
 
-  const badges = [
-    {
-      icon: <Award className="w-6 h-6 text-yellow-700 dark:text-yellow-400" />,
-      label: "50+ Cupons Usados",
-    },
-    {
-      icon: <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-300" />,
-      label: "Cliente Ouro",
-    },
-    {
-      icon: <Coffee className="w-6 h-6 text-yellow-900 dark:text-yellow-200" />,
-      label: "Degustador",
-    },
-  ];
+  //Estado de "loading". Deve ser alterado conforme padrão do site
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold">Carregando...</p>
+      </main>
+    );
+  }
 
+  //Estado de "sessão="unauthenticated"". Também deve ser alterado, codigo provissorio
+  if (!session) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center gap-6 text-gray-900 dark:text-white">
+        <UserCircle size={100} className="text-gray-400 dark:text-gray-500" />
+        <p className="text-xl font-bold">Você não está logado</p>
+        <Link
+          href="/login"
+          className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
+        >
+          <LogIn className="inline w-6 h-6 mr-2" />
+          Fazer Login
+        </Link>
+        <NavBottom />
+      </main>
+    );
+  }
+
+    // Usuário logado, retorna a página de perfil completa
   return (
     <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">
-          Perfil
-        </h1>
+        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">Perfil</h1>
       </div>
 
       <motion.section
@@ -121,6 +131,7 @@ export default function PerfilPage() {
         transition={{ duration: 0.4 }}
         className="bg-gradient-to-tr from-[#292929]/84 to-black/65 p-8 mt-8 rounded-2xl shadow-lg w-full"
       >
+        {/* Foto + Nome + Email */}
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div
             onClick={handleFotoClick}
@@ -155,6 +166,7 @@ export default function PerfilPage() {
               {email}
             </p>
 
+            {/* Fidelidade */}
             <div className="bg-white/60 dark:bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
               <div className="text-lg font-semibold text-white dark:text-white">
                 {titulo}
@@ -183,39 +195,29 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        <div className="mt-10">
-          <h2 className="text-xl font-bold text-white dark:text-white mb-5 text-center">
-            Conquistas
-          </h2>
-          <div className="flex flex-wrap justify-center gap-6">
-            {badges.map(({ icon, label }, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 bg-gray-800 dark:bg-gry-900/50 rounded-xl px-4 py-3 shadow-md hover:scale-105 transform transition cursor-default select-none"
-                title={label}
-              >
-                {icon}
-                <span className="font-semibold text-white-900 dark:text-white-100">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-10 flex justify-center">
+        {/* Botões */}
+        <div className="mt-10 flex flex-col items-center gap-4">
           <button
             onClick={() => setModalAberto(true)}
-            className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#4E2010] transition text-lg font-semibold shadow-lg"
+            className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
           >
             <PencilIcon className="inline w-6 h-6 mr-2" />
             Editar Perfil
+          </button>
+
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="bg-red-600 text-white py-3 px-8 rounded-full hover:bg-red-700 transition text-lg font-semibold shadow-lg flex items-center"
+          >
+            <LogOut className="inline w-6 h-6 mr-2" />
+            Sair
           </button>
         </div>
       </motion.section>
 
       <NavBottom />
 
+      {/* Modal Editar Perfil */}
       <AnimatePresence>
         {modalAberto && (
           <motion.div
@@ -240,14 +242,12 @@ export default function PerfilPage() {
                   type="text"
                   placeholder="Nome"
                   value={nome}
-                  onChange={(e) => setNome(e.target.value)}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
               </div>
@@ -261,7 +261,7 @@ export default function PerfilPage() {
                 </button>
                 <button
                   onClick={handleSalvar}
-                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#4E2010] transition font-semibold"
+                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold"
                 >
                   Salvar
                 </button>

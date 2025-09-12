@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validateEmail } from "@/utils/validators";
+import { useSession } from "next-auth/react";
 
 /**
  * Componente de página para recuperação de senha.
@@ -16,6 +17,7 @@ export default function EsqueceuSenha() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { data: session } = useSession();
 
   /**
    * Lida com o envio do formulário de recuperação de senha.
@@ -54,13 +56,17 @@ export default function EsqueceuSenha() {
     if (res.ok) {
       setSuccess("Código enviado para seu e-mail!");
       setTimeout(() => {
-        router.push("/Login/RedefinirSenha");
+        router.push("/login/redefinir-senha");
       }, 1500);
     } else {
       setError(data?.message || "Erro ao enviar código. Tente novamente.");
     }
   };
-
+  useEffect(() => {
+    if (session) {
+      router.replace("/");
+    }
+  });
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
       <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">

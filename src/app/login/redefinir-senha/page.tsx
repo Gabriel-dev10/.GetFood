@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
 
 export default function RedefinirSenha() {
   const [novaSenha, setNovaSenha] = useState('');
@@ -10,6 +11,7 @@ export default function RedefinirSenha() {
   const [error, setError] = useState('');
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,8 +44,14 @@ export default function RedefinirSenha() {
   };
 
   const voltarParaLogin = () => {
-    router.push('/Login');
+    router.push('/login');
   };
+
+  useEffect(() => {
+      if (session) {
+        router.replace("/");
+      }
+    });
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
