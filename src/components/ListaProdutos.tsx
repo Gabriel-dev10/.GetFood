@@ -173,14 +173,14 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
       {lista.map((item) => (
         <div
           key={item.nome}
-          className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-lg"
+          className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.45)]"
         >
-          <div className="relative w-28 h-28 sm:w-48 sm:h-45 md:w-64 md:h-40 flex-shrink-0">
+          <div className="relative w-30 h-30 sm:w-48 sm:h-45 md:w-64 md:h-40 flex-shrink-0">
             <Image
               src={item.imagem}
               alt={`Imagem do produto ${item.nome}`}
               fill
-              className="object-cover rounded-l-2xl"
+              className="object-cover rounded-2xl"
             />
           </div>
 

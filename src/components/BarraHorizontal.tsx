@@ -42,11 +42,12 @@ export default function BarraHorizontal() {
           <button
             key={cat}
             onClick={() => setCategoriaSelecionada(cat)}
-            className={`px-4 mb-2 py-2 rounded-full transition whitespace-nowrap ${
-              categoriaSelecionada === cat
-                ? "bg-[#4E2010] text-[#DCBD8F] font-semibold"
-                : "bg-[#DCBD8F] border-1 border-[#4E2010] rounded-full text-[#4E2010]"
-            }`}
+            className={`px-4 mb-2 py-2 rounded-full transition whitespace-nowrap
+              ${
+                categoriaSelecionada === cat
+                  ? "bg-[#4E2010] text-[#DCBD8F] font-semibold shadow-[3px_3px_6px_rgba(0,0,0,0.95)]"
+                  : "bg-[#DCBD8F] border border-[#4E2010] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.55)]"
+              }`}
           >
             {cat}
           </button>
