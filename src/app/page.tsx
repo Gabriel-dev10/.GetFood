@@ -106,7 +106,7 @@ export default function Inicio() {
             onClick={() => setShowInfo(false)}
           >
             <motion.div
-              className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white p-6 rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col"
+              className="bg-white dark:bg-[#29292980] text-white p-6 rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
@@ -114,14 +114,14 @@ export default function Inicio() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex border-b mb-4">
-                {["sobre", "horario", "pagamento"].map((aba) => (
+                {["Sobre", "Horario", "Pagamento"].map((aba) => (
                   <button
                     key={aba}
                     onClick={() => setAbaAtiva(aba as typeof abaAtiva)}
                     className={`flex-1 py-2 text-sm font-semibold text-center ${
                       abaAtiva === aba
-                        ? "border-blue-600 text-blue-600"
-                        : "text-gray-400 hover:text-blue-500"
+                        ? "border-black text-black"
+                        : "text-white"
                     }`}
                   >
                     {aba.toUpperCase()}
@@ -138,7 +138,7 @@ export default function Inicio() {
                         alt="Logo"
                         width={100}
                         height={100}
-                        className="rounded-2xl"
+                        className="!rounded-full !w-25 !h-25 object-cover"
                       />
                       <span className="text-sm">GBC Coffee</span>
                     </div>
@@ -146,7 +146,7 @@ export default function Inicio() {
                     <a
                       href="https://www.instagram.com/gbccoffee?igsh=dmY2bGV5YjF2a3Bo"
                       target="_blank"
-                      className="inline-flex items-center gap-2 px-4 py-2 text-white bg-gradient-to-r from-pink-500 to-purple-500 rounded-full hover:brightness-110 transition"
+                      className="inline-flex items-center gap-2 px-4 py-2 text-white bg-[#00000080] rounded-full "
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -182,24 +182,14 @@ export default function Inicio() {
                 )}
 
                 {abaAtiva === "Horario" && (
-                  <ul className="text-sm divide-y divide-gray-200 dark:divide-zinc-800">
+                  <ul className="text-sm divide-y divide-gray-300/30 dark:divide-zinc-700/40">
                     {Object.entries(horarios).map(([dia, hora]) => (
                       <li
                         key={dia}
-                        className={`py-1 flex justify-between ${
-                          dia === "Segunda"
-                            ? "bg-gray-100 dark:bg-zinc-800 rounded-lg px-2"
-                            : ""
-                        }`}
+                        className="py-2 px-2 flex justify-between items-center"
                       >
                         <span>{dia}</span>
-                        <span
-                          className={
-                            hora === "Fechado"
-                              ? "text-red-500 font-semibold"
-                              : "font-medium"
-                          }
-                        >
+                        <span className={hora === "Fechado" ? "text-red-500 font-semibold" : "font-medium"}>
                           {hora}
                         </span>
                       </li>
@@ -208,7 +198,7 @@ export default function Inicio() {
                 )}
 
                 {abaAtiva === "Pagamento" && (
-                  <div className="flex flex-col gap-3 text-sm">
+                  <div className="flex flex-col gap-3">
                     {[
                       {
                         nome: "Dinheiro",
@@ -235,7 +225,7 @@ export default function Inicio() {
                     ].map(({ nome, icon }) => (
                       <div
                         key={nome}
-                        className="flex items-center gap-2 p-3 bg-gray-100 dark:bg-zinc-800 rounded-lg"
+                        className="flex items-center gap-2 p-3 bg-[#00000080] rounded-full"
                       >
                         <span className="text-lg">{icon}</span>
                         <span className="text-base">{nome}</span>
