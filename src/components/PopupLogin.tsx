@@ -32,6 +32,12 @@ export default function PopupLogin() {
         >
           Cadastrar-se
         </Link>
+        <Link
+          href="/"
+          className="text-xs text-white hover:text-gray-300"
+        >
+          <u>voltar à página inicial</u>
+        </Link>
       </div>
     </div>
   );
