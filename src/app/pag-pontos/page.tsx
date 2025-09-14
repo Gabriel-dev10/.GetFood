@@ -1,11 +1,11 @@
 "use client";
 
-import { Gift, TrendingUp, Flame, ScanLine, LogIn, UserCircle } from "lucide-react";
+import { Gift, TrendingUp, Flame, ScanLine } from "lucide-react";
 import { motion } from "framer-motion";
 import NavBottom from "../../components/NavBottom";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import PopupLogin from "../../components/PopupLogin";
 
 /**
  * Página de painel de pontos e recompensas do usuário.
@@ -15,38 +15,8 @@ import Link from "next/link";
  * @returns {JSX.Element} Elemento da página de pontos
  */
 export default function PagPontos() {
+  const { data: session } = useSession();
 
-  const {data:session, status} = useSession();
-
-  //Estado de "loading". Deve ser alterado conforme padrão do site
-  if (status === 'loading'){
-    return(
-      <main className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500">Carregando...</p>
-      </main>
-    );
-  }
-
-  //Estado de "sessão="unauthenticated"". Também deve ser alterado, codigo provissorio
-  if (!session) {
-    return (
-      <main className="min-h-screen flex flex-col items-center justify-center gap-6 text-gray-900 dark:text-white">
-        <UserCircle size={100} className="text-gray-400 dark:text-gray-500" />
-        <p className="text-xl font-bold">Você não está logado</p>
-        <Link
-          href="/login"
-          className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
-        >
-          <LogIn className="inline w-6 h-6 mr-2" />
-          Fazer Login
-        </Link>
-        <NavBottom />
-      </main>
-    );
-  }
-
-  // Usuário logado → exibir painel de pontos
-  // Como ainda não temos tabela, assumimos "pontos=0"
   const pontos = 0;
   const nivel = 1;
   const meta = 1000;
@@ -54,7 +24,7 @@ export default function PagPontos() {
   const validade = "26/08/2026";
 
   return (
-    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl text-amber-950 font-bold text-center flex-1">
           Painel de Recompensas
@@ -70,7 +40,10 @@ export default function PagPontos() {
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="text-xl font-bold">
-              Olá, {" "} <span className="text-[#DCBD8F]">{session.user?.name ?? "Usuário"}</span>
+              Olá,{" "}
+              <span className="text-[#DCBD8F]">
+                {session?.user?.name ?? "Usuário"}
+              </span>
             </p>
             <p className="text-sm text-gray-700 dark:text-gray-300">
               Nível {nivel}
@@ -169,18 +142,9 @@ export default function PagPontos() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            {
-              title: "10% de Desconto",
-              points: 10000,
-            },
-            {
-              title: "Café Grátis",
-              points: 1000,
-            },
-            {
-              title: "Ganhe um Combo",
-              points: 20000,
-            },
+            { title: "10% de Desconto", points: 10000 },
+            { title: "Café Grátis", points: 1000 },
+            { title: "Ganhe um Combo", points: 20000 },
           ].map((promo, i) => (
             <motion.div
               key={i}
@@ -201,6 +165,12 @@ export default function PagPontos() {
 
       <Footer />
       <NavBottom />
+
+      {!session && (
+        <div>
+          <PopupLogin />
+        </div>
+      )}
     </main>
   );
 }

@@ -2,10 +2,10 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, PencilIcon, LogIn, LogOut } from "lucide-react";
+import { UserCircle, PencilIcon, LogOut } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
-import { useSession, signOut} from "next-auth/react";
-import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import PopupLogin from "../../components/PopupLogin";
 
 /**
  * Página de perfil do usuário.
@@ -18,12 +18,10 @@ export default function PerfilPage() {
   const { data: session, status } = useSession();
   const [foto, setFoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const [modalAberto, setModalAberto] = useState(false);
 
-  const nome = session?.user?.name || "UserName";
-  const email = session?.user?.email || "User@exemplo.com";
-
+  const nome = session?.user?.name || "Visitante";
+  const email = session?.user?.email || "Faça login para continuar";
   const cuponsUsados = 35;
 
   /**
@@ -85,44 +83,18 @@ export default function PerfilPage() {
     const file = e.target.files?.[0];
     if (file) setFoto(URL.createObjectURL(file));
   };
-  
-   /**
+
+  /**
    * Salva as alterações do perfil e fecha o modal.
    */
   const handleSalvar = () => setModalAberto(false);
 
-  //Estado de "loading". Deve ser alterado conforme padrão do site
-  if (status === "loading") {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p className="text-lg font-semibold">Carregando...</p>
-      </main>
-    );
-  }
-
-  //Estado de "sessão="unauthenticated"". Também deve ser alterado, codigo provissorio
-  if (!session) {
-    return (
-      <main className="min-h-screen flex flex-col items-center justify-center gap-6 text-gray-900 dark:text-white">
-        <UserCircle size={100} className="text-gray-400 dark:text-gray-500" />
-        <p className="text-xl font-bold">Você não está logado</p>
-        <Link
-          href="/login"
-          className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
-        >
-          <LogIn className="inline w-6 h-6 mr-2" />
-          Fazer Login
-        </Link>
-        <NavBottom />
-      </main>
-    );
-  }
-
-    // Usuário logado, retorna a página de perfil completa
   return (
     <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">Perfil</h1>
+        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">
+          Perfil
+        </h1>
       </div>
 
       <motion.section
@@ -131,10 +103,9 @@ export default function PerfilPage() {
         transition={{ duration: 0.4 }}
         className="bg-gradient-to-tr from-[#292929]/84 to-black/65 p-8 mt-8 rounded-2xl shadow-lg w-full"
       >
-        {/* Foto + Nome + Email */}
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div
-            onClick={handleFotoClick}
+            onClick={session ? handleFotoClick : undefined}
             className="cursor-pointer w-40 h-40 rounded-full overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
           >
             {foto ? (
@@ -166,60 +137,60 @@ export default function PerfilPage() {
               {email}
             </p>
 
-            {/* Fidelidade */}
-            <div className="bg-white/60 dark:bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
-              <div className="text-lg font-semibold text-white dark:text-white">
-                {titulo}
+            {session && (
+              <div className="bg-white/60 dark:bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
+                <div className="text-lg font-semibold text-white dark:text-white">
+                  {titulo}
+                </div>
+                {proximo && (
+                  <>
+                    <p className="text-sm text-white dark:text-white">
+                      Faltam <strong>{restante}</strong> cupons para virar{" "}
+                      <strong>{proximo}</strong>
+                    </p>
+                    <div className="w-full bg-white/70 dark:bg-black/40 h-3 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{
+                          width: `${Math.floor(
+                            ((total - restante) / total) * 100
+                          )}%`,
+                        }}
+                        transition={{ duration: 0.8 }}
+                        className="h-full bg-green-500"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
-              {proximo && (
-                <>
-                  <p className="text-sm text-white dark:text-white">
-                    Faltam <strong>{restante}</strong> cupons para virar{" "}
-                    <strong>{proximo}</strong>
-                  </p>
-                  <div className="w-full bg-white/70 dark:bg-black/40 h-3 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{
-                        width: `${Math.floor(
-                          ((total - restante) / total) * 100
-                        )}%`,
-                      }}
-                      transition={{ duration: 0.8 }}
-                      className="h-full bg-green-500"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Botões */}
-        <div className="mt-10 flex flex-col items-center gap-4">
-          <button
-            onClick={() => setModalAberto(true)}
-            className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
-          >
-            <PencilIcon className="inline w-6 h-6 mr-2" />
-            Editar Perfil
-          </button>
-
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="bg-red-600 text-white py-3 px-8 rounded-full hover:bg-red-700 transition text-lg font-semibold shadow-lg flex items-center"
-          >
-            <LogOut className="inline w-6 h-6 mr-2" />
-            Sair
-          </button>
-        </div>
+        {session && (
+          <div className="mt-10 flex flex-col items-center gap-4">
+            <button
+              onClick={() => setModalAberto(true)}
+              className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
+            >
+              <PencilIcon className="inline w-6 h-6 mr-2" />
+              Editar Perfil
+            </button>
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="bg-red-600 text-white py-3 px-8 rounded-full hover:bg-red-700 transition text-lg font-semibold shadow-lg flex items-center"
+            >
+              <LogOut className="inline w-6 h-6 mr-2" />
+              Sair
+            </button>
+          </div>
+        )}
       </motion.section>
 
       <NavBottom />
 
-      {/* Modal Editar Perfil */}
       <AnimatePresence>
-        {modalAberto && (
+        {modalAberto && session && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -236,22 +207,20 @@ export default function PerfilPage() {
               <h2 className="text-xl font-bold mb-5 text-center text-gray-800 dark:text-white">
                 Editar Perfil
               </h2>
-
               <div className="space-y-4">
                 <input
                   type="text"
                   placeholder="Nome"
-                  value={nome}
+                  defaultValue={nome}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
                 <input
                   type="email"
                   placeholder="Email"
-                  value={email}
+                  defaultValue={email}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
               </div>
-
               <div className="mt-6 flex justify-between">
                 <button
                   onClick={() => setModalAberto(false)}
@@ -270,6 +239,12 @@ export default function PerfilPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
-  );
+
+      {!session && (
+              <div>
+                <PopupLogin />
+              </div>
+            )}
+          </main>
+        );
 }
