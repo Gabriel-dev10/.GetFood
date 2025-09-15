@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -16,7 +16,6 @@ const handler = NextAuth({
           throw new Error("Email e senha são obrigatórios.");
         }
 
-        // Busca o usuário no banco
         const user = await prisma.usuarios.findUnique({
           where: { email: credentials.email },
         });
@@ -25,12 +24,10 @@ const handler = NextAuth({
           throw new Error("Usuário não encontrado.");
         }
 
-        // Verifica se o usuário tem senha cadastrada
         if (!user.senha) {
           throw new Error("Usuário não possui senha definida.");
         }
 
-        // Verifica a senha utilizando bcrypt
         const passwordMatch = await bcrypt.compare(credentials.senha, user.senha);
 
         if (!passwordMatch) {
@@ -41,37 +38,46 @@ const handler = NextAuth({
           id: String(user.id),
           name: user.nome,
           email: user.email,
+          image: user.foto || null, 
         };
       },
     }),
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 dias
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/login',
-    error: '/login',
+    signIn: "/login",
+    error: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+
+      if (trigger === "update" && session?.user?.image) {
+        token.image = session.user.image;
+      }
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.image = user.image ?? token.image;
       }
       return token;
     },
-    
+
     async session({ session, token }) {
-      // Agora o TypeScript reconhece a propriedade id
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.user.image = token.image as string;
       }
       return session;
     },
+
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

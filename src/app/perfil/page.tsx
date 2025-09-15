@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, PencilIcon, LogOut } from "lucide-react";
+import { UserCircle, PencilIcon, LogOut, Loader2 } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
@@ -16,10 +16,12 @@ import PopupLogin from "../../components/PopupLogin";
  */
 export default function PerfilPage() {
   const { data: session, status } = useSession();
-  const [foto, setFoto] = useState<string | null>(null);
+  const [foto, setFoto] = useState<string | null>(null);  
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
-
+  const [timestamp, setTimestamp] = useState(Date.now());
+  
+  const { update } = useSession();
   const nome = session?.user?.name || "Visitante";
   const email = session?.user?.email || "Faça login para continuar";
   const cuponsUsados = 35;
@@ -79,9 +81,29 @@ export default function PerfilPage() {
    *
    * @param e - Evento de alteração do input de arquivo
    */
-  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setFoto(URL.createObjectURL(file));
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res= await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) throw new Error ('Falha no upload')
+      const data = await res.json();
+
+      await update();
+      setTimestamp(Date.now()); // ← Força recarregamento
+      setFoto(data.url);
+
+    } catch(error){
+        console.error('Erro ao enviar imagem: ', error)
+    }
   };
 
   /**
@@ -89,6 +111,13 @@ export default function PerfilPage() {
    */
   const handleSalvar = () => setModalAberto(false);
 
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+        <Loader2 className="animate-spin text-[#4E2010]" size={60} />
+      </main>
+    );
+  }
   return (
     <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-gray-900 dark:text-white">
       <div className="flex items-center justify-between mb-8">
@@ -110,7 +139,7 @@ export default function PerfilPage() {
           >
             {foto ? (
               <img
-                src={foto}
+                src={`${foto}?t=${timestamp}`}
                 alt="Foto de perfil"
                 className="object-cover w-full h-full"
               />
