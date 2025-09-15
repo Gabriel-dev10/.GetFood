@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserCircle, PencilIcon, LogOut, Loader2 } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
@@ -25,6 +25,13 @@ export default function PerfilPage() {
   const nome = session?.user?.name || "Visitante";
   const email = session?.user?.email || "Faça login para continuar";
   const cuponsUsados = 35;
+  
+  // sempre que a session mudar, atualiza o estado
+  useEffect(() => {
+    if (session?.user?.image) {
+      setFoto(session.user.image);
+    }
+  }, [session]);
 
   /**
    * Retorna o título de fidelidade do usuário com base na quantidade de cupons usados.
