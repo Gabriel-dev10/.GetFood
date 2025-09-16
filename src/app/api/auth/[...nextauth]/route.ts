@@ -55,9 +55,23 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
 
-      if (trigger === "update" && session?.user?.image) {
-        token.image = session.user.image;
+      if (trigger === "update") {
+        try {
+          const updatedUser = await prisma.usuarios.findUnique({
+            where: { id: Number(token.id) },
+            select: { nome: true, email: true, foto: true }
+          });
+          
+          if (updatedUser) {
+            token.name = updatedUser.nome;
+            token.email = updatedUser.email;
+            token.image = updatedUser.foto || null;
+          }
+        } catch (error) {
+          console.error("Erro ao buscar usuário atualizado:", error);
+        }
       }
+      
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -69,12 +83,12 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string; 
         session.user.email = token.email as string;
         session.user.image = token.image as string;
       }
       return session;
     },
-
   },
 };
 
