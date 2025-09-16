@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #dcbd8f;
+  --foreground: #dcbd8f;
   --font-sans: var(--font-poppins); 
   --font-mono: var(--font-geist-mono);
   --font-: 'dancingScript', sans-serif;
