@@ -6,6 +6,7 @@ import { UserCircle, PencilIcon, LogOut, Loader2 } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
+import { validateEmail } from "@/utils/validators";
 
 /**
  * Página de perfil do usuário.
@@ -15,21 +16,24 @@ import PopupLogin from "../../components/PopupLogin";
  * @returns {JSX.Element} Elemento da página de perfil
  */
 export default function PerfilPage() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const [foto, setFoto] = useState<string | null>(null);  
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [timestamp, setTimestamp] = useState(Date.now());
-  
-  const { update } = useSession();
-  const nome = session?.user?.name || "Visitante";
-  const email = session?.user?.email || "Faça login para continuar";
+  const [nomeEdit, setNomeEdit]= useState('');
+  const [emailEdit, setEmailEdit]= useState(''); 
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const cuponsUsados = 35;
   
   // sempre que a session mudar, atualiza o estado
   useEffect(() => {
-    if (session?.user?.image) {
-      setFoto(session.user.image);
+    if (session?.user) {
+      setFoto(session.user.image || null);
+      setNomeEdit(session.user.name || '');
+      setEmailEdit(session.user.email || '');
     }
   }, [session]);
 
@@ -113,10 +117,57 @@ export default function PerfilPage() {
     }
   };
 
-  /**
-   * Salva as alterações do perfil e fecha o modal.
-   */
-  const handleSalvar = () => setModalAberto(false);
+   const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!nomeEdit || !emailEdit) {
+      setError('Preencha todos os campos');
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmail(emailEdit)) {
+      setError('Digite um E-mail válido!');
+      setLoading(false);
+      return;
+    }
+
+    setError('');
+
+    try {
+      const res = await fetch('/api/update', {
+        method: 'PATCH',
+        body: JSON.stringify({ nome: nomeEdit, email: emailEdit }),
+        headers: { "Content-Type": "application/json" }
+      });
+      
+      const data = await res.json();
+
+      if (res.ok) {
+        console.log('Editado com sucesso');
+        
+        // Atualiza a sessão com os NOVOS dados
+        await update({
+          user: {
+            name: nomeEdit,    // ← Dados NOVOS
+            email: emailEdit,  // ← Dados NOVOS
+            image: session?.user?.image // Mantém a imagem existente
+          }
+        });
+        
+        console.log('Sessão após update:', session);
+        setModalAberto(false);
+      } else {
+        setError(data?.message || "Erro ao editar informações");
+      }
+    } catch (error) {
+      setError("Erro de conexão");
+      console.error('Erro ao atualizar:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (status === "loading") {
     return (
@@ -168,9 +219,9 @@ export default function PerfilPage() {
           </div>
 
           <div className="text-center md:text-left">
-            <h2 className="text-3xl font-extrabold mb-1">{nome}</h2>
+            <h2 className="text-3xl font-extrabold mb-1">{session?.user?.name || "Visitante"}</h2>
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-              {email}
+              {session?.user?.email || "Faça login para continuar"}
             </p>
 
             {session && (
@@ -206,7 +257,7 @@ export default function PerfilPage() {
         {session && (
           <div className="mt-10 flex flex-col items-center gap-4">
             <button
-              onClick={() => setModalAberto(true)}
+              onClick={() => {setModalAberto(true), setEmailEdit(session?.user?.email || ''), setNomeEdit(session.user?.name || '')}}
               className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
             >
               <PencilIcon className="inline w-6 h-6 mr-2" />
@@ -240,6 +291,7 @@ export default function PerfilPage() {
               transition={{ duration: 0.3 }}
               className="w-full max-w-md bg-gradient-to-tr from-[#292929]/85 to-black/65 p-6 rounded-2xl shadow-lg"
             >
+              <form onSubmit={handleUpdate}>
               <h2 className="text-xl font-bold mb-5 text-center text-gray-800 dark:text-white">
                 Editar Perfil
               </h2>
@@ -247,14 +299,18 @@ export default function PerfilPage() {
                 <input
                   type="text"
                   placeholder="Nome"
-                  defaultValue={nome}
+                  defaultValue={nomeEdit}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  onChange={(e)=>setNomeEdit(e.target.value)}
+                  required
                 />
                 <input
                   type="email"
                   placeholder="Email"
-                  defaultValue={email}
+                  defaultValue={emailEdit}
+                  onChange={(e)=>setEmailEdit(e.target.value)}
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  required
                 />
               </div>
               <div className="mt-6 flex justify-between">
@@ -265,12 +321,17 @@ export default function PerfilPage() {
                   Cancelar
                 </button>
                 <button
-                  onClick={handleSalvar}
-                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold"
+                  type="submit"
+                  disabled={loading}
+                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold disabled:opacity-50"
                 >
-                  Salvar
+                  {loading ? (
+                    <Loader2 className="animate-spin inline w-4 h-4 mr-2" />
+                  ) : null}
+                  {loading ? 'Salvando...' : 'Salvar'}
                 </button>
               </div>
+              </form>
             </motion.div>
           </motion.div>
         )}
@@ -278,7 +339,7 @@ export default function PerfilPage() {
 
       {!session && (
               <div>
-                <PopupLogin />
+                <PopupLogin />  
               </div>
             )}
           </main>
