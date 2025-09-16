@@ -145,7 +145,6 @@ export default function PerfilPage() {
       const data = await res.json();
 
       if (res.ok) {
-        console.log('Editado com sucesso');
         
         // Atualiza a sessão com os NOVOS dados
         await update({
@@ -155,8 +154,6 @@ export default function PerfilPage() {
             image: session?.user?.image // Mantém a imagem existente
           }
         });
-        
-        console.log('Sessão após update:', session);
         setModalAberto(false);
       } else {
         setError(data?.message || "Erro ao editar informações");
