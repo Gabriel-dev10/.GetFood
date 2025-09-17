@@ -1,3 +1,4 @@
+import { px } from "framer-motion";
 import Image from "next/image";
 
 /**
@@ -175,12 +176,12 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
           key={item.nome}
           className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.45)]"
         >
-          <div className="relative w-30 h-30 sm:w-48 sm:h-45 md:w-64 md:h-40 flex-shrink-0">
+          <div className="relative w-43 h-41 sm:w-32 sm:h-32 md:w-40 md:h-40 flex-shrink-0">
             <Image
               src={item.imagem}
               alt={`Imagem do produto ${item.nome}`}
               fill
-              className="object-cover rounded-2xl"
+              className="object-cover"
             />
           </div>
 
