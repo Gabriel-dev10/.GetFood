@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import "swagger-ui-react/swagger-ui.css";
 
 export default function DocsPage() {
-  const [SwaggerUI, setSwaggerUI] = useState<any>(null);
+  const [SwaggerUI, setSwaggerUI] = useState(null);
 
   useEffect(() => {
     import("swagger-ui-react").then(mod => setSwaggerUI(() => mod.default));
