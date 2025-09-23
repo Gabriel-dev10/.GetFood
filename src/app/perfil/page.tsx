@@ -195,7 +195,7 @@ export default function PerfilPage() {
           >
             {foto ? (
               <Image
-                src={`${foto}?t=${timestamp}`}
+                src={`${encodeURIComponent(foto)}?t=${timestamp}`}
                 alt="Foto de perfil"
                 fill
                 className="object-cover"
@@ -208,6 +208,7 @@ export default function PerfilPage() {
                 />
               </div>
             )}
+
             <input
               type="file"
               accept="image/*"
