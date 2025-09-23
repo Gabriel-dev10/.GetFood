@@ -130,16 +130,24 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Não tem uma conta?{" "}
+        <div className="mt-6 text-center text-sm text-gray-600">
+          <p>
+            Não tem uma conta?{" "}
+            <Link
+              href="/cadastrar"
+              className="text-orange-600 hover:underline"
+            >
+              Criar
+            </Link>
+          </p>
           <Link
-            href="/cadastrar"
-            className="text-orange-600 hover:underline"
+            href="/"
+            className="block text-orange-600 hover:underline"
           >
-            Criar
+            voltar à página inicial
           </Link>
-        </p>
-      </div>
+        </div>
+      </div>  
     </div>
   );
 }
