@@ -256,7 +256,11 @@ export default function PerfilPage() {
         {session && (
           <div className="mt-10 flex flex-col items-center gap-4">
             <button
-              onClick={() => {setModalAberto(true), setEmailEdit(session?.user?.email || ''), setNomeEdit(session.user?.name || '')}}
+              onClick={() => {
+                setModalAberto(true);
+                setEmailEdit(session?.user?.email || '');
+                setNomeEdit(session.user?.name || '');
+              }}
               className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
             >
               <PencilIcon className="inline w-6 h-6 mr-2" />
