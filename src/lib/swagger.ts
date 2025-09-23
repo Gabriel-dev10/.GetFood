@@ -1,12 +1,12 @@
-import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerJSDoc from "swagger-jsdoc";
 
 export const swaggerSpec = swaggerJSDoc({
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: '.GetFood API',
-      version: '1.0.0',
+      title: ".GetFood API",
+      version: "1.0.0",
     },
   },
-  apis: ['./src/app/api/**/*.ts'], 
+  apis: ["./src/app/api/**/*.ts"],
 });
