@@ -195,11 +195,15 @@ export default function PerfilPage() {
           >
             {foto ? (
               <Image
-                src={`${encodeURIComponent(foto)}?t=${timestamp}`}
+                src={`/uploads/profile/${encodeURIComponent(foto.split('/').pop()!) }?t=${timestamp}`}
                 alt="Foto de perfil"
                 fill
                 className="object-cover"
+                 onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/default-profile.png";
+                }}
               />
+
             ) : (
               <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">
                 <UserCircle

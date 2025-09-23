@@ -43,14 +43,11 @@ export async function POST(req: Request) {
   }
 
   const formData = await req.formData();
-  const file = formData.get("file") as File | null;
+  const fileBlob = formData.get("file") as Blob | null;
+  if (!fileBlob) return NextResponse.json({ error: "Arquivo não enviado" }, { status: 400 });
 
-  if (!file) {
-    return NextResponse.json({ error: "Arquivo não enviado" }, { status: 400 });
-  }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  const arrayBuffer = await fileBlob.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
   const fileName = `${session.user.email}.jpg`;
   const filePath = path.join(
