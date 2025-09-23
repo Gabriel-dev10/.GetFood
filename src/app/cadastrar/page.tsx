@@ -164,10 +164,16 @@ export default function CriarConta() {
           >
             Criar Conta
           </button>
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-gray-600">
             Já tem uma conta?{" "}
             <Link href="/login" className="text-orange-600 hover:underline">
               Entrar
+            </Link>
+            <Link
+              href="/"
+              className="block text-orange-600 hover:underline"
+            >
+            voltar à página inicial
             </Link>
           </p>
         </form>
