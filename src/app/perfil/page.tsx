@@ -191,7 +191,7 @@ export default function PerfilPage() {
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div
             onClick={session ? handleFotoClick : undefined}
-            className="cursor-pointer w-40 h-40 rounded-full overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
+            className="cursor-pointer w-40 h-40 rounded-full relative overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
           >
             {foto ? (
               <Image
