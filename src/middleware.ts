@@ -15,7 +15,7 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => {
+      authorized: () => {
         // Permite que todas as requisições passem pelo middleware
         // A lógica de redirecionamento é tratada manualmente acima
         return true;

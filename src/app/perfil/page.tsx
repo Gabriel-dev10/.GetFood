@@ -7,6 +7,7 @@ import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
 import { validateEmail } from "@/utils/validators";
+import Image from "next/image";
 
 /**
  * Página de perfil do usuário.
@@ -124,13 +125,13 @@ export default function PerfilPage() {
     if (!nomeEdit || !emailEdit) {
       setError('Preencha todos os campos');
       setLoading(false);
-      return;
+      return error;
     }
 
     if (!validateEmail(emailEdit)) {
       setError('Digite um E-mail válido!');
       setLoading(false);
-      return;
+      return error;
     }
 
     setError('');
@@ -193,10 +194,11 @@ export default function PerfilPage() {
             className="cursor-pointer w-40 h-40 rounded-full overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
           >
             {foto ? (
-              <img
+              <Image
                 src={`${foto}?t=${timestamp}`}
                 alt="Foto de perfil"
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover"
               />
             ) : (
               <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">

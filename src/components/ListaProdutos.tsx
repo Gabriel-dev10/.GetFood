@@ -1,4 +1,3 @@
-import { px } from "framer-motion";
 import Image from "next/image";
 
 /**
