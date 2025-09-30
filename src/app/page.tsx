@@ -16,13 +16,30 @@ import LoginIcon from "../components/LoginIcon";
 import UserBadge from "../components/UserBadge";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 
+/**
+ * Página inicial do sistema GBC Coffee.
+ *
+ * Esta página exibe o carrossel de imagens promocionais, informações sobre o café,
+ * horários de funcionamento e formas de pagamento aceitas.
+ * Inclui animações e navegação utilizando Next.js.
+ *
+ * @returns {JSX.Element} Componente da página inicial
+ */
 export default function Inicio() {
   const { data: session, status } = useSession();
   const [showInfo, setShowInfo] = useState(false);
+
+  /**
+   * Estado para determinar qual aba está ativa no modal de informações.
+   * As opções disponíveis são: 'Sobre', 'Horario' e 'Pagamento'.
+   */
   const [abaAtiva, setAbaAtiva] = useState<"Sobre" | "Horario" | "Pagamento">(
     "Sobre"
   );
 
+  /**
+   * Objeto contendo os horários de funcionamento do café para cada dia da semana.
+   */
   const horarios = {
     Segunda: "07:00 às 22:00",
     Terça: "07:00 às 22:00",
@@ -131,27 +148,30 @@ export default function Inicio() {
       <AnimatePresence>
         {showInfo && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowInfo(false)}
           >
             <motion.div
-              className="bg-white dark:bg-[#29292980] text-white p-6 rounded-3xl shadow-2xl w-full max-w-lg sm:max-w-2xl flex flex-col"
+              className="bg-white/90 dark:bg-[#292929e6] text-white p-6 rounded-3xl shadow-2xl w-[90%] max-w-md sm:max-w-lg flex flex-col mx-auto"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex border-b mb-4">
+              {/* Abas com alinhamento corrigido */}
+              <div className="flex border-b border-white/20 mb-4">
                 {["Sobre", "Horario", "Pagamento"].map((aba) => (
                   <button
                     key={aba}
                     onClick={() => setAbaAtiva(aba as typeof abaAtiva)}
-                    className={`flex-1 py-2 text-sm font-semibold text-center ${
-                      abaAtiva === aba ? "border-black text-black" : "text-white"
+                    className={`flex-1 py-2 text-sm font-semibold text-center border-b-2 transition-colors duration-200 ${
+                      abaAtiva === aba
+                        ? "border-white text-white"
+                        : "border-transparent text-white/80 hover:text-white"
                     }`}
                   >
                     {aba.toUpperCase()}
