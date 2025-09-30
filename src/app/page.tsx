@@ -15,7 +15,6 @@ import { useSession } from "next-auth/react";
 import LoginIcon from "../components/LoginIcon";
 import UserBadge from "../components/UserBadge";
 import LoadingSkeleton from "../components/LoadingSkeleton";
-import { User } from "next-auth";
 
 /**
  * Página inicial do sistema GBC Coffee.
