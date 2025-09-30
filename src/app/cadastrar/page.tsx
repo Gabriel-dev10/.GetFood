@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { validateForm } from "@/utils/validators";
+import { validateForm, validateCPF, validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
 
 type FormData = {
@@ -69,7 +69,21 @@ export default function CriarConta() {
   const { data: session } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "cpf" || name === "telefone") {
+      let numericValue = value.replace(/\D/g, "");
+
+      if (name === "telefone") {
+        if (numericValue.length > 2) {
+          numericValue = `(${numericValue.slice(0, 2)})${numericValue.slice(2)}`;
+        }
+      }
+
+      setForm({ ...form, [name]: numericValue });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   /**
@@ -84,13 +98,32 @@ export default function CriarConta() {
 
     const { senha, confirmaSenha, ...fieldsToValidate } = form;
 
-    // aqui deixamos o validateForm retornar ValidationErrors
-    const validationErrors: ValidationErrors = validateForm(fieldsToValidate);
+    const validationErrors: ValidationErrors = validateForm({
+      ...fieldsToValidate,
+      email: form.email,
+      telefone: form.telefone,
+      cpf: form.cpf,
+    });
 
     if (!senha) validationErrors.senha = "A senha é obrigatória.";
     if (!confirmaSenha) validationErrors.confirmaSenha = "Confirme sua senha.";
     if (senha && confirmaSenha && senha !== confirmaSenha)
       validationErrors.confirmaSenha = "As senhas não coincidem.";
+
+    if (!validateCPF(form.cpf)) {
+      validationErrors.cpf =
+        "CPF inválido. Certifique-se de usar apenas números e que tenha 11 dígitos.";
+    }
+
+    if (!/^(\d{2})\s?9\d{4}-?\d{4}$/.test(form.telefone)) {
+      validationErrors.telefone =
+        "Telefone inválido. Use o formato (99) 99999-9999.";
+    }
+
+    if (!validateEmail(form.email)) {
+      validationErrors.email =
+        "Email inválido. Certifique-se de usar um formato válido.";
+    }
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -100,26 +133,30 @@ export default function CriarConta() {
     setErrors({});
     setError("");
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify(form),
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const data: { message?: string } = await res.json();
+      const data: { message?: string } = await res.json();
 
-    if (res.ok) {
-      router.push("/login");
-    } else {
-      setError(data?.message || "Erro ao criar conta");
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        setError(data?.message || "Erro ao criar conta");
+      }
+    } catch (err) {
+      setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };
 
   useEffect(() => {
-      if (session) {
-        router.replace("/");
-      }
-    });
+    if (session) {
+      router.replace("/");
+    }
+  });
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
@@ -145,7 +182,7 @@ export default function CriarConta() {
                 name={id}
                 type={type}
                 placeholder={placeholder}
-                className="w-full px-4 py-3 rounded-md border border-gray-300"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 text-black"
                 value={form[id as keyof FormData]}
                 onChange={handleChange}
                 required
@@ -173,7 +210,7 @@ export default function CriarConta() {
               href="/"
               className="block text-orange-600 hover:underline"
             >
-            voltar à página inicial
+              voltar à página inicial
             </Link>
           </p>
         </form>

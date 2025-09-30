@@ -36,6 +36,7 @@ export default function EsqueceuSenha() {
       setSuccess("");
       return;
     }
+
     if (!validateEmail(email)) {
       setError("Digite um e-mail válido.");
       setSuccess("");
@@ -45,21 +46,25 @@ export default function EsqueceuSenha() {
     setError("");
     setSuccess("");
 
-    const res = await fetch("/api/auth/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      setSuccess("Código enviado para seu e-mail!");
-      setTimeout(() => {
-        router.push("/login/redefinir-senha");
-      }, 1500);
-    } else {
-      setError(data?.message || "Erro ao enviar código. Tente novamente.");
+      if (res.ok) {
+        setSuccess("Código enviado para seu e-mail!");
+        setTimeout(() => {
+          router.push("/login/redefinir-senha");
+        }, 1500);
+      } else {
+        setError(data?.message || "Erro ao enviar código. Tente novamente.");
+      }
+    } catch (err) {
+      setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };
   useEffect(() => {
