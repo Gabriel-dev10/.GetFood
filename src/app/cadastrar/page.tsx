@@ -147,7 +147,7 @@ export default function CriarConta() {
       } else {
         setError(data?.message || "Erro ao criar conta");
       }
-    } catch (err) {
+    } catch{
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };

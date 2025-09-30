@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 import LoginIcon from "../components/LoginIcon";
 import UserBadge from "../components/UserBadge";
 import LoadingSkeleton from "../components/LoadingSkeleton";
+import { User } from "next-auth";
 
 /**
  * Página inicial do sistema GBC Coffee.
@@ -117,7 +118,7 @@ export default function Inicio() {
           ) : !session ? (
             <LoginIcon />
           ) : (
-            <UserBadge image={(session.user as any)?.image ?? null} />
+            <UserBadge image={(session.user)?.image ?? null} />
           )}
         </div>
       </motion.div>

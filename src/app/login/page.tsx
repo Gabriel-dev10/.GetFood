@@ -54,12 +54,10 @@ export default function Login() {
         senha,
       });
 
-      if (res?.ok) {
-        router.push("/");
-      } else {
+      if (!res?.ok) {
         setError("Credenciais inválidas!");
       }
-    } catch (err) {
+    } catch{
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     } finally {
       setIsLoading(false);

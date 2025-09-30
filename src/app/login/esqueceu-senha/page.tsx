@@ -63,7 +63,7 @@ export default function EsqueceuSenha() {
       } else {
         setError(data?.message || "Erro ao enviar código. Tente novamente.");
       }
-    } catch (err) {
+    } catch{
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };
