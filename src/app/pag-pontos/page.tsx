@@ -6,6 +6,7 @@ import NavBottom from "../../components/NavBottom";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
+import { Loader2 } from "lucide-react";
 
 /**
  * Página de painel de pontos e recompensas do usuário.
@@ -15,13 +16,21 @@ import PopupLogin from "../../components/PopupLogin";
  * @returns {JSX.Element} Elemento da página de pontos
  */
 export default function PagPontos() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const pontos = 0;
   const nivel = 1;
   const meta = 1000;
   const progresso = (pontos / meta) * 100;
   const validade = "26/08/2026";
+
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+        <Loader2 className="animate-spin text-[#4E2010]" size={60} />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative text-gray-900 dark:text-white">

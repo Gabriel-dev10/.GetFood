@@ -1,42 +1,28 @@
 "use client";
 
-import { Info, LogIn } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { motion, AnimatePresence } from "framer-motion";
 import "swiper/css";
 import Image from "next/image";
 import BarraHorizontal from "../components/BarraHorizontal";
 import NavBottom from "../components/NavBottom";
-import Link from "next/link";
 import Footer from "../components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaMoneyBillWave, FaCreditCard } from "react-icons/fa";
 import { SiPix } from "react-icons/si";
+import { useSession } from "next-auth/react";
+import LoginIcon from "../components/LoginIcon";
+import UserBadge from "../components/UserBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 
-/**
- * Página inicial do sistema GBC Coffee.
- *
- * Exibe carrossel, informações, horários e formas de pagamento.
- * Utiliza animações e navegação com Next.js.
- *
- * @returns {JSX.Element} Elemento da página inicial
- */
 export default function Inicio() {
-  /**
-   * Controla a exibição do modal de informações.
-   */
+  const { data: session, status } = useSession();
   const [showInfo, setShowInfo] = useState(false);
-  /**
-   * Aba ativa do modal de informações.
-   * Pode ser 'sobre', 'horario' ou 'pagamento'.
-   */
   const [abaAtiva, setAbaAtiva] = useState<"Sobre" | "Horario" | "Pagamento">(
     "Sobre"
   );
 
-  /**
-   * Horários de funcionamento por dia da semana.
-   */
   const horarios = {
     Segunda: "07:00 às 22:00",
     Terça: "07:00 às 22:00",
@@ -46,6 +32,48 @@ export default function Inicio() {
     Sábado: "07:00 às 13:00",
     Domingo: "Fechado",
   };
+
+  // Travar scroll de fundo quando o modal estiver aberto
+  useEffect(() => {
+    if (showInfo) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.overflow = "hidden";
+      document.body.style.width = "100%";
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.overflow = "";
+      document.body.style.width = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    }
+
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.overflow = "";
+      document.body.style.width = "";
+    };
+  }, [showInfo]);
+
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+        <Loader2 className="animate-spin text-[#4E2010]" size={60} />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative mt-3 text-gray-900 dark:text-white">
       <motion.div
@@ -66,12 +94,15 @@ export default function Inicio() {
           GBC <span className="font-dancingScript">Coffee</span>
         </h1>
 
-        <Link
-          href="/login"
-          className="flex items-center gap-2 font-bold text-xs cursor-pointer hover:text-white hover:underline text-[#4E2010] px-2 py-1 rounded-lg transition duration-300"
-        >
-          <LogIn size={20} />
-        </Link>
+        <div className="relative">
+          {status === undefined ? (
+            <LoadingSkeleton />
+          ) : !session ? (
+            <LoginIcon />
+          ) : (
+            <UserBadge image={(session.user as any)?.image ?? null} />
+          )}
+        </div>
       </motion.div>
 
       <motion.section
@@ -96,17 +127,18 @@ export default function Inicio() {
         </Swiper>
       </motion.section>
 
+      {/* MODAL */}
       <AnimatePresence>
         {showInfo && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowInfo(false)}
           >
             <motion.div
-              className="bg-white dark:bg-[#29292980] text-white p-6 rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col"
+              className="bg-white dark:bg-[#29292980] text-white p-6 rounded-3xl shadow-2xl w-full max-w-lg sm:max-w-2xl flex flex-col"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
@@ -119,9 +151,7 @@ export default function Inicio() {
                     key={aba}
                     onClick={() => setAbaAtiva(aba as typeof abaAtiva)}
                     className={`flex-1 py-2 text-sm font-semibold text-center ${
-                      abaAtiva === aba
-                        ? "border-black text-black"
-                        : "text-white"
+                      abaAtiva === aba ? "border-black text-black" : "text-white"
                     }`}
                   >
                     {aba.toUpperCase()}
@@ -189,7 +219,13 @@ export default function Inicio() {
                         className="py-2 px-2 flex justify-between items-center"
                       >
                         <span>{dia}</span>
-                        <span className={hora === "Fechado" ? "text-red-500 font-semibold" : "font-medium"}>
+                        <span
+                          className={
+                            hora === "Fechado"
+                              ? "text-red-500 font-semibold"
+                              : "font-medium"
+                          }
+                        >
                           {hora}
                         </span>
                       </li>

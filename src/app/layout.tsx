@@ -5,9 +5,11 @@
  * @module RootLayout
  */
 // layout.tsx
+
 import type { Metadata } from "next";
 import { Poppins, Dancing_Script } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const dancingScript = Dancing_Script({
   variable: "--font-dancingScript",
@@ -59,7 +61,7 @@ export default function RootLayout({
         />
         <meta name="msapplication-navbutton-color" content="#451a03" />
       </head>
-      <body className="antialiased font-sans">{children}</body>
+      <body className="antialiased font-sans"><Providers>{children}</Providers></body>
     </html>
   );
 }
