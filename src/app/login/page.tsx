@@ -43,13 +43,15 @@ export default function Login() {
 
     setError("");
 
-    const res = await signIn("credentials", {
-      redirect: false,
+    const res = await signIn("credentials",  {
+      callbackUrl: "/",
+      redirect: true,
       email,
       senha,
     });
 
     if (res?.ok) {
+      router.refresh();
       router.push("/");
     } else {
       setError("Credenciais inválidas!");
