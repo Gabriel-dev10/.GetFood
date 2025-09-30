@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
 /**
  * Componente de página de login do sistema.
@@ -18,8 +19,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   /**
    * Realiza o processo de login do usuário.
@@ -42,19 +44,25 @@ export default function Login() {
     }
 
     setError("");
+    setIsLoading(false);
 
-    const res = await signIn("credentials",  {
-      callbackUrl: "/",
-      redirect: true,
-      email,
-      senha,
-    });
+    try {
+      const res = await signIn("credentials", {
+        callbackUrl: "/",
+        redirect: true,
+        email,
+        senha,
+      });
 
-    if (res?.ok) {
-      router.refresh();
-      router.push("/");
-    } else {
-      setError("Credenciais inválidas!");
+      if (res?.ok) {
+        router.push("/");
+      } else {
+        setError("Credenciais inválidas!");
+      }
+    } catch (err) {
+      setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,7 +71,15 @@ export default function Login() {
       router.replace("/");
     }
   });
-  
+
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+        <Loader2 className="animate-spin text-[#4E2010]" size={60} />
+      </main>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
       <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">
@@ -126,9 +142,12 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-md transition"
+            className={`w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-md transition ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
           >
-            Entrar
+            {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
@@ -149,7 +168,7 @@ export default function Login() {
             voltar à página inicial
           </Link>
         </div>
-      </div>  
+      </div>
     </div>
   );
 }
