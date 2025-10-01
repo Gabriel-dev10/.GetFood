@@ -71,16 +71,39 @@ export default function CriarConta() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === "cpf" || name === "telefone") {
-      let numericValue = value.replace(/\D/g, "");
-
-      if (name === "telefone") {
-        if (numericValue.length > 2) {
-          numericValue = `(${numericValue.slice(0, 2)})${numericValue.slice(2)}`;
-        }
+    if (name === "cpf") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 11);
+      let formattedValue = numericValue;
+      if (numericValue.length > 9) {
+        formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(
+          3,
+          6,
+        )}.${numericValue.slice(6, 9)}-${numericValue.slice(9)}`;
+      } else if (numericValue.length > 6) {
+        formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(
+          3,
+          6,
+        )}.${numericValue.slice(6)}`;
+      } else if (numericValue.length > 3) {
+        formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
       }
+      setForm({ ...form, [name]: formattedValue });
+    } else if (name === "telefone") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 11);
+      let formattedValue = numericValue;
 
-      setForm({ ...form, [name]: numericValue });
+      if (numericValue.length > 2) {
+        formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
+          2,
+        )}`;
+      }
+      if (numericValue.length > 7) {
+        formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
+          2,
+          7,
+        )}-${numericValue.slice(7, 11)}`;
+      }
+      setForm({ ...form, [name]: formattedValue });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -115,7 +138,7 @@ export default function CriarConta() {
         "CPF inválido. Certifique-se de usar apenas números e que tenha 11 dígitos.";
     }
 
-    if (!/^(\d{2})\s?9\d{4}-?\d{4}$/.test(form.telefone)) {
+    if (!/^\(\d{2}\)\s\d{5}-\d{4}$/.test(form.telefone)) {
       validationErrors.telefone =
         "Telefone inválido. Use o formato (99) 99999-9999.";
     }
@@ -136,7 +159,11 @@ export default function CriarConta() {
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          cpf: form.cpf.replace(/\D/g, ""),
+          telefone: form.telefone.replace(/\D/g, ""),
+        }),
         headers: { "Content-Type": "application/json" },
       });
 
