@@ -164,7 +164,9 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
 
   if (lista.length === 0) {
     return (
-      <p className="text-[#4E2010]">Nenhum item disponível nesta categoria.</p>
+      <p className="text-[#4E2010] text-center" role="alert">
+        Nenhum item disponível nesta categoria.
+      </p>
     );
   }
 
@@ -173,7 +175,7 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
       {lista.map((item) => (
         <div
           key={item.nome}
-          className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.45)]"
+          className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.45)] hover:shadow-lg transition-shadow"
         >
           <div className="relative w-43 h-41 sm:w-32 sm:h-32 md:w-40 md:h-40 flex-shrink-0">
             <Image
@@ -186,12 +188,25 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
 
           <div className="p-4 flex flex-col justify-between w-full">
             <div>
-              <h2 className="font-bold text-xl">{item.nome}</h2>
-              <p className="text-sm text-[#4E2010]/80 line-clamp-2">
+              <h2
+                className="font-bold text-xl"
+                aria-label={`Nome do produto: ${item.nome}`}
+              >
+                {item.nome}
+              </h2>
+              <p
+                className="text-sm text-[#4E2010]/80 line-clamp-2"
+                aria-label={`Descrição: ${item.descricao}`}
+              >
                 {item.descricao}
               </p>
             </div>
-            <p className="text-lg font-extrabold mt-2">{item.preco}</p>
+            <p
+              className="text-lg font-extrabold mt-2"
+              aria-label={`Preço: ${item.preco}`}
+            >
+              {item.preco}
+            </p>
           </div>
         </div>
       ))}
