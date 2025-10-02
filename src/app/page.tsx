@@ -3,6 +3,7 @@
 import { Info, Loader2 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import { Autoplay } from "swiper/modules";
 import Image from "next/image";
 import BarraHorizontal from "../components/BarraHorizontal";
 import NavBottom from "../components/NavBottom";
@@ -118,7 +119,7 @@ export default function Inicio() {
         transition={{ duration: 0.5 }}
         className="rounded-2xl overflow-hidden shadow-lg mb-8"
       >
-        <Swiper spaceBetween={10} slidesPerView={1}>
+        <Swiper spaceBetween={10} slidesPerView={1}  modules={[Autoplay]} autoplay={{ delay: 3000, disableOnInteraction: false }} loop={true} speed={1200}>
           {[1, 2, 3].map((_, index) => (
             <SwiperSlide key={index}>
               <div className="relative w-full h-[200px] md:h-[350px]">

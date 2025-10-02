@@ -4,14 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
-/**
- * Componente de página para recuperação de senha.
- *
- * Permite ao usuário solicitar o envio de código para redefinição de senha.
- *
- * @returns {JSX.Element} Elemento da página de recuperação de senha
- */
 export default function EsqueceuSenha() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -19,13 +13,6 @@ export default function EsqueceuSenha() {
   const [success, setSuccess] = useState("");
   const { data: session } = useSession();
 
-  /**
-   * Lida com o envio do formulário de recuperação de senha.
-   *
-   * Valida o e-mail e faz requisição para a API de recuperação.
-   *
-   * @param event - Evento de submit do formulário
-   */
   const lidarComEsqueceuSenha = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -63,28 +50,35 @@ export default function EsqueceuSenha() {
       } else {
         setError(data?.message || "Erro ao enviar código. Tente novamente.");
       }
-    } catch{
+    } catch {
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };
+
   useEffect(() => {
     if (session) {
       router.replace("/");
     }
   });
-  return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
-      <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">
-        <span className="text-orange-600">.</span>Get
-        <span className="text-orange-600">Food</span>
-      </h1>
 
-      <div className="w-full max-w-md bg-gray-100 rounded-xl shadow-md p-8">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-2 text-center">
-          Esqueceu a Senha
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-gradient-to-tr from-[#1a1a1a] to-black">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-md bg-gradient-to-br from-[#1e1e1e] to-[#2b2b2b] rounded-3xl shadow-2xl p-8 border border-white/10 text-white"
+      >
+        <h1 className="text-3xl font-extrabold text-center mb-6 select-none">
+          <span className="text-[#ff7043]">.</span>Get
+          <span className="text-[#ff7043]">Food</span>
+        </h1>
+
+        <h2 className="text-xl font-semibold text-center mb-3 text-gray-200">
+          Esqueceu a senha?
         </h2>
-        <p className="text-sm text-gray-600 text-center mb-6">
-          Não se preocupe! Isso acontece.
+        <p className="text-sm text-gray-400 text-center mb-6">
+          Não se preocupe, isso acontece!
           <br />
           Insira o e-mail associado à sua conta.
         </p>
@@ -93,7 +87,7 @@ export default function EsqueceuSenha() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-600 mb-1"
+              className="block text-sm font-medium text-gray-400 mb-1"
             >
               Email
             </label>
@@ -103,21 +97,32 @@ export default function EsqueceuSenha() {
               placeholder="Digite seu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700"
+              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
             />
           </div>
 
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          {success && <p className="text-green-600 text-sm">{success}</p>}
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+          {success && (
+            <p className="text-green-500 text-sm font-medium">{success}</p>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-md transition"
+            className="w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all"
           >
             Enviar Código
           </button>
         </form>
-      </div>
+
+        <div className="mt-6 text-center text-sm text-gray-400">
+          <button
+            onClick={() => router.push("/login")}
+            className="text-[#ff7043] hover:underline"
+          >
+            Voltar para o login
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 }
