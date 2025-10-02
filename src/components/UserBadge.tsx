@@ -18,7 +18,7 @@ export default function UserBadge({
     >
       {image ? (
         <Image
-          src={image}
+          src={`${image}?v=${Date.now()}`}
           alt={name ?? "Avatar"}
           width={36}
           height={36}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
@@ -35,16 +35,24 @@ export default function Login() {
 
     try {
       const res = await signIn("credentials", {
-        callbackUrl: "/",
-        redirect: true,
+        redirect: false, // Alterado para false para capturar a resposta
         email,
         senha,
       });
 
-      if (!res?.ok) {
-        setError("Credenciais inválidas!");
+      if (res?.error) {
+        setError("Credenciais inválidas! Verifique seu e-mail e senha.");
+      } else if (res?.ok) {
+        try {
+          await getSession();
+        } catch {
+        }
+        router.push("/");
+      } else {
+        setError("Erro desconhecido. Tente novamente mais tarde.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Erro ao tentar login:", err);
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     } finally {
       setIsLoading(false);
@@ -55,7 +63,7 @@ export default function Login() {
     if (session) {
       router.replace("/");
     }
-  });
+  }, [session, router]);
 
   if (status === "loading") {
     return (
@@ -119,9 +127,7 @@ export default function Login() {
             />
           </div>
 
-          {error && (
-            <p className="text-red-500 text-sm font-medium">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
 
           <div className="text-right">
             <Link
@@ -146,17 +152,11 @@ export default function Login() {
         <div className="mt-6 text-center text-sm text-gray-400">
           <p>
             Não tem uma conta?{" "}
-            <Link
-              href="/cadastrar"
-              className="text-[#ff7043] hover:underline"
-            >
+            <Link href="/cadastrar" className="text-[#ff7043] hover:underline">
               Criar
             </Link>
           </p>
-          <Link
-            href="/"
-            className="block mt-2 text-[#ff7043] hover:underline"
-          >
+          <Link href="/" className="block mt-2 text-[#ff7043] hover:underline">
             Voltar à página inicial
           </Link>
         </div>

@@ -55,7 +55,7 @@ const produtos: Record<Categoria, Produto[]> = {
       imagem: "/Img/Sanduiche.jpg",
     },
     {
-      nome: "Sanduiche Natural Australiano",
+      nome: "Sanduiche Astraliano ",
       descricao: "Especificações do produto",
       preco: "R$ 20,00",
       imagem: "/Img/sandA.jpg",
@@ -177,7 +177,7 @@ export default function ListaProdutos({ categoria }: ListaProdutosProps) {
           key={item.nome}
           className="flex flex-row items-center rounded-2xl w-full overflow-hidden bg-[#E6C697] text-[#4E2010] shadow-[2px_2px_4px_rgba(0,0,0,0.45)] hover:shadow-lg transition-shadow"
         >
-          <div className="relative w-43 h-41 sm:w-32 sm:h-32 md:w-40 md:h-40 flex-shrink-0">
+          <div className="relative w-40 h-40 flex-shrink-0">
             <Image
               src={item.imagem}
               alt={`Imagem do produto ${item.nome}`}
