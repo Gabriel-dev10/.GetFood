@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { validateForm, validateCPF, validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
 type FormData = {
   nome: string;
@@ -46,13 +47,6 @@ const fields = [
   },
 ];
 
-/**
- * Componente de página de cadastro de novo usuário.
- *
- * Permite ao usuário criar uma conta informando dados pessoais e senha.
- *
- * @returns {JSX.Element} Elemento da página de cadastro
- */
 export default function CriarConta() {
   const [form, setForm] = useState<FormData>({
     nome: "",
@@ -77,12 +71,12 @@ export default function CriarConta() {
       if (numericValue.length > 9) {
         formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(
           3,
-          6,
+          6
         )}.${numericValue.slice(6, 9)}-${numericValue.slice(9)}`;
       } else if (numericValue.length > 6) {
         formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(
           3,
-          6,
+          6
         )}.${numericValue.slice(6)}`;
       } else if (numericValue.length > 3) {
         formattedValue = `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
@@ -94,13 +88,13 @@ export default function CriarConta() {
 
       if (numericValue.length > 2) {
         formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
-          2,
+          2
         )}`;
       }
       if (numericValue.length > 7) {
         formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
           2,
-          7,
+          7
         )}-${numericValue.slice(7, 11)}`;
       }
       setForm({ ...form, [name]: formattedValue });
@@ -109,13 +103,6 @@ export default function CriarConta() {
     }
   };
 
-  /**
-   * Realiza o processo de cadastro do usuário.
-   *
-   * Valida os campos, envia dados para a API e redireciona em caso de sucesso.
-   *
-   * @param e - Evento de submit do formulário
-   */
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -174,7 +161,7 @@ export default function CriarConta() {
       } else {
         setError(data?.message || "Erro ao criar conta");
       }
-    } catch{
+    } catch {
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
     }
   };
@@ -186,21 +173,28 @@ export default function CriarConta() {
   });
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
-      <h1 className="text-4xl font-semibold text-gray-800 mb-10 select-none">
-        <span className="text-orange-600">.</span>Get
-        <span className="text-orange-600">Food</span>
-      </h1>
-      <div className="w-full max-w-md bg-gray-100 rounded-xl shadow-md p-8">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-gradient-to-tr from-[#1a1a1a] to-black">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-md bg-gradient-to-br from-[#1e1e1e] to-[#2b2b2b] rounded-3xl shadow-2xl p-8 border border-white/10 text-white"
+      >
+        <h1 className="text-3xl font-extrabold text-center mb-8 select-none">
+          <span className="text-[#ff7043]">.</span>Get
+          <span className="text-[#ff7043]">Food</span>
+        </h1>
+
+        <h2 className="text-xl font-semibold text-center mb-6 text-gray-200">
           Criar Conta
         </h2>
-        <form onSubmit={handleRegister} className=" text-gray-700 space-y-5">
+
+        <form onSubmit={handleRegister} className="space-y-5">
           {fields.map(({ id, label, type, placeholder }) => (
             <div key={id}>
               <label
                 htmlFor={id}
-                className="block text-sm font-medium text-gray-600 mb-1"
+                className="block text-sm font-medium text-gray-400 mb-1"
               >
                 {label}
               </label>
@@ -209,39 +203,39 @@ export default function CriarConta() {
                 name={id}
                 type={type}
                 placeholder={placeholder}
-                className="w-full px-4 py-3 rounded-md border border-gray-300 text-black"
+                className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
                 value={form[id as keyof FormData]}
                 onChange={handleChange}
                 required
               />
               {errors[id as keyof ValidationErrors] && (
-                <p className="text-red-600 text-sm">
+                <p className="text-red-500 text-sm mt-1">
                   {errors[id as keyof ValidationErrors]}
                 </p>
               )}
             </div>
           ))}
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-orange-600 hover:bg-orange-700 transition text-white py-3 rounded-md font-semibold"
+            className="w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all"
           >
             Criar Conta
           </button>
-          <p className="text-center text-sm text-gray-600">
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-400">
+          <p>
             Já tem uma conta?{" "}
-            <Link href="/login" className="text-orange-600 hover:underline">
+            <Link href="/login" className="text-[#ff7043] hover:underline">
               Entrar
             </Link>
-            <Link
-              href="/"
-              className="block text-orange-600 hover:underline"
-            >
-              voltar à página inicial
-            </Link>
           </p>
-        </form>
-      </div>
+          <Link href="/" className="block mt-2 text-[#ff7043] hover:underline">
+            Voltar à página inicial
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }

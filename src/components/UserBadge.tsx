@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { UserRound } from "lucide-react";
 
 export default function UserBadge({
   name,
@@ -11,22 +12,27 @@ export default function UserBadge({
   image?: string | null;
 }) {
   return (
-  <div className="flex items-center gap-2">
-    <Link href="/perfil">
+    <Link
+      href="/perfil"
+      className="flex items-center gap-2 group cursor-pointer"
+    >
       {image ? (
         <Image
           src={image}
           alt={name ?? "Avatar"}
           width={36}
           height={36}
-          className="rounded-full object-cover cursor-pointer"
+          className="rounded-full object-cover border border-gray-300 group-hover:border-[#ff7043] transition"
         />
       ) : (
-        <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm text-gray-700 cursor-pointer">
-          {name ? name.charAt(0).toUpperCase() : "U"}
+        <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 group-hover:bg-[#ff7043] group-hover:text-white transition">
+          {name ? name.charAt(0).toUpperCase() : <UserRound size={18} />}
         </div>
       )}
+
+      <span className="text-sm font-medium text-gray-700 group-hover:text-[#ff7043] transition hidden sm:block">
+        {name ?? "Usuário"}
+      </span>
     </Link>
-  </div>
-);
+  );
 }
