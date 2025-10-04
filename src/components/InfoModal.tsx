@@ -28,6 +28,9 @@ const InfoModal: React.FC<InfoModalProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
+      aria-labelledby="info-modal-title"
+      role="dialog"
+      aria-modal="true"
     >
       <motion.div
         className="bg-white/90 dark:bg-[#292929e6] text-white p-6 rounded-3xl shadow-2xl w-[90%] max-w-md sm:max-w-lg flex flex-col mx-auto"
@@ -37,16 +40,30 @@ const InfoModal: React.FC<InfoModalProps> = ({
         transition={{ duration: 0.3 }}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="flex justify-between items-center mb-4">
+          <h2 id="info-modal-title" className="text-lg font-bold">
+            Informações
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-white/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white rounded-full"
+            aria-label="Fechar modal"
+          >
+            ✕
+          </button>
+        </div>
+
         <div className="flex border-b border-white/20 mb-4">
           {["Sobre", "Horario", "Pagamento"].map((aba) => (
             <button
               key={aba}
               onClick={() => setAbaAtiva(aba as typeof abaAtiva)}
-              className={`flex-1 py-2 text-sm font-semibold text-center border-b-2 transition-colors duration-200 ${
+              className={`flex-1 py-2 text-sm font-semibold text-center border-b-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white rounded-sm ${
                 abaAtiva === aba
                   ? "border-white text-white"
                   : "border-transparent text-white/80 hover:text-white"
               }`}
+              aria-current={abaAtiva === aba ? "page" : undefined}
             >
               {aba.toUpperCase()}
             </button>
@@ -59,7 +76,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
               <div className="flex items-center gap-2 mt-4">
                 <Image
                   src="/Img/logogbc.png"
-                  alt="Logo"
+                  alt="Logo GBC Coffee"
                   width={100}
                   height={100}
                   className="!rounded-full !w-25 !h-25 object-cover"
@@ -70,7 +87,8 @@ const InfoModal: React.FC<InfoModalProps> = ({
               <a
                 href="https://www.instagram.com/gbccoffee?igsh=dmY2bGV5YjF2a3Bo"
                 target="_blank"
-                className="inline-flex items-center gap-2 px-4 py-2 text-white bg-[#00000080] rounded-full "
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 text-white bg-[#00000080] rounded-full focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +169,9 @@ const InfoModal: React.FC<InfoModalProps> = ({
                   key={nome}
                   className="flex items-center gap-2 p-3 bg-[#00000080] rounded-full"
                 >
-                  <span className="text-lg">{icon}</span>
+                  <span className="text-lg" aria-hidden="true">
+                    {icon}
+                  </span>
                   <span className="text-base">{nome}</span>
                 </div>
               ))}
