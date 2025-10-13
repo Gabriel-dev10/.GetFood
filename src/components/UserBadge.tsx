@@ -23,6 +23,7 @@ export default function UserBadge({
           width={36}
           height={36}
           className="rounded-full object-cover border border-gray-300 group-hover:border-[#ff7043] transition"
+          style={{ width: "36px", height: "36px", objectFit: "cover" }}
         />
       ) : (
         <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 group-hover:bg-[#ff7043] group-hover:text-white transition">
