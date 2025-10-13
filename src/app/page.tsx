@@ -108,7 +108,10 @@ export default function Inicio() {
           ) : !session ? (
             <LoginIcon />
           ) : (
-            <UserBadge image={session.user?.image ?? null} />
+            <UserBadge
+              image={session.user?.image ?? null}
+              name={session.user?.name ?? "Usuário"}
+            />
           )}
         </div>
       </motion.div>
@@ -119,7 +122,14 @@ export default function Inicio() {
         transition={{ duration: 0.5 }}
         className="rounded-2xl overflow-hidden shadow-lg mb-8"
       >
-        <Swiper spaceBetween={10} slidesPerView={1}  modules={[Autoplay]} autoplay={{ delay: 3000, disableOnInteraction: false }} loop={true} speed={1200}>
+        <Swiper
+          spaceBetween={10}
+          slidesPerView={1}
+          modules={[Autoplay]}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          loop={true}
+          speed={1200}
+        >
           {[1, 2, 3].map((_, index) => (
             <SwiperSlide key={index}>
               <div className="relative w-full h-[200px] md:h-[350px]">
