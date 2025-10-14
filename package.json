@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "cross-env NEXT_PRIVATE_TURBOPACK=1 next dev",
     "build": "next build",
-    "test": "jest",
     "start": "next start",
     "lint": "next lint",
     "docs": "typedoc --entryPoints src/app --out docs"
@@ -23,7 +22,6 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
-    "supertest": "^7.1.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "swagger-ui-react": "^5.29.0",
@@ -33,16 +31,13 @@
     "@eslint/eslintrc": "^3",
     "@microsoft/tsdoc": "^0.15.1",
     "@tailwindcss/postcss": "^4",
-    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/supertest": "^6.0.3",
     "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
-    "ts-jest": "^29.4.5",
     "typedoc": "^0.28.12",
     "typescript": "^5"
   }

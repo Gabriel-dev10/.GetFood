@@ -34,7 +34,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import path from "path";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -43,17 +43,25 @@ export async function POST(req: Request) {
   }
 
   const formData = await req.formData();
-  const file = formData.get("file") as File | null;
-
-  if (!file) {
+  const fileBlob = formData.get("file") as Blob | null;
+  if (!fileBlob)
     return NextResponse.json({ error: "Arquivo não enviado" }, { status: 400 });
-  }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  const arrayBuffer = await fileBlob.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
   const fileName = `${session.user.email}.jpg`;
-  const filePath = path.join(process.cwd(), "public/uploads/profile/", fileName);
+  const directoryPath = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    "profile"
+  );
+
+  // Verifica e cria o diretório, se necessário
+  await mkdir(directoryPath, { recursive: true });
+
+  const filePath = path.join(directoryPath, fileName);
 
   await writeFile(filePath, buffer);
 
