@@ -28,7 +28,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Usuário não possui senha definida.");
         }
 
-        const passwordMatch = await bcrypt.compare(credentials.senha, user.senha);
+        const passwordMatch = await bcrypt.compare(
+          credentials.senha,
+          user.senha
+        );
 
         if (!passwordMatch) {
           throw new Error("Senha incorreta.");
@@ -73,6 +76,7 @@ export const authOptions: NextAuthOptions = {
 
       if (user) {
         token.id = user.id;
+        token.name = user.name;
         token.email = user.email;
         token.image = user.image ?? token.image;
       }

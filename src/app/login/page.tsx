@@ -35,26 +35,24 @@ export default function Login() {
 
     try {
       const res = await signIn("credentials", {
-        redirect: false, // Alterado para false para capturar a resposta
+        redirect: false,
         email,
         senha,
       });
 
       if (res?.error) {
         setError("Credenciais inválidas! Verifique seu e-mail e senha.");
+        setIsLoading(false);
       } else if (res?.ok) {
-        try {
-          await getSession();
-        } catch {
-        }
-        router.push("/");
+        await getSession();
+        window.location.href = "/";
       } else {
         setError("Erro desconhecido. Tente novamente mais tarde.");
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("Erro ao tentar login:", err);
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
-    } finally {
       setIsLoading(false);
     }
   };

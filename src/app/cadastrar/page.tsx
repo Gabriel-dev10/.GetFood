@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { validateForm, validateCPF, validateEmail } from "@/utils/validators";
-import { useSession } from "next-auth/react";
+import { useSession, signIn, getSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
 type FormData = {
@@ -59,6 +59,7 @@ export default function CriarConta() {
 
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -142,6 +143,7 @@ export default function CriarConta() {
 
     setErrors({});
     setError("");
+    setIsLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -157,18 +159,35 @@ export default function CriarConta() {
       const data: { message?: string } = await res.json();
 
       if (res.ok) {
-        router.push("/login");
+        // Login automático após cadastro bem-sucedido
+        const loginRes = await signIn("credentials", {
+          redirect: false,
+          email: form.email,
+          senha: form.senha,
+        });
+
+        if (loginRes?.ok) {
+          // Aguarda a sessão ser atualizada
+          await getSession();
+          // Força reload da página para garantir que a sessão seja atualizada
+          window.location.href = "/";
+        } else {
+          // Se o login automático falhar, redireciona para a página de login
+          router.push("/login");
+        }
       } else {
         setError(data?.message || "Erro ao criar conta");
+        setIsLoading(false);
       }
     } catch {
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (session) {
-      router.replace("/");
+      window.location.href = "/";
     }
   });
 
@@ -218,9 +237,12 @@ export default function CriarConta() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all"
+            className={`w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
           >
-            Criar Conta
+            {isLoading ? "Criando conta e entrando..." : "Criar Conta"}
           </button>
         </form>
 
