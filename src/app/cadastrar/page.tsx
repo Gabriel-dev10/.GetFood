@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { validateForm, validateCPF, validateEmail } from "@/utils/validators";
 import { useSession, signIn, getSession } from "next-auth/react";
 import { motion } from "framer-motion";
@@ -60,7 +59,6 @@ export default function CriarConta() {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const { data: session } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +171,7 @@ export default function CriarConta() {
           window.location.href = "/";
         } else {
           // Se o login automático falhar, redireciona para a página de login
-          router.push("/login");
+          window.location.href = "/login";
         }
       } else {
         setError(data?.message || "Erro ao criar conta");

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
@@ -14,7 +13,6 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const { data: session, status } = useSession();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -59,9 +57,9 @@ export default function Login() {
 
   useEffect(() => {
     if (session) {
-      router.replace("/");
+      window.location.href = "/";
     }
-  }, [session, router]);
+  }, [session]);
 
   if (status === "loading") {
     return (
