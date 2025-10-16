@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Login() {
@@ -13,10 +13,15 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
   const { data: session, status } = useSession();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isBlocked) return;
 
     if (!email || !senha) {
       setError("Preencha todos os campos.");
@@ -41,6 +46,7 @@ export default function Login() {
       if (res?.error) {
         setError("Credenciais inválidas! Verifique seu e-mail e senha.");
         setIsLoading(false);
+        setAttempts((prev) => prev + 1);
       } else if (res?.ok) {
         await getSession();
         window.location.href = "/";
@@ -54,6 +60,31 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  // Bloqueia após 3 tentativas erradas
+  useEffect(() => {
+    if (attempts >= 3) {
+      setIsBlocked(true);
+      setAttempts(0);
+      setSecondsLeft(60);
+    }
+  }, [attempts]);
+
+  // Contagem regressiva do bloqueio
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isBlocked && secondsLeft > 0) {
+      setError(`Muitas tentativas falhas. Tente novamente em ${secondsLeft}s.`);
+      timer = setInterval(() => {
+        setSecondsLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (isBlocked && secondsLeft === 0) {
+      setIsBlocked(false);
+      setError("");
+      window.location.href = "/login/esqueceu-senha";
+    }
+    return () => clearInterval(timer);
+  }, [isBlocked, secondsLeft]);
 
   useEffect(() => {
     if (session) {
@@ -105,7 +136,7 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label
               htmlFor="senha"
               className="block text-sm font-medium text-gray-400 mb-1"
@@ -114,16 +145,27 @@ export default function Login() {
             </label>
             <input
               id="senha"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Digite sua senha"
-              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
+              className="w-full px-4 py-3 pr-10 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-gray-400 hover:text-gray-200"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
-          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm font-medium text-center">
+              {error}
+            </p>
+          )}
 
           <div className="text-right">
             <Link
@@ -137,11 +179,15 @@ export default function Login() {
           <button
             type="submit"
             className={`w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all ${
-              isLoading ? "opacity-50 cursor-not-allowed" : ""
+              isLoading || isBlocked ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            disabled={isLoading}
+            disabled={isLoading || isBlocked}
           >
-            {isLoading ? "Entrando..." : "Entrar"}
+            {isLoading
+              ? "Entrando..."
+              : isBlocked
+              ? "Bloqueado"
+              : "Entrar"}
           </button>
         </form>
 
