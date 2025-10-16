@@ -5,6 +5,7 @@ import Link from "next/link";
 import { validateForm, validateCPF, validateEmail } from "@/utils/validators";
 import { useSession, signIn, getSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 
 type FormData = {
   nome: string;
@@ -61,6 +62,12 @@ export default function CriarConta() {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const senhaValidaTamanho = form.senha.length >= 8;
+  const senhaValidaEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(form.senha);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -114,10 +121,23 @@ export default function CriarConta() {
       cpf: form.cpf,
     });
 
-    if (!senha) validationErrors.senha = "A senha é obrigatória.";
-    if (!confirmaSenha) validationErrors.confirmaSenha = "Confirme sua senha.";
-    if (senha && confirmaSenha && senha !== confirmaSenha)
+    // Verificação da senha
+    if (!senha) {
+      validationErrors.senha = "A senha é obrigatória.";
+    } else {
+      if (senha.length < 8) {
+        validationErrors.senha = "A senha deve ter no mínimo 8 caracteres.";
+      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
+        validationErrors.senha =
+          "A senha deve conter pelo menos um caractere especial.";
+      }
+    }
+
+    if (!confirmaSenha) {
+      validationErrors.confirmaSenha = "Confirme sua senha.";
+    } else if (senha && confirmaSenha && senha !== confirmaSenha) {
       validationErrors.confirmaSenha = "As senhas não coincidem.";
+    }
 
     if (!validateCPF(form.cpf)) {
       validationErrors.cpf =
@@ -157,7 +177,6 @@ export default function CriarConta() {
       const data: { message?: string } = await res.json();
 
       if (res.ok) {
-        // Login automático após cadastro bem-sucedido
         const loginRes = await signIn("credentials", {
           redirect: false,
           email: form.email,
@@ -165,12 +184,9 @@ export default function CriarConta() {
         });
 
         if (loginRes?.ok) {
-          // Aguarda a sessão ser atualizada
           await getSession();
-          // Força reload da página para garantir que a sessão seja atualizada
           window.location.href = "/";
         } else {
-          // Se o login automático falhar, redireciona para a página de login
           window.location.href = "/login";
         }
       } else {
@@ -215,16 +231,69 @@ export default function CriarConta() {
               >
                 {label}
               </label>
-              <input
-                id={id}
-                name={id}
-                type={type}
-                placeholder={placeholder}
-                className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
-                value={form[id as keyof FormData]}
-                onChange={handleChange}
-                required
-              />
+              <div className="relative">
+                <input
+                  id={id}
+                  name={id}
+                  type={
+                    id === "senha"
+                      ? showPassword
+                        ? "text"
+                        : "password"
+                      : id === "confirmaSenha"
+                      ? showConfirmPassword
+                        ? "text"
+                        : "password"
+                      : type
+                  }
+                  placeholder={placeholder}
+                  className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500 pr-10"
+                  value={form[id as keyof FormData]}
+                  onChange={handleChange}
+                  required
+                />
+                {(id === "senha" || id === "confirmaSenha") && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      id === "senha"
+                        ? setShowPassword(!showPassword)
+                        : setShowConfirmPassword(!showConfirmPassword)
+                    }
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                  >
+                    {id === "senha"
+                      ? showPassword
+                        ? <EyeOff size={20} />
+                        : <Eye size={20} />
+                      : showConfirmPassword
+                      ? <EyeOff size={20} />
+                      : <Eye size={20} />}
+                  </button>
+                )}
+              </div>
+
+              {/* Checklist de senha */}
+              {id === "senha" && (
+                <div className="mt-2 text-xs text-gray-400 space-y-1">
+                  <p
+                    className={`${
+                      senhaValidaTamanho ? "text-green-400" : "text-gray-500"
+                    }`}
+                  >
+                    {senhaValidaTamanho ? "✔" : "✖"} Mínimo de 8 caracteres
+                  </p>
+                  <p
+                    className={`${
+                      senhaValidaEspecial ? "text-green-400" : "text-gray-500"
+                    }`}
+                  >
+                    {senhaValidaEspecial ? "✔" : "✖"} Pelo menos um caractere
+                    especial
+                  </p>
+                </div>
+              )}
+
               {errors[id as keyof ValidationErrors] && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors[id as keyof ValidationErrors]}
