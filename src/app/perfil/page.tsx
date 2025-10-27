@@ -175,7 +175,7 @@ export default function PerfilPage() {
     );
   }
   return (
-    <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-gray-900 dark:text-white">
+    <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-white">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">
           Perfil
@@ -205,12 +205,12 @@ export default function PerfilPage() {
               />
 
             ) : (
-              <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">
-                <UserCircle
-                  className="text-gray-400 dark:text-gray-500"
-                  size={90}
-                />
-              </div>
+              <div className="flex items-center justify-center h-full bg-gray-700">
+                  <UserCircle
+                    className="text-gray-500"
+                    size={90}
+                  />
+                </div>
             )}
 
             <input
@@ -224,22 +224,22 @@ export default function PerfilPage() {
 
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-extrabold mb-1">{session?.user?.name || "Visitante"}</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+            <p className="text-sm text-gray-700 mb-4">
               {session?.user?.email || "Faça login para continuar"}
             </p>
 
             {session && (
-              <div className="bg-white/60 dark:bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
-                <div className="text-lg font-semibold text-white dark:text-white">
+              <div className="bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
+                <div className="text-lg font-semibold text-gray-900">
                   {titulo}
                 </div>
                 {proximo && (
                   <>
-                    <p className="text-sm text-white dark:text-white">
+                    <p className="text-sm text-white">
                       Faltam <strong>{restante}</strong> cupons para virar{" "}
                       <strong>{proximo}</strong>
                     </p>
-                    <div className="w-full bg-white/70 dark:bg-black/40 h-3 rounded-full overflow-hidden">
+                    <div className="w-full bg-black/40 h-3 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
@@ -300,7 +300,7 @@ export default function PerfilPage() {
               className="w-full max-w-md bg-gradient-to-tr from-[#292929]/85 to-black/65 p-6 rounded-2xl shadow-lg"
             >
               <form onSubmit={handleUpdate}>
-              <h2 className="text-xl font-bold mb-5 text-center text-gray-800 dark:text-white">
+              <h2 className="text-xl font-bold mb-5 text-center text-white">
                 Editar Perfil
               </h2>
               <div className="space-y-4">
@@ -308,7 +308,7 @@ export default function PerfilPage() {
                   type="text"
                   placeholder="Nome"
                   defaultValue={nomeEdit}
-                  className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
                   onChange={(e)=>setNomeEdit(e.target.value)}
                   required
                 />
@@ -317,14 +317,14 @@ export default function PerfilPage() {
                   placeholder="Email"
                   defaultValue={emailEdit}
                   onChange={(e)=>setEmailEdit(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
                   required
                 />
               </div>
               <div className="mt-6 flex justify-between">
                 <button
                   onClick={() => setModalAberto(false)}
-                  className="px-5 py-2 rounded-xl bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600 transition font-semibold"
+                  className="px-5 py-2 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition font-semibold"
                 >
                   Cancelar
                 </button>

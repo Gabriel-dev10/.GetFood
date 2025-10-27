@@ -11,7 +11,7 @@ export default function LoadingSkeleton() {
       <div className="w-7 h-7 rounded-full border-2 border-t-transparent border-[#4E2010] animate-spin" />
 
       {/* bloco de texto curto com pulse */}
-      <div className="w-14 h-3 bg-gray-200 dark:bg-zinc-700 rounded animate-pulse" />
+      <div className="w-14 h-3 bg-zinc-700 rounded animate-pulse" />
     </div>
   );
 }
