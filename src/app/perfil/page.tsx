@@ -224,13 +224,13 @@ export default function PerfilPage() {
 
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-extrabold mb-1">{session?.user?.name || "Visitante"}</h2>
-            <p className="text-sm text-gray-700 mb-4">
+            <p className="text-sm text-white mb-4">
               {session?.user?.email || "Faça login para continuar"}
             </p>
 
             {session && (
               <div className="bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-white">
                   {titulo}
                 </div>
                 {proximo && (

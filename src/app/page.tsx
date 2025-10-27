@@ -15,6 +15,7 @@ import UserBadge from "../components/UserBadge";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import InfoModal from "../components/InfoModal";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Página inicial do sistema GBC Coffee.
@@ -27,6 +28,7 @@ import { motion } from "framer-motion";
  */
 export default function Inicio() {
   const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
   const [showInfo, setShowInfo] = useState(false);
   const [abaAtiva, setAbaAtiva] = useState<"Sobre" | "Horario" | "Pagamento">(
     "Sobre"
@@ -41,6 +43,17 @@ export default function Inicio() {
     Sábado: "07:00 às 13:00",
     Domingo: "Fechado",
   };
+
+  // Verifica se deve abrir o modal de contato ao carregar
+  useEffect(() => {
+    const contato = searchParams.get("contato");
+    if (contato === "true") {
+      setAbaAtiva("Sobre");
+      setShowInfo(true);
+      // Remove o parâmetro da URL sem recarregar a página
+      window.history.replaceState({}, "", "/");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (showInfo) {
@@ -92,10 +105,11 @@ export default function Inicio() {
       >
         <button
           onClick={() => setShowInfo(true)}
-          className="text-[#4E2010] hover:text-white flex items-center gap-1 text-xs font-bold transition"
+          className="flex items-center gap-2 text-sm font-semibold text-[#4E2010] px-3 py-2 rounded-lg transition-all duration-300 hover:text-white hover:bg-[#4E2010]"
+          aria-label="Informações"
         >
-          <Info size={18} />
-          Info
+          <Info size={18} strokeWidth={2} />
+          <span>Info</span>
         </button>
 
         <h1 className="text-[#4E2010] absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
@@ -162,7 +176,12 @@ export default function Inicio() {
         <BarraHorizontal />
       </motion.div>
 
-      <Footer />
+      <Footer 
+        onContatoClick={() => {
+          setAbaAtiva("Sobre");
+          setShowInfo(true);
+        }}
+      />
       <NavBottom />
     </main>
   );
