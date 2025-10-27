@@ -33,7 +33,7 @@ export default function PagPontos() {
   }
 
   return (
-    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative text-gray-900 dark:text-white">
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative text-white">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl text-amber-950 font-bold text-center flex-1">
           Painel de Recompensas
@@ -44,7 +44,7 @@ export default function PagPontos() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-gradient-to-tr from-[#292929]/85 to-black/65 p-7 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
+        className="bg-black/30 p-7 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
       >
         <div className="flex justify-between items-center mb-4">
           <div>
@@ -54,20 +54,16 @@ export default function PagPontos() {
                 {session?.user?.name ?? "Usuário"}
               </span>
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Nível {nivel}
-            </p>
+            <p className="text-sm text-gray-300">Nível {nivel}</p>
           </div>
           <div className="text-right">
-            <span className="text-xs text-gray-600 dark:text-gray-300">
-              Pontos
-            </span>
+            <span className="text-xs text-gray-300">Pontos</span>
             <p className="text-2xl font-extrabold text-green-500">{pontos}</p>
             <p className="text-xs mb-1">Válido até {validade}</p>
           </div>
         </div>
 
-        <div className="w-full h-3 bg-white/50 dark:bg-black/30 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-black/30 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-green-500"
             initial={{ width: 0 }}
@@ -75,7 +71,7 @@ export default function PagPontos() {
             transition={{ duration: 1 }}
           />
         </div>
-        <p className="text-xs text-right mt-1 text-gray-600 dark:text-gray-300">
+        <p className="text-xs text-right mt-1 text-gray-300">
           {progresso.toFixed(1)}% até o próximo nível ({meta} pontos)
         </p>
       </motion.section>
@@ -130,13 +126,13 @@ export default function PagPontos() {
           ].map((achieve, i) => (
             <motion.div
               key={i}
-              className="flex items-center gap-4 p-4 bg-gradient-to-tr from-[#292929]/85 to-black/60 rounded-xl shadow"
+              className="flex items-center gap-4 p-4 bg-black/60 rounded-xl shadow"
               whileHover={{ scale: 1.03 }}
             >
               <div className="text-3xl">{achieve.icon}</div>
               <div>
                 <p className="font-bold">{achieve.title}</p>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-sm text-gray-400">
                   {achieve.desc}
                 </span>
               </div>
@@ -157,12 +153,12 @@ export default function PagPontos() {
           ].map((promo, i) => (
             <motion.div
               key={i}
-              className="bg-gradient-to-tr from-[#292929]/85 to-black/60 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
+              className="bg-black/60 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
               whileHover={{ scale: 1.03 }}
             >
               <div className="p-3 text-sm">
                 <p className="font-bold mb-1">{promo.title}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <p className="text-xs text-gray-400 flex items-center gap-1">
                   <Gift size={14} aria-label="Ícone de presente" />{" "}
                   {promo.points} pontos
                 </p>
