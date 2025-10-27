@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
@@ -14,11 +14,23 @@ export default function RedefinirSenha() {
   const router = useRouter();
   const { data: session } = useSession();
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Tenta pegar o parâmetro 'token' da URL
+    const tokenDaUrl = searchParams.get('token');
+
+    if (tokenDaUrl) {
+      // Se encontrou o token na URL, atualiza o estado 'codigo'
+      setCodigo(tokenDaUrl);
+    }
+  }, [searchParams]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!novaSenha.trim() || !confirmarSenha.trim() || !codigo.trim()) {
-      setError('Preencha todos os campos.');
+      setError('Preencha todos os campos. Se o código não apareceu, use o link do e-mail.');
       return;
     }
 
@@ -29,19 +41,31 @@ export default function RedefinirSenha() {
 
     setError('');
 
-    const res = await fetch('/api/auth/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ novaSenha, codigo }),
-    });
+    // 👇 INÍCIO DOS AJUSTES
+    try {
+      // AJUSTE 1: Corrigir a URL da API
+      const res = await fetch('/api/auth/redefine-senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // AJUSTE 2: Mapear os estados do frontend para os nomes que o backend espera
+        body: JSON.stringify({
+          token: codigo,
+          password: novaSenha,
+          passwordConfirmation: confirmarSenha,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      setMostrarPopup(true);
-    } else {
-      setError(data?.message || 'Erro ao redefinir senha. Verifique o código.');
+      if (res.ok) {
+        setMostrarPopup(true);
+      } else {
+        setError(data?.error || 'Erro ao redefinir senha. Verifique o código.');
+      }
+    } catch (e) {
+      setError("Erro ao conectar com o servidor. Tente novamente.")
     }
+    // 👆 FIM DOS AJUSTES
   };
 
   const voltarParaLogin = () => {
@@ -52,8 +76,9 @@ export default function RedefinirSenha() {
     if (session) {
       router.replace("/");
     }
-  });
+  }, [session, router]); // Adicionadas dependências ao useEffect
 
+  // O resto do seu JSX permanece exatamente o mesmo, pois está perfeito!
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-6">
       <motion.div
@@ -115,7 +140,7 @@ export default function RedefinirSenha() {
               placeholder="Insira o código"
               className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a]/80 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
               value={codigo}
-              onChange={e => setCodigo(e.target.value)}
+              readOnly
               required
             />
           </div>
