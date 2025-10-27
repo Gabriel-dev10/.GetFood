@@ -63,7 +63,7 @@ export default function RedefinirSenha() {
         setError(data?.error || 'Erro ao redefinir senha. Verifique o código.');
       }
     } catch (e) {
-      setError("Erro ao conectar com o servidor. Tente novamente.")
+      setError( `${e}. Erro ao conectar com o servidor. Tente novamente.`)
     }
     // 👆 FIM DOS AJUSTES
   };
