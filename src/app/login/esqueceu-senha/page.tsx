@@ -11,6 +11,7 @@ export default function EsqueceuSenha() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // <-- NOVO ESTADO
   const { data: session } = useSession();
 
   const lidarComEsqueceuSenha = async (
@@ -18,40 +19,35 @@ export default function EsqueceuSenha() {
   ) => {
     event.preventDefault();
 
-    if (!email) {
-      setError("Por favor, preencha o e-mail.");
-      setSuccess("");
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setError("Digite um e-mail válido.");
+    if (!email || !validateEmail(email)) {
+      setError("Por favor, digite um e-mail válido.");
       setSuccess("");
       return;
     }
 
     setError("");
     setSuccess("");
+    setIsSubmitting(true); // <-- Desabilita o botão
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await fetch("/api/auth/esqueceu-senha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        setSuccess("Código enviado para seu e-mail!");
-        setTimeout(() => {
-          router.push("/login/redefinir-senha");
-        }, 1500);
+        setSuccess(
+          "Se uma conta com este e-mail existir, um link de redefinição foi enviado. Verifique sua caixa de entrada e spam."
+        );
       } else {
-        setError(data?.message || "Erro ao enviar código. Tente novamente.");
+        const data = await res.json();
+        setError(data?.error || "Erro ao enviar código. Tente novamente.");
       }
     } catch {
       setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
+    } finally {
+        setIsSubmitting(false); 
     }
   };
 
@@ -59,7 +55,7 @@ export default function EsqueceuSenha() {
     if (session) {
       router.replace("/");
     }
-  });
+  }, [session, router]); // <-- Adicionadas dependências
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-gradient-to-tr from-[#1a1a1a] to-black">
@@ -97,7 +93,8 @@ export default function EsqueceuSenha() {
               placeholder="Digite seu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
+              disabled={isSubmitting}
+              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500 disabled:opacity-50"
             />
           </div>
 
@@ -108,9 +105,10 @@ export default function EsqueceuSenha() {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all"
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-[#ff7043] to-[#ff5722] hover:from-[#ff5722] hover:to-[#e64a19] text-white font-semibold py-3 rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Enviar Código
+            {isSubmitting ? "Enviando..." : "Enviar Código"}
           </button>
         </form>
 
