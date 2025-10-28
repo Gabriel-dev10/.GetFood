@@ -22,7 +22,7 @@ export default function UserBadge({
           alt={name ?? "Avatar"}
           width={36}
           height={36}
-          className="rounded-full object-cover border border-gray-300 group-hover:border-[#ff7043] transition"
+          className="rounded-full object-cover border border-[#4E2010] group-hover:border-white transition"
           style={{ width: "36px", height: "36px", objectFit: "cover" }}
         />
       ) : (
@@ -31,7 +31,7 @@ export default function UserBadge({
         </div>
       )}
 
-      <span className="text-sm font-medium text-gray-700 group-hover:text-[#ff7043] transition hidden sm:block">
+      <span className="text-sm font-medium text-[#4E2010] group-hover:text-white transition hidden sm:block">
         {name ?? "Usuário"}
       </span>
     </Link>

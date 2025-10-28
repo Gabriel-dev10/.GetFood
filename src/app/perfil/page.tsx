@@ -186,7 +186,7 @@ export default function PerfilPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-gradient-to-tr from-[#292929]/84 to-black/65 p-8 mt-8 rounded-2xl shadow-lg w-full"
+        className="bg-black/50 p-8 mt-8 rounded-2xl shadow-lg w-full"
       >
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div
@@ -229,7 +229,7 @@ export default function PerfilPage() {
             </p>
 
             {session && (
-              <div className="bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
+              <div className="bg-black/50 rounded-xl py-4 px-6 shadow-inner space-y-3">
                 <div className="text-lg font-semibold text-white">
                   {titulo}
                 </div>
@@ -239,7 +239,7 @@ export default function PerfilPage() {
                       Faltam <strong>{restante}</strong> cupons para virar{" "}
                       <strong>{proximo}</strong>
                     </p>
-                    <div className="w-full bg-black/40 h-3 rounded-full overflow-hidden">
+                    <div className="w-full bg-black/50 h-3 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
@@ -248,7 +248,7 @@ export default function PerfilPage() {
                           )}%`,
                         }}
                         transition={{ duration: 0.8 }}
-                        className="h-full bg-green-500"
+                        className="h-full bg-[#4E2010]"
                       />
                     </div>
                   </>

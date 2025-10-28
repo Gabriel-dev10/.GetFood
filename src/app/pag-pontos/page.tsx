@@ -26,16 +26,16 @@ export default function PagPontos() {
 
   if (status === "loading") {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+      <main className="min-h-screen flex items-center justify-center bg-[#C9A882]">
         <Loader2 className="animate-spin text-[#4E2010]" size={60} />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative text-white">
+    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl text-amber-950 font-bold text-center flex-1">
+        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1 uppercase tracking-wide">
           Painel de Recompensas
         </h1>
       </div>
@@ -44,53 +44,54 @@ export default function PagPontos() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-black/30 p-7 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
+        className="bg-black/50 p-7 rounded-2xl shadow-lg mb-10 relative overflow-hidden"
       >
         <div className="flex justify-between items-center mb-4">
           <div>
-            <p className="text-xl font-bold">
+            <p className="text-xl font-bold text-white">
               Olá,{" "}
-              <span className="text-[#DCBD8F]">
-                {session?.user?.name ?? "Usuário"}
+              <span className="text-[#C9A882]">
+                {session?.user?.name ?? "User"}!
               </span>
+              
             </p>
-            <p className="text-sm text-gray-300">Nível {nivel}</p>
+            <p className="text-sm text-white/80">Nível {nivel}</p>
           </div>
           <div className="text-right">
-            <span className="text-xs text-gray-300">Pontos</span>
-            <p className="text-2xl font-extrabold text-green-500">{pontos}</p>
-            <p className="text-xs mb-1">Válido até {validade}</p>
+            <span className="text-xs text-white/70">Pontos</span>
+            <p className="text-3xl font-extrabold text-[#4E2010]">{pontos}</p>
+            <p className="text-xs text-white/70">Válido até {validade}</p>
           </div>
         </div>
 
-        <div className="w-full h-3 bg-black/30 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-gradient-to-r from-[#1A1A1A] to-[#2A2A2A] rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-green-500"
+            className="h-full bg-[#8B4513]"
             initial={{ width: 0 }}
             animate={{ width: `${progresso}%` }}
             transition={{ duration: 1 }}
           />
         </div>
-        <p className="text-xs text-right mt-1 text-gray-300">
+        <p className="text-xs text-right mt-1 text-white/70">
           {progresso.toFixed(1)}% até o próximo nível ({meta} pontos)
         </p>
       </motion.section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">
-          RESGATAR CUPOM
+        <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
+          Resgatar Cupom
         </h2>
-        <div className="flex flex-col sm:flex-row w-full max-w-xl bg-gradient-to-tr from-[#292929]/65 to-black/85 rounded-2xl sm:rounded-full shadow p-2 gap-2">
+        <div className="flex flex-col sm:flex-row w-full max-w-xl bg-black/50 rounded-2xl sm:rounded-full shadow p-2 gap-2">
           <input
             type="text"
-            placeholder="RESGATE SEU CUPOM"
-            className="w-full flex-1 bg-white/20 text-gray-200 placeholder-gray-200 px-4 py-3 rounded-full focus:outline-none"
+            placeholder="CADASTRE O CÓDIGO DO CUPOM"
+            className="w-full flex-1 bg-black/70 text-white placeholder-white/70 px-4 py-3 rounded-full focus:outline-none text-sm"
           />
           <div className="flex gap-2 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none bg-[#3c1c11] hover:bg-[#2a120c] text-white text-sm font-bold px-4 py-2 rounded-full transition">
-              ENVIAR
+            <button className="flex-1 sm:flex-none bg-[#4E2010] hover:bg-[#3c1c11] text-white text-sm font-bold px-6 py-3 rounded-full transition uppercase">
+              Enviar
             </button>
-            <button className="bg-[#3c1c11]/70 hover:bg-[#2a120c] text-white p-3 rounded-full transition flex items-center justify-center">
+            <button className="hover:bg-black/50 text-white p-3 rounded-full transition flex items-center justify-center">
               <ScanLine size={22} />
             </button>
           </div>
@@ -98,15 +99,15 @@ export default function PagPontos() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">
-          CONQUISTAS RECENTES
+        <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
+          Conquistas Recentes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
               icon: (
                 <Flame
-                  className="text-red-500"
+                  className="text-[#FF6347]"
                   aria-label="Conquista: Combo Semanal"
                 />
               ),
@@ -116,7 +117,7 @@ export default function PagPontos() {
             {
               icon: (
                 <TrendingUp
-                  className="text-blue-500"
+                  className="text-white"
                   aria-label="Conquista: Fidelidade Ouro"
                 />
               ),
@@ -126,13 +127,13 @@ export default function PagPontos() {
           ].map((achieve, i) => (
             <motion.div
               key={i}
-              className="flex items-center gap-4 p-4 bg-black/60 rounded-xl shadow"
+              className="flex items-center gap-4 p-4 bg-black/50 rounded-xl shadow-lg"
               whileHover={{ scale: 1.03 }}
             >
               <div className="text-3xl">{achieve.icon}</div>
               <div>
-                <p className="font-bold">{achieve.title}</p>
-                <span className="text-sm text-gray-400">
+                <p className="font-bold text-white">{achieve.title}</p>
+                <span className="text-sm text-white/70">
                   {achieve.desc}
                 </span>
               </div>
@@ -142,23 +143,23 @@ export default function PagPontos() {
       </section>
 
       <section className="mb-10">
-        <h2 className="text-lg text-amber-950 font-bold mb-4">
-          RECOMPENSAS DISPONÍVEIS
+        <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
+          Recompensas Disponíveis
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
-            { title: "10% de Desconto", points: 10000 },
+            { title: "10% de desconto", points: 1000 },
             { title: "Café Grátis", points: 1000 },
-            { title: "Ganhe um Combo", points: 20000 },
+            { title: "Ganhe um Combo", points: 2000 },
           ].map((promo, i) => (
             <motion.div
               key={i}
-              className="bg-black/60 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
+              className="bg-black/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
               whileHover={{ scale: 1.03 }}
             >
-              <div className="p-3 text-sm">
-                <p className="font-bold mb-1">{promo.title}</p>
-                <p className="text-xs text-gray-400 flex items-center gap-1">
+              <div className="p-4 text-sm">
+                <p className="font-bold mb-2 text-white">{promo.title}</p>
+                <p className="text-xs text-white/70 flex items-center gap-1">
                   <Gift size={14} aria-label="Ícone de presente" />{" "}
                   {promo.points} pontos
                 </p>
