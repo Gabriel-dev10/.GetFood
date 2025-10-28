@@ -18,23 +18,23 @@ import Image from "next/image";
  */
 export default function PerfilPage() {
   const { data: session, status, update } = useSession();
-  const [foto, setFoto] = useState<string | null>(null);  
+  const [foto, setFoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [timestamp, setTimestamp] = useState(Date.now());
-  const [nomeEdit, setNomeEdit]= useState('');
-  const [emailEdit, setEmailEdit]= useState(''); 
-  const [error, setError] = useState('');
+  const [nomeEdit, setNomeEdit] = useState("");
+  const [emailEdit, setEmailEdit] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const cuponsUsados = 35;
-  
+
   // sempre que a session mudar, atualiza o estado
   useEffect(() => {
     if (session?.user) {
       setFoto(session.user.image || null);
-      setNomeEdit(session.user.name || '');
-      setEmailEdit(session.user.email || '');
+      setNomeEdit(session.user.name || "");
+      setEmailEdit(session.user.email || "");
     }
   }, [session]);
 
@@ -81,7 +81,8 @@ export default function PerfilPage() {
     };
   };
 
-  const { titulo, restante, proximo, total } = getTituloFidelidade(cuponsUsados);
+  const { titulo, restante, proximo, total } =
+    getTituloFidelidade(cuponsUsados);
 
   /**
    * Abre o seletor de arquivo para alterar a foto de perfil.
@@ -95,65 +96,72 @@ export default function PerfilPage() {
    */
   const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return
+    if (!file) return;
 
-    const formData = new FormData()
-    formData.append('file', file)
+    const formData = new FormData();
+    formData.append("file", file);
 
     try {
-      const res= await fetch('/api/upload', {
-        method: 'POST',
+      const res = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
-      })
+      });
 
-      if (!res.ok) throw new Error ('Falha no upload')
+      if (!res.ok) throw new Error("Falha no upload");
       const data = await res.json();
 
-      await update();
-      setTimestamp(Date.now()); // ← Força recarregamento
+      // Primeiro atualiza o estado local
       setFoto(data.url);
+      setTimestamp(Date.now()); // ← Força recarregamento
 
-    } catch(error){
-        console.error('Erro ao enviar imagem: ', error)
+      // Depois atualiza a sessão
+      await update({
+        user: {
+          name: session?.user?.name,
+          email: session?.user?.email,
+          image: data.url, // ← URL nova da foto
+        },
+      });
+    } catch (error) {
+      console.error("Erro ao enviar imagem: ", error);
     }
   };
 
-   const handleUpdate = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     if (!nomeEdit || !emailEdit) {
-      setError('Preencha todos os campos');
+      setError("Preencha todos os campos");
       setLoading(false);
       return error;
     }
 
     if (!validateEmail(emailEdit)) {
-      setError('Digite um E-mail válido!');
+      setError("Digite um E-mail válido!");
       setLoading(false);
       return error;
     }
 
-    setError('');
+    setError("");
 
     try {
-      const res = await fetch('/api/update', {
-        method: 'PATCH',
+      const res = await fetch("/api/update", {
+        method: "PATCH",
         body: JSON.stringify({ nome: nomeEdit, email: emailEdit }),
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
-      
+
       const data = await res.json();
 
       if (res.ok) {
-        
         // Atualiza a sessão com os NOVOS dados
         await update({
           user: {
-            name: nomeEdit,    // ← Dados NOVOS
-            email: emailEdit,  // ← Dados NOVOS
-            image: session?.user?.image // Mantém a imagem existente
-          }
+            name: nomeEdit, // ← Dados NOVOS
+            email: emailEdit, // ← Dados NOVOS
+            image: session?.user?.image, // Mantém a imagem existente
+          },
         });
         setModalAberto(false);
       } else {
@@ -161,7 +169,7 @@ export default function PerfilPage() {
       }
     } catch (error) {
       setError("Erro de conexão");
-      console.error('Erro ao atualizar:', error);
+      console.error("Erro ao atualizar:", error);
     } finally {
       setLoading(false);
     }
@@ -195,22 +203,19 @@ export default function PerfilPage() {
           >
             {foto ? (
               <Image
-                src={`/uploads/profile/${encodeURIComponent(foto.split('/').pop()!) }?t=${timestamp}`}
+                src={`${foto}?t=${timestamp}`}
                 alt="Foto de perfil"
                 fill
                 className="object-cover"
-                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = "/default-profile.png";
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src =
+                    "/default-profile.png";
                 }}
               />
-
             ) : (
               <div className="flex items-center justify-center h-full bg-gray-700">
-                  <UserCircle
-                    className="text-gray-500"
-                    size={90}
-                  />
-                </div>
+                <UserCircle className="text-gray-500" size={90} />
+              </div>
             )}
 
             <input
@@ -223,16 +228,16 @@ export default function PerfilPage() {
           </div>
 
           <div className="text-center md:text-left">
-            <h2 className="text-3xl font-extrabold mb-1">{session?.user?.name || "Visitante"}</h2>
+            <h2 className="text-3xl font-extrabold mb-1">
+              {session?.user?.name || "Visitante"}
+            </h2>
             <p className="text-sm text-white mb-4">
               {session?.user?.email || "Faça login para continuar"}
             </p>
 
             {session && (
               <div className="bg-black/30 rounded-xl py-4 px-6 shadow-inner space-y-3">
-                <div className="text-lg font-semibold text-white">
-                  {titulo}
-                </div>
+                <div className="text-lg font-semibold text-white">{titulo}</div>
                 {proximo && (
                   <>
                     <p className="text-sm text-white">
@@ -263,8 +268,8 @@ export default function PerfilPage() {
             <button
               onClick={() => {
                 setModalAberto(true);
-                setEmailEdit(session?.user?.email || '');
-                setNomeEdit(session.user?.name || '');
+                setEmailEdit(session?.user?.email || "");
+                setNomeEdit(session.user?.name || "");
               }}
               className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
             >
@@ -300,45 +305,45 @@ export default function PerfilPage() {
               className="w-full max-w-md bg-gradient-to-tr from-[#292929]/85 to-black/65 p-6 rounded-2xl shadow-lg"
             >
               <form onSubmit={handleUpdate}>
-              <h2 className="text-xl font-bold mb-5 text-center text-white">
-                Editar Perfil
-              </h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Nome"
-                  defaultValue={nomeEdit}
-                  className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
-                  onChange={(e)=>setNomeEdit(e.target.value)}
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  defaultValue={emailEdit}
-                  onChange={(e)=>setEmailEdit(e.target.value)}
-                  className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
-                  required
-                />
-              </div>
-              <div className="mt-6 flex justify-between">
-                <button
-                  onClick={() => setModalAberto(false)}
-                  className="px-5 py-2 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition font-semibold"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold disabled:opacity-50"
-                >
-                  {loading ? (
-                    <Loader2 className="animate-spin inline w-4 h-4 mr-2" />
-                  ) : null}
-                  {loading ? 'Salvando...' : 'Salvar'}
-                </button>
-              </div>
+                <h2 className="text-xl font-bold mb-5 text-center text-white">
+                  Editar Perfil
+                </h2>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Nome"
+                    defaultValue={nomeEdit}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
+                    onChange={(e) => setNomeEdit(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    defaultValue={emailEdit}
+                    onChange={(e) => setEmailEdit(e.target.value)}
+                    className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
+                    required
+                  />
+                </div>
+                <div className="mt-6 flex justify-between">
+                  <button
+                    onClick={() => setModalAberto(false)}
+                    className="px-5 py-2 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition font-semibold"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="animate-spin inline w-4 h-4 mr-2" />
+                    ) : null}
+                    {loading ? "Salvando..." : "Salvar"}
+                  </button>
+                </div>
               </form>
             </motion.div>
           </motion.div>
@@ -346,10 +351,10 @@ export default function PerfilPage() {
       </AnimatePresence>
 
       {!session && (
-              <div>
-                <PopupLogin />  
-              </div>
-            )}
-          </main>
-        );
+        <div>
+          <PopupLogin />
+        </div>
+      )}
+    </main>
+  );
 }
