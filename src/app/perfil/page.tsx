@@ -94,10 +94,19 @@ export default function PerfilPage() {
    *
    * @param e - Evento de alteração do input de arquivo
    */
+
+
+  // DAQUI PRA BAIXO FOI EDITADO - PARA AJUSTAR O UPLOAD DA IMAGEM
+
   const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Cria URL temporária para preview imediato
+    const previewUrl = URL.createObjectURL(file);
+    setFoto(previewUrl);
+
+    // Agora faz o upload para o servidor
     const formData = new FormData();
     formData.append("file", file);
 
@@ -110,23 +119,26 @@ export default function PerfilPage() {
       if (!res.ok) throw new Error("Falha no upload");
       const data = await res.json();
 
-      // Primeiro atualiza o estado local
+      // Atualiza com a URL real do servidor
       setFoto(data.url);
-      setTimestamp(Date.now()); // ← Força recarregamento
+      setTimestamp(Date.now());
 
-      // Depois atualiza a sessão
+      // Atualiza a sessão
       await update({
         user: {
           name: session?.user?.name,
           email: session?.user?.email,
-          image: data.url, // ← URL nova da foto
+          image: data.url,
         },
       });
     } catch (error) {
       console.error("Erro ao enviar imagem: ", error);
+      // Se falhar, mantém a URL temporária do preview
     }
   };
 
+  // FIM DA EDIÇÃO
+  
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -203,13 +215,14 @@ export default function PerfilPage() {
           >
             {foto ? (
               <Image
-                src={`${foto}?t=${timestamp}`}
+                src={foto.startsWith("blob:") ? foto : `${foto}?t=${timestamp}`}
                 alt="Foto de perfil"
                 fill
+                unoptimized={foto.startsWith("blob:")}
                 className="object-cover"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src =
-                    "/default-profile.png";
+                onError={() => {
+                  console.error("Erro ao carregar imagem");
+                  setFoto(null);
                 }}
               />
             ) : (
