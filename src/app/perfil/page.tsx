@@ -7,7 +7,6 @@ import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
 import { validateEmail } from "@/utils/validators";
-import Image from "next/image";
 
 /**
  * Página de perfil do usuário.
@@ -95,18 +94,26 @@ export default function PerfilPage() {
    * @param e - Evento de alteração do input de arquivo
    */
 
-
   // DAQUI PRA BAIXO FOI EDITADO - PARA AJUSTAR O UPLOAD DA IMAGEM
 
   const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Cria URL temporária para preview imediato
+    if (!file.type.startsWith("image/")) {
+      console.error("Por favor, selecione um arquivo de imagem válido");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      console.error("O arquivo deve ter menos de 5MB");
+      return;
+    }
+
     const previewUrl = URL.createObjectURL(file);
+    const previousFoto = foto;
     setFoto(previewUrl);
 
-    // Agora faz o upload para o servidor
     const formData = new FormData();
     formData.append("file", file);
 
@@ -116,14 +123,18 @@ export default function PerfilPage() {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Falha no upload");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Falha no upload");
+      }
+
       const data = await res.json();
 
-      // Atualiza com a URL real do servidor
+      URL.revokeObjectURL(previewUrl);
+
       setFoto(data.url);
       setTimestamp(Date.now());
 
-      // Atualiza a sessão
       await update({
         user: {
           name: session?.user?.name,
@@ -133,12 +144,13 @@ export default function PerfilPage() {
       });
     } catch (error) {
       console.error("Erro ao enviar imagem: ", error);
-      // Se falhar, mantém a URL temporária do preview
+      URL.revokeObjectURL(previewUrl);
+      setFoto(previousFoto);
     }
   };
 
   // FIM DA EDIÇÃO
-  
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -214,14 +226,13 @@ export default function PerfilPage() {
             className="cursor-pointer w-40 h-40 rounded-full relative overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
           >
             {foto ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={foto.startsWith("blob:") ? foto : `${foto}?t=${timestamp}`}
                 alt="Foto de perfil"
-                fill
-                unoptimized={foto.startsWith("blob:")}
-                className="object-cover"
+                className="w-full h-full object-cover"
                 onError={() => {
-                  console.error("Erro ao carregar imagem");
+                  console.error("Erro ao carregar imagem:", foto);
                   setFoto(null);
                 }}
               />
@@ -250,10 +261,7 @@ export default function PerfilPage() {
 
             {session && (
               <div className="bg-black/50 rounded-xl py-4 px-6 shadow-inner space-y-3">
-                <div className="text-lg font-semibold text-white">
-                  {titulo}
-                </div>
-
+                <div className="text-lg font-semibold text-white">{titulo}</div>
 
                 {proximo && (
                   <>

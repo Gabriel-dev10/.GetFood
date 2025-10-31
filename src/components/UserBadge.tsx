@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { UserRound } from "lucide-react";
 
@@ -17,11 +16,10 @@ export default function UserBadge({
       className="flex items-center gap-2 group cursor-pointer"
     >
       {image ? (
-        <Image
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={`${image}?v=${Date.now()}`}
           alt={name ?? "Avatar"}
-          width={36}
-          height={36}
           className="rounded-full object-cover border border-[#4E2010] group-hover:border-white transition"
           style={{ width: "36px", height: "36px", objectFit: "cover" }}
         />
