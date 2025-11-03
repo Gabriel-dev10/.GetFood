@@ -203,7 +203,7 @@ export default function PerfilPage() {
 
   const handleEncerrarConta = async (password: string) => {
     try {
-      const res = await fetch("/api/delete-account", {
+      const res = await fetch("/api/auth/deleta-conta", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
