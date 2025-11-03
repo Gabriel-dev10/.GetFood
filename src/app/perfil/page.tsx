@@ -6,6 +6,7 @@ import { UserCircle, PencilIcon, LogOut, Loader2 } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
+import EncerrarContaModal from "@/components/EncerrarContaModal";
 import { validateEmail } from "@/utils/validators";
 
 /**
@@ -20,6 +21,7 @@ export default function PerfilPage() {
   const [foto, setFoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalEncerrarAberto, setModalEncerrarAberto] = useState(false);
   const [timestamp, setTimestamp] = useState(Date.now());
   const [nomeEdit, setNomeEdit] = useState("");
   const [emailEdit, setEmailEdit] = useState("");
@@ -199,6 +201,27 @@ export default function PerfilPage() {
     }
   };
 
+  const handleEncerrarConta = async (password: string) => {
+    try {
+      const res = await fetch("/api/delete-account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        // Desloga e redireciona para a página inicial
+        await signOut({ callbackUrl: "/" });
+      } else {
+        const data = await res.json();
+        throw new Error(data?.message || "Erro ao encerrar conta");
+      }
+    } catch (error) {
+      console.error("Erro ao encerrar conta:", error);
+      throw error;
+    }
+  };
+
   if (status === "loading") {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
@@ -308,6 +331,12 @@ export default function PerfilPage() {
               <LogOut className="inline w-6 h-6 mr-2" />
               Sair
             </button>
+            <button
+              onClick={() => setModalEncerrarAberto(true)}
+              className="text-white flex items-center text-xs underline hover:text-red-500 transition"
+            >
+              Encerrar conta
+            </button>
           </div>
         )}
       </motion.section>
@@ -374,6 +403,13 @@ export default function PerfilPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <EncerrarContaModal
+        isOpen={modalEncerrarAberto}
+        onClose={() => setModalEncerrarAberto(false)}
+        onConfirm={handleEncerrarConta}
+        userName={session?.user?.name || undefined}
+      />
 
       {!session && (
         <div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RedefinirSenha() {
   const [novaSenha, setNovaSenha] = useState('');
@@ -11,10 +12,15 @@ export default function RedefinirSenha() {
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
   const [mostrarPopup, setMostrarPopup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
   const searchParams = useSearchParams();
+
+  const senhaValidaTamanho = novaSenha.length >= 8;
+  const senhaValidaEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(novaSenha);
 
   useEffect(() => {
     // Tenta pegar o parâmetro 'token' da URL
@@ -31,6 +37,17 @@ export default function RedefinirSenha() {
 
     if (!novaSenha.trim() || !confirmarSenha.trim() || !codigo.trim()) {
       setError('Preencha todos os campos. Se o código não apareceu, use o link do e-mail.');
+      return;
+    }
+
+    // Validação da senha
+    if (novaSenha.length < 8) {
+      setError('A senha deve ter no mínimo 8 caracteres.');
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(novaSenha)) {
+      setError('A senha deve conter pelo menos um caractere especial.');
       return;
     }
 
@@ -107,28 +124,64 @@ export default function RedefinirSenha() {
             <label className="block text-sm font-medium text-gray-400 mb-1">
               Nova Senha
             </label>
-            <input
-              type="password"
-              placeholder="Digite sua nova senha"
-              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a]/80 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
-              value={novaSenha}
-              onChange={e => setNovaSenha(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Digite sua nova senha"
+                className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a]/80 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500 pr-10"
+                value={novaSenha}
+                onChange={e => setNovaSenha(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            
+            {/* Checklist de senha */}
+            <div className="mt-2 text-xs text-gray-400 space-y-1">
+              <p
+                className={`${
+                  senhaValidaTamanho ? "text-green-400" : "text-gray-500"
+                }`}
+              >
+                {senhaValidaTamanho ? "✔" : "✖"} Mínimo de 8 caracteres
+              </p>
+              <p
+                className={`${
+                  senhaValidaEspecial ? "text-green-400" : "text-gray-500"
+                }`}
+              >
+                {senhaValidaEspecial ? "✔" : "✖"} Pelo menos um caractere especial
+              </p>
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
               Confirmar Nova Senha
             </label>
-            <input
-              type="password"
-              placeholder="Repita sua nova senha"
-              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a]/80 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500"
-              value={confirmarSenha}
-              onChange={e => setConfirmarSenha(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Repita sua nova senha"
+                className="w-full px-4 py-3 rounded-lg bg-[#2a2a2a]/80 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#ff7043] text-gray-200 placeholder-gray-500 pr-10"
+                value={confirmarSenha}
+                onChange={e => setConfirmarSenha(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           <div>
