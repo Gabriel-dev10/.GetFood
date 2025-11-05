@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "@zxing/browser": "^0.1.5",
     "bcryptjs": "^3.0.2",
     "framer-motion": "^12.16.0",
     "icons": "^1.0.0",
