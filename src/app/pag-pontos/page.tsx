@@ -21,6 +21,7 @@ export default function PagPontos() {
   const { data: session, status } = useSession();
   const [showScanner, setShowScanner] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [codigoCupom, setCodigoCupom] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
 
@@ -63,7 +64,6 @@ export default function PagPontos() {
   }, [showScanner]);
 
   const stopScanning = () => {
-
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       const tracks = stream.getTracks();
@@ -134,21 +134,43 @@ export default function PagPontos() {
         <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
           Resgatar Cupom
         </h2>
-        <div className="flex flex-col sm:flex-row w-full max-w-xl bg-black/50 rounded-2xl sm:rounded-full shadow p-2 gap-2">
-          <input
-            type="text"
-            placeholder="CADASTRE O CÓDIGO DO CUPOM"
-            className="w-full flex-1 bg-black/70 text-white placeholder-white/70 px-4 py-3 rounded-full focus:outline-none text-sm"
-          />
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none bg-[#4E2010] hover:bg-[#3c1c11] text-white text-sm font-bold px-6 py-3 rounded-full transition uppercase">
-              Enviar
-            </button>
+        <div className="bg-black/50 p-6 rounded-2xl shadow-lg space-y-4">
+          <div>
+            <h3 className="text-white font-semibold mb-3 text-sm">
+              Inserir Código do Cupom
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                placeholder="Digite o código do cupom"
+                value={codigoCupom}
+                onChange={(e) => setCodigoCupom(e.target.value.toUpperCase())}
+                className="w-full flex-1 bg-black/70 text-white placeholder-white/50 px-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-[#C9A882] text-sm uppercase"
+              />
+              <button className="bg-[#4E2010] hover:bg-[#3c1c11] text-white text-sm font-bold px-8 py-3 rounded-full transition uppercase w-full sm:w-auto">
+                Resgatar
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 mt-5">
+            <div className="flex-1 h-px bg-white/20"></div>
+            <span className="text-white/50 text-xs uppercase">Ou</span>
+            <div className="flex-1 h-px bg-white/20"></div>
+          </div>
+
+          <div>
+            <h3 className="text-white font-semibold mb-3 text-sm">
+              Escanear QR Code
+            </h3>
             <button
-              className="hover:bg-black/50 cursor-pointer text-white p-3 rounded-full transition flex items-center justify-center"
               onClick={() => setShowScanner(!showScanner)}
+              className="w-full bg-[#C9A882] hover:bg-[#b89870] text-[#4E2010] font-bold px-6 py-4 rounded-xl transition flex items-center justify-center gap-3"
             >
-              <ScanLine size={22} />
+              <ScanLine size={24} />
+              <span className="uppercase text-sm">
+                {showScanner ? "Fechar Scanner" : "Abrir Scanner de QR Code"}
+              </span>
             </button>
           </div>
         </div>
