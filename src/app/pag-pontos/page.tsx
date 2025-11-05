@@ -31,7 +31,11 @@ export default function PagPontos() {
   const validade = "26/08/2026";
 
   useEffect(() => {
-    if (!showScanner || !videoRef.current) return;
+    if (!showScanner || !videoRef.current) {
+      // Se o scanner foi fechado, parar a câmera
+      stopScanning();
+      return;
+    }
 
     const codeReader = new BrowserQRCodeReader();
     codeReaderRef.current = codeReader;
@@ -59,6 +63,18 @@ export default function PagPontos() {
   }, [showScanner]);
 
   const stopScanning = () => {
+
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+
+    if (codeReaderRef.current) {
+      codeReaderRef.current = null;
+    }
+
     setScanning(false);
   };
 
