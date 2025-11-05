@@ -1,12 +1,14 @@
 "use client";
 
-import { Gift, TrendingUp, Flame, ScanLine } from "lucide-react";
+import { Gift, TrendingUp, Flame, ScanLine, X } from "lucide-react";
 import { motion } from "framer-motion";
 import NavBottom from "../../components/NavBottom";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
 import { Loader2 } from "lucide-react";
+import { BrowserQRCodeReader } from "@zxing/browser";
+import { useEffect, useState, useRef } from "react";
 
 /**
  * Página de painel de pontos e recompensas do usuário.
@@ -17,12 +19,48 @@ import { Loader2 } from "lucide-react";
  */
 export default function PagPontos() {
   const { data: session, status } = useSession();
+  const [showScanner, setShowScanner] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
 
   const pontos = 0;
   const nivel = 1;
   const meta = 1000;
   const progresso = (pontos / meta) * 100;
   const validade = "26/08/2026";
+
+  useEffect(() => {
+    if (!showScanner || !videoRef.current) return;
+
+    const codeReader = new BrowserQRCodeReader();
+    codeReaderRef.current = codeReader;
+    setScanning(true);
+
+    codeReader
+      .decodeFromVideoDevice(undefined, videoRef.current, (result, error) => {
+        if (result) {
+          alert(`QR Code escaneado: ${result.getText()}`);
+          stopScanning();
+          setShowScanner(false);
+        }
+        if (error && error.name !== "NotFoundException") {
+          console.error("Erro ao escanear:", error);
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao iniciar scanner:", err);
+        setScanning(false);
+      });
+
+    return () => {
+      stopScanning();
+    };
+  }, [showScanner]);
+
+  const stopScanning = () => {
+    setScanning(false);
+  };
 
   if (status === "loading") {
     return (
@@ -53,7 +91,6 @@ export default function PagPontos() {
               <span className="text-[#C9A882]">
                 {session?.user?.name ?? "User"}!
               </span>
-              
             </p>
             <p className="text-sm text-white/80">Nível {nivel}</p>
           </div>
@@ -91,12 +128,46 @@ export default function PagPontos() {
             <button className="flex-1 sm:flex-none bg-[#4E2010] hover:bg-[#3c1c11] text-white text-sm font-bold px-6 py-3 rounded-full transition uppercase">
               Enviar
             </button>
-            <button className="hover:bg-black/50 text-white p-3 rounded-full transition flex items-center justify-center">
+            <button
+              className="hover:bg-black/50 cursor-pointer text-white p-3 rounded-full transition flex items-center justify-center"
+              onClick={() => setShowScanner(!showScanner)}
+            >
               <ScanLine size={22} />
             </button>
           </div>
         </div>
       </section>
+
+      {showScanner && (
+        <section className="mb-10">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg text-[#4E2010] font-bold uppercase tracking-wide">
+              Scanner QR Code
+            </h2>
+            <button
+              onClick={() => {
+                stopScanning();
+                setShowScanner(false);
+              }}
+              className="text-[#4E2010] hover:text-[#3c1c11] font-bold text-sm flex items-center gap-1"
+            >
+              <X size={20} /> Fechar
+            </button>
+          </div>
+          <div className="bg-black/50 p-6 rounded-2xl shadow-lg">
+            <video
+              ref={videoRef}
+              className="w-full max-w-md mx-auto rounded-xl"
+              style={{ maxHeight: "400px" }}
+            />
+            {scanning && (
+              <p className="text-center text-white mt-4 text-sm">
+                Aponte a câmera para o QR Code...
+              </p>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="mb-10">
         <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
@@ -133,9 +204,7 @@ export default function PagPontos() {
               <div className="text-3xl">{achieve.icon}</div>
               <div>
                 <p className="font-bold text-white">{achieve.title}</p>
-                <span className="text-sm text-white/70">
-                  {achieve.desc}
-                </span>
+                <span className="text-sm text-white/70">{achieve.desc}</span>
               </div>
             </motion.div>
           ))}
