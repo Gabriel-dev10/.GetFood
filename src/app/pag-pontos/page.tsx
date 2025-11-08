@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import NavBottom from "../../components/NavBottom";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
-import PopupLogin from "../../components/PopupLogin";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProgressCard from "@/components/ProgressCard";

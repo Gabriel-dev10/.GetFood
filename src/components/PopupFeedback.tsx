@@ -9,7 +9,7 @@ interface PopupFeedbackProps {
   onClose: () => void;
 }
 
-export default function PopupFeedback({ title = "GBC Coffee", message, type, onClose }: PopupFeedbackProps) {
+export default function PopupFeedback({ title = "GBC Coffee", message, onClose }: PopupFeedbackProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <motion.div

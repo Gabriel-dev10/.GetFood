@@ -22,7 +22,6 @@ export default function RecompensasList({
   recompensas,
   loading = false,
   pontosUsuario = 0,
-  onResgatar,
 }: RecompensasListProps) {
   if (loading) {
     return (

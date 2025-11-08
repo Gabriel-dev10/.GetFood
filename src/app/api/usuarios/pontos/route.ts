@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await getServerSession();
     
@@ -31,10 +31,10 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json(usuario);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro ao buscar pontos:", error);
     return NextResponse.json(
-      { error: "Erro ao buscar pontos", details: error.message },
+      { error: "Erro ao buscar pontos" },
       { status: 500 }
     );
   }
