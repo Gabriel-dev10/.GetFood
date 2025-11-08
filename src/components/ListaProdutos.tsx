@@ -1,4 +1,9 @@
 import Image from "next/image";
+import ItensModal from "./ItensModal";
+import {
+  PRODUCT_IMAGE_SIZES,
+  DEFAULT_IMAGE_QUALITY,
+} from "@/utils/imageUtils";
 
 /**
  * Tipos de categorias de produtos disponíveis.
