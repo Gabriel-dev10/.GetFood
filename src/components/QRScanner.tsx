@@ -47,7 +47,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
           audio: false,
         };
         stream = await navigator.mediaDevices.getUserMedia(constraints);
-      } catch (_err) {
+      } catch {
         console.log(
           "Câmera traseira não disponível, tentando qualquer câmera..."
         );
