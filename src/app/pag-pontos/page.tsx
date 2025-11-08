@@ -177,7 +177,7 @@ export default function PagPontos() {
   }
 
   return (
-    <main className="min-h-screen px-4 pt-4 pb-20 w-full max-w-screen-xl mx-auto relative">
+    <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-xl mx-auto relative">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1 uppercase tracking-wide">
           Painel de Recompensas
