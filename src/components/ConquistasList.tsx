@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Trophy } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
