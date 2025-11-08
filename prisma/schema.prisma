@@ -16,19 +16,6 @@ model produtos {
   categoria  String? @db.VarChar(50)
 }
 
-
-model recompensas {
-  id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  usuario_id   Int       @db.UnsignedInt
-  codigo_ponto String    @unique(map: "codigo_ponto") @default("") @db.VarChar(155)
-  quant_pontos Int?
-  data_resgate DateTime? @db.DateTime(0)
-  status       String?   @db.VarChar(50)
-  usuarios     usuarios  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__usuarios")
-
-  @@index([usuario_id], map: "FK__usuarios")
-}
-
 model recompensas_disponiveis {
   id           Int       @id @default(autoincrement()) @db.UnsignedInt
   titulo       String    @db.VarChar(100)
@@ -39,20 +26,95 @@ model recompensas_disponiveis {
 }
 
 model usuarios {
-  id                    Int           @id @default(autoincrement()) @db.UnsignedInt
-  token                 String        @unique(map: "token") @db.VarChar(12)
-  nome                  String?       @db.VarChar(60)
-  dataNascimento        DateTime?     @db.Date
-  email                 String        @unique(map: "email") @db.VarChar(255)
-  senha                 String?       @db.VarChar(64)
-  telefone              String?       @db.VarChar(45)
-  foto                  String?       @db.VarChar(255)
-  status                String        @default("ATIVO") @db.VarChar(15)
-  dataUltimoAcesso      DateTime?     @db.DateTime(0)
-  dataUltimaModificacao DateTime      @default(now()) @db.Timestamp(0)
-  tokenSenha            String?       @db.VarChar(100)
-  dataSenha             DateTime?     @db.Timestamp(0)
-  data                  DateTime      @default(now()) @db.Timestamp(0)
-  dataExclusao          DateTime?     @db.Timestamp(0)
-  recompensas           recompensas[]
+  id                    Int                   @id @default(autoincrement()) @db.UnsignedInt
+  token                 String                @unique(map: "token") @db.VarChar(12)
+  nome                  String?               @db.VarChar(60)
+  dataNascimento        DateTime?             @db.Date
+  email                 String                @unique(map: "email") @db.VarChar(255)
+  senha                 String?               @db.VarChar(64)
+  telefone              String?               @db.VarChar(45)
+  foto                  String?               @db.VarChar(255)
+  status                String                @default("ATIVO") @db.VarChar(15)
+  dataUltimoAcesso      DateTime?             @db.DateTime(0)
+  dataUltimaModificacao DateTime              @default(now()) @db.Timestamp(0)
+  tokenSenha            String?               @db.VarChar(100)
+  dataSenha             DateTime?             @db.Timestamp(0)
+  data                  DateTime              @default(now()) @db.Timestamp(0)
+  dataExclusao          DateTime?             @db.Timestamp(0)
+  pontos_total          Int                   @default(0) @db.UnsignedInt
+  atividades_usuario    atividades_usuario[]
+  estatisticas_usuario  estatisticas_usuario?
+  qr_scans              qr_scans[]
+  usuarios_conquistas   usuarios_conquistas[]
+}
+
+model conquistas {
+  id                  Int                   @id @default(autoincrement()) @db.UnsignedInt
+  titulo              String                @db.VarChar(100)
+  descricao           String                @db.VarChar(255)
+  icone               String                @db.VarChar(50)
+  pontos_necessarios  Int                   @db.UnsignedInt
+  ativo               Boolean               @default(true)
+  data_criacao        DateTime              @default(now()) @db.Timestamp(0)
+  usuarios_conquistas usuarios_conquistas[]
+}
+
+model usuarios_conquistas {
+  id               Int        @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id       Int        @db.UnsignedInt
+  conquista_id     Int        @db.UnsignedInt
+  desbloqueada     Boolean    @default(false)
+  data_desbloqueio DateTime?  @db.Timestamp(0)
+  conquistas       conquistas @relation(fields: [conquista_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  usuarios         usuarios   @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([usuario_id, conquista_id])
+  @@index([usuario_id], map: "idx_usuario_conquistas")
+  @@index([conquista_id], map: "idx_conquista")
+}
+
+model qr_codes {
+  id        Int       @id @default(autoincrement())
+  codigo    String    @unique(map: "codigo") @db.VarChar(255)
+  descricao String    @db.Text
+  criado_em DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model atividades_usuario {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id     Int      @db.UnsignedInt
+  tipo_atividade String   @db.VarChar(50)
+  descricao      String?  @db.VarChar(255)
+  pontos_ganhos  Int?     @default(0) @db.UnsignedInt
+  data_atividade DateTime @default(now()) @db.Timestamp(0)
+  usuarios       usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "atividades_usuario_id_fkey")
+
+  @@index([data_atividade], map: "idx_data_atividade")
+  @@index([tipo_atividade], map: "idx_tipo_atividade")
+  @@index([usuario_id], map: "idx_usuario_atividades")
+}
+
+model estatisticas_usuario {
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id        Int       @unique(map: "usuario_id") @db.UnsignedInt
+  total_qr_scans    Int?      @default(0) @db.UnsignedInt
+  total_resgates    Int?      @default(0) @db.UnsignedInt
+  dias_consecutivos Int?      @default(0) @db.UnsignedInt
+  ultima_atividade  DateTime? @db.Timestamp(0)
+  atualizado_em     DateTime  @default(now()) @db.Timestamp(0)
+  usuarios          usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "estatisticas_usuario_id_fkey")
+
+  @@index([usuario_id], map: "idx_usuario_stats")
+}
+
+model qr_scans {
+  id            Int      @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id    Int      @db.UnsignedInt
+  codigo_qr     String   @db.VarChar(255)
+  pontos_ganhos Int?     @default(10) @db.UnsignedInt
+  data_scan     DateTime @default(now()) @db.Timestamp(0)
+  usuarios      usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([data_scan], map: "idx_data_scan")
+  @@index([usuario_id], map: "idx_usuario_scans")
 }
