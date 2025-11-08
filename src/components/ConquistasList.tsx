@@ -26,7 +26,6 @@ export default function ConquistasList({
   conquistas,
   loading = false,
   pontosUsuario = 0,
-  onResgatar,
 }: ConquistasListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   if (loading) {

@@ -72,10 +72,10 @@ export async function POST(request: Request) {
       message: "Conquista resgatada com sucesso!",
       conquista: conquistaUsuario.conquistas,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro ao resgatar conquista:", error);
     return NextResponse.json(
-      { error: "Erro ao resgatar conquista", details: error.message },
+      { error: "Erro ao resgatar conquista" },
       { status: 500 }
     );
   }

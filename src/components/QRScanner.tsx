@@ -47,7 +47,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
           audio: false,
         };
         stream = await navigator.mediaDevices.getUserMedia(constraints);
-      } catch (err) {
+      } catch (_err) {
         console.log(
           "Câmera traseira não disponível, tentando qualquer câmera..."
         );
@@ -78,32 +78,33 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
       startQRScanning();
 
       console.log("Câmera iniciada com sucesso");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao acessar a câmera:", error);
       let errorMessage = "Não foi possível acessar a câmera. ";
+      const err = error as { name?: string; message?: string };
 
       if (
-        error.name === "NotAllowedError" ||
-        error.name === "PermissionDeniedError"
+        err.name === "NotAllowedError" ||
+        err.name === "PermissionDeniedError"
       ) {
         errorMessage +=
           "Permissão negada. Clique em 'Permitir' quando o navegador solicitar acesso à câmera.";
       } else if (
-        error.name === "NotFoundError" ||
-        error.name === "DevicesNotFoundError"
+        err.name === "NotFoundError" ||
+        err.name === "DevicesNotFoundError"
       ) {
         errorMessage += "Nenhuma câmera encontrada no dispositivo.";
       } else if (
-        error.name === "NotReadableError" ||
-        error.name === "TrackStartError"
+        err.name === "NotReadableError" ||
+        err.name === "TrackStartError"
       ) {
         errorMessage +=
           "A câmera está sendo usada por outro aplicativo. Feche outros apps que usam câmera.";
-      } else if (error.name === "NotSupportedError") {
+      } else if (err.name === "NotSupportedError") {
         errorMessage +=
           "Acesso à câmera não suportado. Certifique-se de estar usando HTTPS ou localhost.";
-      } else if (error.message) {
-        errorMessage += error.message;
+      } else if (err.message) {
+        errorMessage += err.message;
       } else {
         errorMessage +=
           "Erro desconhecido. Tente usar o navegador Chrome ou Safari.";
@@ -178,6 +179,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
     return () => {
       stopCamera();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showScanner]);
 
   const handleResgatar = () => {

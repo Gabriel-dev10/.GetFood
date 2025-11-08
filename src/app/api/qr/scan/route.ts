@@ -111,16 +111,16 @@ export async function POST(request: Request) {
       pontosTotal: usuarioAtualizado.pontos_total,
       usuario: usuarioAtualizado,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro ao registrar scan:", error);
     return NextResponse.json(
-      { error: "Erro ao registrar scan", details: error.message },
+      { error: "Erro ao registrar scan" },
       { status: 500 }
     );
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await getServerSession();
     
@@ -159,10 +159,10 @@ export async function GET(request: Request) {
       scans,
       estatisticas: Array.isArray(estatisticas) && estatisticas.length > 0 ? estatisticas[0] : null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro ao buscar histórico:", error);
     return NextResponse.json(
-      { error: "Erro ao buscar histórico", details: error.message },
+      { error: "Erro ao buscar histórico" },
       { status: 500 }
     );
   }
