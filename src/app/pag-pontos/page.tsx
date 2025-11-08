@@ -22,8 +22,12 @@ export default function PagPontos() {
   const [showScanner, setShowScanner] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [codigoCupom, setCodigoCupom] = useState("");
+  const [cameraError, setCameraError] = useState("");
+  const [recompensas, setRecompensas] = useState<any[]>([]);
+  const [loadingRecompensas, setLoadingRecompensas] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const pontos = 0;
   const nivel = 1;
@@ -31,43 +35,116 @@ export default function PagPontos() {
   const progresso = (pontos / meta) * 100;
   const validade = "26/08/2026";
 
+  // Buscar recompensas do banco
   useEffect(() => {
-    if (!showScanner || !videoRef.current) {
-      // Se o scanner foi fechado, parar a câmera
-      stopScanning();
-      return;
+    const fetchRecompensas = async () => {
+      try {
+        const response = await fetch("/api/recompensas");
+        if (response.ok) {
+          const data = await response.json();
+          setRecompensas(data);
+        } else {
+          console.error("Erro ao buscar recompensas");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar recompensas:", error);
+      } finally {
+        setLoadingRecompensas(false);
+      }
+    };
+
+    fetchRecompensas();
+  }, []);
+
+  const startCamera = async () => {
+    if (!videoRef.current) return;
+
+    try {
+      setCameraError("");
+      setScanning(true);
+
+      // Para qualquer stream anterior
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+
+      // Verifica se getUserMedia está disponível
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Seu navegador não suporta acesso à câmera. Use Chrome ou Safari atualizado.");
+      }
+
+      // Tenta primeiro com a câmera traseira, depois qualquer câmera disponível
+      let stream: MediaStream | null = null;
+      
+      try {
+        // Tenta câmera traseira primeiro
+        const constraints = {
+          video: {
+            facingMode: { exact: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (err) {
+        console.log("Câmera traseira não disponível, tentando qualquer câmera...");
+        // Se falhar, tenta qualquer câmera
+        const constraints = {
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      }
+
+      if (!stream) {
+        throw new Error("Não foi possível obter acesso à câmera");
+      }
+
+      streamRef.current = stream;
+      videoRef.current.srcObject = stream;
+      videoRef.current.setAttribute("playsinline", "");
+      videoRef.current.setAttribute("autoplay", "");
+      videoRef.current.setAttribute("muted", "");
+      videoRef.current.muted = true;
+      videoRef.current.controls = false;
+      
+      await videoRef.current.play();
+      
+      console.log("Câmera iniciada com sucesso");
+    } catch (error: any) {
+      console.error("Erro ao acessar a câmera:", error);
+      let errorMessage = "Não foi possível acessar a câmera. ";
+      
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorMessage += "Permissão negada. Clique em 'Permitir' quando o navegador solicitar acesso à câmera.";
+      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+        errorMessage += "Nenhuma câmera encontrada no dispositivo.";
+      } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
+        errorMessage += "A câmera está sendo usada por outro aplicativo. Feche outros apps que usam câmera.";
+      } else if (error.name === "NotSupportedError") {
+        errorMessage += "Acesso à câmera não suportado. Certifique-se de estar usando HTTPS ou localhost.";
+      } else if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += "Erro desconhecido. Tente usar o navegador Chrome ou Safari.";
+      }
+      
+      setCameraError(errorMessage);
+      setScanning(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
     }
 
-    const codeReader = new BrowserQRCodeReader();
-    codeReaderRef.current = codeReader;
-    setScanning(true);
-
-    codeReader
-      .decodeFromVideoDevice(undefined, videoRef.current, (result, error) => {
-        if (result) {
-          alert(`QR Code escaneado: ${result.getText()}`);
-          stopScanning();
-          setShowScanner(false);
-        }
-        if (error && error.name !== "NotFoundException") {
-          console.error("Erro ao escanear:", error);
-        }
-      })
-      .catch((err) => {
-        console.error("Erro ao iniciar scanner:", err);
-        setScanning(false);
-      });
-
-    return () => {
-      stopScanning();
-    };
-  }, [showScanner]);
-
-  const stopScanning = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      const tracks = stream.getTracks();
-      tracks.forEach((track) => track.stop());
+    if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
 
@@ -76,7 +153,20 @@ export default function PagPontos() {
     }
 
     setScanning(false);
+    setCameraError("");
   };
+
+  useEffect(() => {
+    if (showScanner) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+
+    return () => {
+      stopCamera();
+    };
+  }, [showScanner]);
 
   if (status === "loading") {
     return (
@@ -184,7 +274,7 @@ export default function PagPontos() {
             </h2>
             <button
               onClick={() => {
-                stopScanning();
+                stopCamera();
                 setShowScanner(false);
               }}
               className="text-[#4E2010] hover:text-[#3c1c11] font-bold text-sm flex items-center gap-1"
@@ -193,14 +283,33 @@ export default function PagPontos() {
             </button>
           </div>
           <div className="bg-black/50 p-6 rounded-2xl shadow-lg">
+            {cameraError && (
+              <div className="bg-red-500/20 border border-red-500 text-white p-4 rounded-xl mb-4">
+                <p className="text-sm">{cameraError}</p>
+                <button
+                  onClick={startCamera}
+                  className="mt-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold"
+                >
+                  Tentar Novamente
+                </button>
+              </div>
+            )}
             <video
               ref={videoRef}
-              className="w-full max-w-md mx-auto rounded-xl"
-              style={{ maxHeight: "400px" }}
+              playsInline
+              autoPlay
+              muted
+              className="w-full max-w-md mx-auto rounded-xl bg-black"
+              style={{ maxHeight: "400px", minHeight: "300px" }}
             />
-            {scanning && (
+            {scanning && !cameraError && (
               <p className="text-center text-white mt-4 text-sm">
-                Aponte a câmera para o QR Code...
+                Câmera ativa - Aponte para o QR Code...
+              </p>
+            )}
+            {!scanning && !cameraError && (
+              <p className="text-center text-white/50 mt-4 text-sm">
+                Iniciando câmera...
               </p>
             )}
           </div>
@@ -253,27 +362,38 @@ export default function PagPontos() {
         <h2 className="text-lg text-[#4E2010] font-bold mb-4 uppercase tracking-wide">
           Recompensas Disponíveis
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { title: "10% de desconto", points: 1000 },
-            { title: "Café Grátis", points: 1000 },
-            { title: "Ganhe um Combo", points: 2000 },
-          ].map((promo, i) => (
-            <motion.div
-              key={i}
-              className="bg-black/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
-              whileHover={{ scale: 1.03 }}
-            >
-              <div className="p-4 text-sm">
-                <p className="font-bold mb-2 text-white">{promo.title}</p>
-                <p className="text-xs text-white/70 flex items-center gap-1">
-                  <Gift size={14} aria-label="Ícone de presente" />{" "}
-                  {promo.points} pontos
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {loadingRecompensas ? (
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="animate-spin text-[#4E2010]" size={40} />
+          </div>
+        ) : recompensas.length === 0 ? (
+          <div className="bg-black/50 p-6 rounded-xl text-center">
+            <p className="text-white/70">Nenhuma recompensa disponível no momento.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {recompensas.map((recompensa) => (
+              <motion.div
+                key={recompensa.id}
+                className="bg-black/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group"
+                whileHover={{ scale: 1.03 }}
+              >
+                <div className="p-4 text-sm">
+                  <p className="font-bold mb-2 text-white">{recompensa.titulo}</p>
+                  {recompensa.descricao && (
+                    <p className="text-xs text-white/50 mb-2 line-clamp-2">
+                      {recompensa.descricao}
+                    </p>
+                  )}
+                  <p className="text-xs text-white/70 flex items-center gap-1">
+                    <Gift size={14} aria-label="Ícone de presente" />{" "}
+                    {recompensa.pontos} pontos
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       <Footer />

@@ -29,6 +29,14 @@ model recompensas {
   @@index([usuario_id], map: "FK__usuarios")
 }
 
+model recompensas_disponiveis {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  titulo       String    @db.VarChar(100)
+  descricao    String?   @db.VarChar(255)
+  pontos       Int       @db.UnsignedInt
+  ativo        Boolean?  @default(true)
+  data_criacao DateTime? @default(now()) @db.Timestamp(0)
+}
 
 model usuarios {
   id                    Int           @id @default(autoincrement()) @db.UnsignedInt
