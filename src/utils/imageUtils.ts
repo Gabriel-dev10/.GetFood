@@ -25,6 +25,7 @@ export const PRODUCT_IMAGE_DIMENSIONS = {
  * const optimizedUrl = getOptimizedImageUrl('/Img/cafe.jpg', 600, 85);
  * ```
  */
+
 export function getOptimizedImageUrl(src: string): string {
   // Se for uma URL externa, retorna sem modificação
   if (src.startsWith('http://') || src.startsWith('https://')) {
