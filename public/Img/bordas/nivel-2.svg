@@ -1,0 +1,16 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer border ring - Silver -->
+  <circle cx="150" cy="150" r="145" fill="none" stroke="#C0C0C0" stroke-width="18" opacity="0.9"/>
+  
+  <!-- Middle ring - Lighter silver -->
+  <circle cx="150" cy="150" r="138" fill="none" stroke="#E8E8E8" stroke-width="5" opacity="0.3"/>
+  
+  <!-- Inner ring -->
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#A8A8A8" stroke-width="10" opacity="0.4"/>
+  
+  <!-- Decorative stars -->
+  <polygon points="150,5 155,15 165,15 157,22 160,32 150,25 140,32 143,22 135,15 145,15" fill="#C0C0C0"/>
+  <polygon points="295,150 285,155 285,165 278,157 268,160 275,150 268,140 278,143 285,135 285,145" fill="#C0C0C0"/>
+  <polygon points="150,295 145,285 135,285 143,278 140,268 150,275 160,268 157,278 165,285 155,285" fill="#C0C0C0"/>
+  <polygon points="5,150 15,145 15,135 22,143 32,140 25,150 32,160 22,157 15,165 15,155" fill="#C0C0C0"/>
+</svg>

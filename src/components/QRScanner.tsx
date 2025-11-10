@@ -214,7 +214,7 @@ export default function QRScanner({ onScanSuccess }: QRScannerProps) {
               disabled={isProcessing || !codigoCupom}
               className="bg-[#4E2010] hover:bg-[#3c1c11] disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-sm font-bold px-8 py-3 rounded-full transition uppercase w-full sm:w-auto"
             >
-              {isProcessing ? "Processando..." : "Escanear"}
+              {isProcessing ? "Processando..." : "Resgatar"}
             </button>
           </div>
         </div>

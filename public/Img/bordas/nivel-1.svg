@@ -1,0 +1,16 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle (transparent center) -->
+  <circle cx="150" cy="150" r="150" fill="none"/>
+  
+  <!-- Outer border ring - Bronze -->
+  <circle cx="150" cy="150" r="145" fill="none" stroke="#CD7F32" stroke-width="16" opacity="0.9"/>
+  
+  <!-- Inner border ring - Lighter bronze -->
+  <circle cx="150" cy="150" r="135" fill="none" stroke="#B87333" stroke-width="8" opacity="0.3"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="10" r="8" fill="#CD7F32"/>
+  <circle cx="290" cy="150" r="8" fill="#CD7F32"/>
+  <circle cx="150" cy="290" r="8" fill="#CD7F32"/>
+  <circle cx="10" cy="150" r="8" fill="#CD7F32"/>
+</svg>

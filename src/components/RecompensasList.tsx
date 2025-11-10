@@ -15,13 +15,14 @@ interface RecompensasListProps {
   recompensas: Recompensa[];
   loading?: boolean;
   pontosUsuario?: number;
-  onResgatar?: (recompensaId: number) => void;
+  onRecompensaClick?: (recompensa: Recompensa) => void;
 }
 
 export default function RecompensasList({
   recompensas,
   loading = false,
   pontosUsuario = 0,
+  onRecompensaClick,
 }: RecompensasListProps) {
   if (loading) {
     return (
@@ -63,10 +64,11 @@ export default function RecompensasList({
           return (
             <motion.div
               key={recompensa.id}
-              className={`bg-black/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group ${
+              className={`bg-black/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition group cursor-pointer ${
                 podeResgatar ? "border-2 border-green-500/30" : ""
               }`}
               whileHover={{ scale: 1.03 }}
+              onClick={() => onRecompensaClick?.(recompensa)}
             >
               <div className="p-4 text-sm">
                 <div className="flex items-center justify-between mb-2">
