@@ -2,14 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, PencilIcon, LogOut, Loader2, Trophy, Calendar, Mail, Award } from "lucide-react";
-import NavBottom from "@/components/NavBottom";
+import { UserCircle, PencilIcon, LogOut, Loader2, Trophy, Mail } from "lucide-react";
+import NavBottom from "@/components/ui/NavBottom";
 import { useSession, signOut } from "next-auth/react";
-import PopupLogin from "../../components/PopupLogin";
-import EncerrarContaModal from "@/components/EncerrarContaModal";
+import PopupLogin from "@/components/auth/PopupLogin";
+import EncerrarContaModal from "@/components/modals/EncerrarContaModal";
 import { validateEmail } from "@/utils/validators";
-import ConquistasList, { Conquista } from "@/components/ConquistasList";
-import Footer from "@/components/Footer";
+import ConquistasList from "@/components/pontos/ConquistasList";
+import { Conquista } from "@/models/conquista";
+import Footer from "@/components/ui/Footer";
 
 /**
  * Página de perfil do usuário.

@@ -4,20 +4,24 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 import { validateEmail } from "@/utils/validators";
-import { useSession } from "next-auth/react";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { useLoginAttempts } from "@/hooks/useLoginAttempts";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [isBlocked, setIsBlocked] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const { data: session, status } = useSession();
+  
+  const { session, status } = useAuth();
+  const {
+    isBlocked,
+    secondsLeft,
+    incrementAttempts,
+  } = useLoginAttempts();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +50,7 @@ export default function Login() {
       if (res?.error) {
         setError("Credenciais inválidas! Verifique seu e-mail e senha.");
         setIsLoading(false);
-        setAttempts((prev) => prev + 1);
+        incrementAttempts();
       } else if (res?.ok) {
         await getSession();
         window.location.href = "/";
@@ -61,29 +65,18 @@ export default function Login() {
     }
   };
 
-  // Bloqueia após 3 tentativas erradas
+  // Redireciona para esqueceu-senha quando o bloqueio terminar
   useEffect(() => {
-    if (attempts >= 3) {
-      setIsBlocked(true);
-      setAttempts(0);
-      setSecondsLeft(60);
-    }
-  }, [attempts]);
-
-  // Contagem regressiva do bloqueio
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isBlocked && secondsLeft > 0) {
-      setError(`Muitas tentativas falhas. Tente novamente em ${secondsLeft}s.`);
-      timer = setInterval(() => {
-        setSecondsLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isBlocked && secondsLeft === 0) {
-      setIsBlocked(false);
-      setError("");
+    if (isBlocked && secondsLeft === 0) {
       window.location.href = "/login/esqueceu-senha";
     }
-    return () => clearInterval(timer);
+  }, [isBlocked, secondsLeft]);
+
+  // Atualiza mensagem de erro durante o bloqueio
+  useEffect(() => {
+    if (isBlocked && secondsLeft > 0) {
+      setError(`Muitas tentativas falhas. Tente novamente em ${secondsLeft}s.`);
+    }
   }, [isBlocked, secondsLeft]);
 
   useEffect(() => {

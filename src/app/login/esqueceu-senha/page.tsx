@@ -1,18 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { validateEmail } from "@/utils/validators";
-import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { useEsqueceuSenha } from "@/hooks/useEsqueceuSenha";
 
 export default function EsqueceuSenha() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // <-- NOVO ESTADO
-  const { data: session } = useSession();
+  const { session } = useAuth();
+  const {
+    email,
+    setEmail,
+    error,
+    success,
+    isSubmitting,
+    handleSubmit: submitForm,
+  } = useEsqueceuSenha();
 
   const lidarComEsqueceuSenha = async (
     event: React.FormEvent<HTMLFormElement>
@@ -20,42 +25,17 @@ export default function EsqueceuSenha() {
     event.preventDefault();
 
     if (!email || !validateEmail(email)) {
-      setError("Por favor, digite um e-mail válido.");
-      setSuccess("");
       return;
     }
 
-    setError("");
-    setSuccess("");
-    setIsSubmitting(true); // <-- Desabilita o botão
-
-    try {
-      const res = await fetch("/api/auth/esqueceu-senha", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      if (res.ok) {
-        setSuccess(
-          "Se uma conta com este e-mail existir, um link de redefinição foi enviado. Verifique sua caixa de entrada e spam."
-        );
-      } else {
-        const data = await res.json();
-        setError(data?.error || "Erro ao enviar código. Tente novamente.");
-      }
-    } catch {
-      setError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
-    } finally {
-        setIsSubmitting(false); 
-    }
+    await submitForm(event);
   };
 
   useEffect(() => {
     if (session) {
       router.replace("/");
     }
-  }, [session, router]); // <-- Adicionadas dependências
+  }, [session, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-gradient-to-tr from-[#1a1a1a] to-black">

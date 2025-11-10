@@ -1,101 +1,36 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useRedefinirSenha } from "@/hooks/useRedefinirSenha";
 
 export default function RedefinirSenha() {
-  const [novaSenha, setNovaSenha] = useState('');
-  const [confirmarSenha, setConfirmarSenha] = useState('');
-  const [codigo, setCodigo] = useState('');
-  const [error, setError] = useState('');
-  const [mostrarPopup, setMostrarPopup] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const searchParams = useSearchParams();
-
-  const senhaValidaTamanho = novaSenha.length >= 8;
-  const senhaValidaEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(novaSenha);
-
-  useEffect(() => {
-    // Tenta pegar o parâmetro 'token' da URL
-    const tokenDaUrl = searchParams.get('token');
-
-    if (tokenDaUrl) {
-      // Se encontrou o token na URL, atualiza o estado 'codigo'
-      setCodigo(tokenDaUrl);
-    }
-  }, [searchParams]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!novaSenha.trim() || !confirmarSenha.trim() || !codigo.trim()) {
-      setError('Preencha todos os campos. Se o código não apareceu, use o link do e-mail.');
-      return;
-    }
-
-    // Validação da senha
-    if (novaSenha.length < 8) {
-      setError('A senha deve ter no mínimo 8 caracteres.');
-      return;
-    }
-
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(novaSenha)) {
-      setError('A senha deve conter pelo menos um caractere especial.');
-      return;
-    }
-
-    if (novaSenha !== confirmarSenha) {
-      setError('As senhas não coincidem.');
-      return;
-    }
-
-    setError('');
-
-    // 👇 INÍCIO DOS AJUSTES
-    try {
-      // AJUSTE 1: Corrigir a URL da API
-      const res = await fetch('/api/auth/redefine-senha', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // AJUSTE 2: Mapear os estados do frontend para os nomes que o backend espera
-        body: JSON.stringify({
-          token: codigo,
-          password: novaSenha,
-          passwordConfirmation: confirmarSenha,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setMostrarPopup(true);
-      } else {
-        setError(data?.error || 'Erro ao redefinir senha. Verifique o código.');
-      }
-    } catch (e) {
-      setError( `${e}. Erro ao conectar com o servidor. Tente novamente.`)
-    }
-    // 👆 FIM DOS AJUSTES
-  };
-
-  const voltarParaLogin = () => {
-    router.push('/login');
-  };
+  const { session } = useAuth();
+  const {
+    novaSenha,
+    setNovaSenha,
+    confirmarSenha,
+    setConfirmarSenha,
+    codigo,
+    error,
+    mostrarPopup,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    senhaValidaTamanho,
+    senhaValidaEspecial,
+    handleSubmit,
+    voltarParaLogin,
+  } = useRedefinirSenha();
 
   useEffect(() => {
     if (session) {
-      router.replace("/");
+      voltarParaLogin();
     }
-  }, [session, router]); // Adicionadas dependências ao useEffect
-
-  // O resto do seu JSX permanece exatamente o mesmo, pois está perfeito!
+  }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-6">
       <motion.div

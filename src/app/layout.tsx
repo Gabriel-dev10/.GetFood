@@ -9,7 +9,7 @@
 import type { Metadata } from "next";
 import { Poppins, Dancing_Script } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import { Providers } from "@/config/providers";
 
 const dancingScript = Dancing_Script({
   variable: "--font-dancingScript",
