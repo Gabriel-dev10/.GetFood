@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, PencilIcon, LogOut, Loader2 } from "lucide-react";
+import { UserCircle, PencilIcon, LogOut, Loader2, Trophy, Calendar, Mail, Award } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
 import EncerrarContaModal from "@/components/EncerrarContaModal";
 import { validateEmail } from "@/utils/validators";
+import ConquistasList, { Conquista } from "@/components/ConquistasList";
+import Footer from "@/components/Footer";
 
 /**
  * Página de perfil do usuário.
@@ -27,6 +29,9 @@ export default function PerfilPage() {
   const [emailEdit, setEmailEdit] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [conquistas, setConquistas] = useState<Conquista[]>([]);
+  const [loadingConquistas, setLoadingConquistas] = useState(true);
+  const [pontos, setPontos] = useState(0);
 
   const cuponsUsados = 35;
 
@@ -38,6 +43,53 @@ export default function PerfilPage() {
       setEmailEdit(session.user.email || "");
     }
   }, [session]);
+
+  // Buscar pontos do usuário
+  useEffect(() => {
+    const fetchPontos = async () => {
+      if (!session?.user) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/usuarios/pontos');
+        if (response.ok) {
+          const data = await response.json();
+          setPontos(data.pontos_total || 0);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar pontos:", error);
+      }
+    };
+
+    fetchPontos();
+  }, [session]);
+
+  // Buscar conquistas do usuário
+  useEffect(() => {
+    const fetchConquistas = async () => {
+      if (!session?.user) {
+        setLoadingConquistas(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/conquistas');
+        if (response.ok) {
+          const data = await response.json();
+          setConquistas(data);
+        } else {
+          console.error("Erro ao buscar conquistas");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar conquistas:", error);
+      } finally {
+        setLoadingConquistas(false);
+      }
+    };
+
+    fetchConquistas();
+  }, [session, pontos]);
 
   /**
    * Retorna o título de fidelidade do usuário com base na quantidade de cupons usados.
@@ -84,6 +136,49 @@ export default function PerfilPage() {
 
   const { titulo, restante, proximo, total } =
     getTituloFidelidade(cuponsUsados);
+
+  /**
+   * Retorna apenas o primeiro e segundo nome do usuário, com limite de caracteres
+   */
+  const getShortName = (fullName?: string | null) => {
+    if (!fullName) return "Visitante";
+    const names = fullName.trim().split(" ");
+    
+    if (names.length === 1) {
+      // Se for apenas um nome e for muito longo, abrevia
+      if (names[0].length > 20) {
+        return names[0].substring(0, 17) + "...";
+      }
+      return names[0];
+    }
+    
+    const firstName = names[0];
+    const secondName = names[1];
+    const combined = `${firstName} ${secondName}`;
+    
+    // Se o nome combinado for muito longo, abrevia
+    if (combined.length > 25) {
+      if (firstName.length > 15) {
+        return firstName.substring(0, 12) + "...";
+      }
+      return `${firstName} ${secondName.substring(0, 8)}...`;
+    }
+    
+    return combined;
+  };
+
+  /**
+   * Abrevia email se for muito longo
+   */
+  const getShortEmail = (email?: string | null) => {
+    if (!email) return "";
+    if (email.length <= 30) return email;
+    const [localPart, domain] = email.split("@");
+    if (localPart.length > 15) {
+      return `${localPart.substring(0, 12)}...@${domain}`;
+    }
+    return email;
+  };
 
   /**
    * Abre o seletor de arquivo para alterar a foto de perfil.
@@ -224,29 +319,34 @@ export default function PerfilPage() {
 
   if (status === "loading") {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#292929]/84 to-black/65">
+      <main className="min-h-screen flex items-center justify-center bg-[#C9A882]">
         <Loader2 className="animate-spin text-[#4E2010]" size={60} />
       </main>
     );
   }
+  
   return (
-    <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-md mx-auto text-white">
+    <main className="min-h-screen px-4 pt-4 mt-3 pb-20 w-full max-w-screen-xl mx-auto relative">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1">
-          Perfil
+        <h1 className="text-2xl text-[#4E2010] font-bold text-center flex-1 uppercase tracking-wide">
+          Meu Perfil
         </h1>
       </div>
 
+      {/* Card principal do perfil */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-black/50 p-8 mt-8 rounded-2xl shadow-lg w-full"
+        className="bg-black/50 p-6 md:p-8 rounded-2xl shadow-lg mb-6"
       >
-        <div className="flex flex-col md:flex-row items-center gap-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+          {/* Foto de perfil */}
           <div
             onClick={session ? handleFotoClick : undefined}
-            className="cursor-pointer w-40 h-40 rounded-full relative overflow-hidden border-3 border-[#4E2010] shadow-lg hover:scale-110 transition"
+            className={`${
+              session ? "cursor-pointer hover:scale-105" : ""
+            } w-32 h-32 md:w-40 md:h-40 rounded-full relative overflow-hidden border-4 border-[#4E2010] shadow-lg transition flex-shrink-0`}
           >
             {foto ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -260,8 +360,8 @@ export default function PerfilPage() {
                 }}
               />
             ) : (
-              <div className="flex items-center justify-center h-full bg-gray-700">
-                <UserCircle className="text-gray-500" size={90} />
+              <div className="flex items-center justify-center h-full bg-[#2a1810]">
+                <UserCircle className="text-[#C9A882]/50" size={80} />
               </div>
             )}
 
@@ -274,25 +374,38 @@ export default function PerfilPage() {
             />
           </div>
 
-          <div className="text-center md:text-left">
-            <h2 className="text-3xl font-extrabold mb-1">
-              {session?.user?.name || "Visitante"}
+          {/* Informações do usuário */}
+          <div className="flex-1 text-center md:text-left w-full">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2 break-words" title={session?.user?.name || ""}>
+              {getShortName(session?.user?.name)}
             </h2>
-            <p className="text-sm text-white mb-4">
-              {session?.user?.email || "Faça login para continuar"}
-            </p>
-
+            
             {session && (
-              <div className="bg-black/50 rounded-xl py-4 px-6 shadow-inner space-y-3">
-                <div className="text-lg font-semibold text-white">{titulo}</div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-center md:justify-start gap-2 text-white/80">
+                  <Mail size={18} className="text-[#C9A882] flex-shrink-0" />
+                  <p className="text-sm truncate" title={session.user.email || ""}>
+                    {getShortEmail(session.user.email)}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Card de fidelidade */}
+            {session && (
+              <div className="bg-[#2a1810] rounded-xl p-5 shadow-inner space-y-3 border border-[#C9A882]/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <Trophy size={22} className="text-[#C9A882]" />
+                  <div className="text-lg font-bold text-[#C9A882]">{titulo}</div>
+                </div>
 
                 {proximo && (
                   <>
-                    <p className="text-sm text-white">
-                      Faltam <strong>{restante}</strong> cupons para virar{" "}
-                      <strong>{proximo}</strong>
+                    <p className="text-sm text-white/70">
+                      Faltam <span className="text-[#C9A882] font-semibold">{restante}</span> cupons para alcançar{" "}
+                      <span className="text-white font-semibold">{proximo}</span>
                     </p>
-                    <div className="w-full bg-black/50 h-3 rounded-full overflow-hidden">
+                    <div className="w-full bg-black/50 h-2.5 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
@@ -301,9 +414,12 @@ export default function PerfilPage() {
                           )}%`,
                         }}
                         transition={{ duration: 0.8 }}
-                        className="h-full bg-[#4E2010]"
+                        className="h-full bg-gradient-to-r from-[#8B4513] to-[#C9A882]"
                       />
                     </div>
+                    <p className="text-xs text-white/60 text-right">
+                      {Math.floor(((total - restante) / total) * 100)}% completo
+                    </p>
                   </>
                 )}
               </div>
@@ -311,29 +427,35 @@ export default function PerfilPage() {
           </div>
         </div>
 
+        {/* Botões de ação */}
         {session && (
-          <div className="mt-10 flex flex-col items-center gap-4">
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => {
                 setModalAberto(true);
                 setEmailEdit(session?.user?.email || "");
                 setNomeEdit(session.user?.name || "");
               }}
-              className="bg-[#4E2010] text-white py-3 px-8 rounded-full hover:bg-[#3b180c] transition text-lg font-semibold shadow-lg flex items-center"
+              className="w-full sm:w-auto bg-[#4E2010] text-white py-3 px-6 rounded-xl hover:bg-[#3b180c] transition text-base font-semibold shadow-lg flex items-center justify-center gap-2"
             >
-              <PencilIcon className="inline w-6 h-6 mr-2" />
+              <PencilIcon size={20} />
               Editar Perfil
             </button>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="bg-red-600 text-white py-3 px-8 rounded-full hover:bg-red-700 transition text-lg font-semibold shadow-lg flex items-center"
+              className="w-full sm:w-auto bg-red-600 text-white py-3 px-6 rounded-xl hover:bg-red-700 transition text-base font-semibold shadow-lg flex items-center justify-center gap-2"
             >
-              <LogOut className="inline w-6 h-6 mr-2" />
+              <LogOut size={20} />
               Sair
             </button>
+          </div>
+        )}
+
+        {session && (
+          <div className="mt-4 text-center">
             <button
               onClick={() => setModalEncerrarAberto(true)}
-              className="text-white flex items-center text-xs underline hover:text-red-500 transition"
+              className="text-white/60 text-xs underline hover:text-red-500 transition"
             >
               Encerrar conta
             </button>
@@ -341,6 +463,23 @@ export default function PerfilPage() {
         )}
       </motion.section>
 
+      {/* Seção de conquistas */}
+      {session && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="mb-10"
+        >
+          <ConquistasList
+            conquistas={conquistas}
+            loading={loadingConquistas}
+            pontosUsuario={pontos}
+          />
+        </motion.section>
+      )}
+
+      <Footer />
       <NavBottom />
 
       <AnimatePresence>
@@ -349,53 +488,73 @@ export default function PerfilPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => setModalAberto(false)}
           >
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md bg-gradient-to-tr from-[#292929]/85 to-black/65 p-6 rounded-2xl shadow-lg"
+              className="w-full max-w-md bg-[#2a1810] p-6 rounded-2xl shadow-2xl border border-[#C9A882]/20"
+              onClick={(e) => e.stopPropagation()}
             >
               <form onSubmit={handleUpdate}>
-                <h2 className="text-xl font-bold mb-5 text-center text-white">
+                <h2 className="text-xl font-bold mb-5 text-center text-[#C9A882]">
                   Editar Perfil
                 </h2>
+                
+                {error && (
+                  <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm">
+                    {error}
+                  </div>
+                )}
+                
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Nome"
-                    defaultValue={nomeEdit}
-                    className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
-                    onChange={(e) => setNomeEdit(e.target.value)}
-                    required
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    defaultValue={emailEdit}
-                    onChange={(e) => setEmailEdit(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-gray-600 bg-gray-800 text-white"
-                    required
-                  />
+                  <div>
+                    <label className="text-xs text-white/70 mb-1 block">Nome</label>
+                    <input
+                      type="text"
+                      placeholder="Seu nome"
+                      defaultValue={nomeEdit}
+                      className="w-full px-4 py-3 rounded-xl border border-[#C9A882]/30 bg-black/40 text-white placeholder:text-white/30 focus:border-[#C9A882] focus:outline-none transition"
+                      onChange={(e) => setNomeEdit(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-white/70 mb-1 block">E-mail</label>
+                    <input
+                      type="email"
+                      placeholder="seu@email.com"
+                      defaultValue={emailEdit}
+                      onChange={(e) => setEmailEdit(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-[#C9A882]/30 bg-black/40 text-white placeholder:text-white/30 focus:border-[#C9A882] focus:outline-none transition"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="mt-6 flex justify-between">
+                <div className="mt-6 flex gap-3">
                   <button
+                    type="button"
                     onClick={() => setModalAberto(false)}
-                    className="px-5 py-2 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition font-semibold"
+                    className="flex-1 px-5 py-3 rounded-xl bg-black/40 text-white hover:bg-black/60 transition font-semibold border border-white/10"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-5 py-2 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold disabled:opacity-50"
+                    className="flex-1 px-5 py-3 rounded-xl bg-[#4E2010] text-white hover:bg-[#3b180c] transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   >
                     {loading ? (
-                      <Loader2 className="animate-spin inline w-4 h-4 mr-2" />
-                    ) : null}
-                    {loading ? "Salvando..." : "Salvar"}
+                      <>
+                        <Loader2 className="animate-spin inline w-4 h-4 mr-2" />
+                        Salvando...
+                      </>
+                    ) : (
+                      "Salvar"
+                    )}
                   </button>
                 </div>
               </form>
