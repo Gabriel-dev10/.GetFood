@@ -38,7 +38,7 @@ export default function NavBottom() {
   };
 
   return (
-    <div className="fixed bottom-1 left-4 right-4 bg-amber-950 p-2 text-white rounded-full flex justify-around items-center shadow-lg">
+    <div className="fixed bottom-1 left-4 right-4 bg-amber-950 p-2 text-white rounded-full flex justify-around items-center shadow-lg z-50">
       {menuItems.map(({ id, label, icon: Icon, href }) => (
         <button
           key={id}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCircle, PencilIcon, LogOut, Loader2, Trophy, Calendar, Mail, Award } from "lucide-react";
+import { PencilIcon, LogOut, Loader2, Mail } from "lucide-react";
 import NavBottom from "@/components/NavBottom";
 import { useSession, signOut } from "next-auth/react";
 import PopupLogin from "../../components/PopupLogin";
@@ -10,6 +10,8 @@ import EncerrarContaModal from "@/components/EncerrarContaModal";
 import { validateEmail } from "@/utils/validators";
 import ConquistasList, { Conquista } from "@/components/ConquistasList";
 import Footer from "@/components/Footer";
+import ProfileAvatar from "@/components/ProfileAvatar";
+import { calcularNivel } from "@/utils/nivelSystem";
 
 /**
  * Página de perfil do usuário.
@@ -33,7 +35,9 @@ export default function PerfilPage() {
   const [loadingConquistas, setLoadingConquistas] = useState(true);
   const [pontos, setPontos] = useState(0);
 
-  const cuponsUsados = 35;
+  // Calcula o nível baseado nas conquistas desbloqueadas
+  const conquistasDesbloqueadas = conquistas.filter(c => c.desbloqueada).length;
+  const nivelInfo = calcularNivel(conquistasDesbloqueadas);
 
   // sempre que a session mudar, atualiza o estado
   useEffect(() => {
@@ -74,6 +78,12 @@ export default function PerfilPage() {
       }
 
       try {
+        // Primeiro, tenta desbloquear conquistas baseado nos pontos atuais
+        await fetch('/api/conquistas/desbloquear', {
+          method: 'POST',
+        });
+
+        // Depois busca as conquistas atualizadas
         const response = await fetch('/api/conquistas');
         if (response.ok) {
           const data = await response.json();
@@ -90,52 +100,6 @@ export default function PerfilPage() {
 
     fetchConquistas();
   }, [session, pontos]);
-
-  /**
-   * Retorna o título de fidelidade do usuário com base na quantidade de cupons usados.
-   *
-   * @param cupons - Quantidade de cupons usados
-   * @returns {Object} Informações sobre o título, restante para próximo nível, etc.
-   */
-  const getTituloFidelidade = (cupons: number) => {
-    if (cupons >= 50)
-      return {
-        titulo: "🔥 Café Viciado",
-        restante: 0,
-        proximo: null,
-        total: 50,
-      };
-    if (cupons >= 25)
-      return {
-        titulo: "🏆 Mestre do Expresso",
-        restante: 50 - cupons,
-        proximo: "🔥 Café Viciado",
-        total: 50,
-      };
-    if (cupons >= 10)
-      return {
-        titulo: "🎯 Cliente de Ouro",
-        restante: 25 - cupons,
-        proximo: "🏆 Mestre do Expresso",
-        total: 25,
-      };
-    if (cupons >= 5)
-      return {
-        titulo: "🥐 Degustador de Sabores",
-        restante: 10 - cupons,
-        proximo: "🎯 Cliente de Ouro",
-        total: 10,
-      };
-    return {
-      titulo: "☕ Cafézinho Casual",
-      restante: 5 - cupons,
-      proximo: "🥐 Degustador de Sabores",
-      total: 5,
-    };
-  };
-
-  const { titulo, restante, proximo, total } =
-    getTituloFidelidade(cuponsUsados);
 
   /**
    * Retorna apenas o primeiro e segundo nome do usuário, com limite de caracteres
@@ -341,30 +305,17 @@ export default function PerfilPage() {
         className="bg-black/50 p-6 md:p-8 rounded-2xl shadow-lg mb-6"
       >
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-          {/* Foto de perfil */}
-          <div
-            onClick={session ? handleFotoClick : undefined}
-            className={`${
-              session ? "cursor-pointer hover:scale-105" : ""
-            } w-32 h-32 md:w-40 md:h-40 rounded-full relative overflow-hidden border-4 border-[#4E2010] shadow-lg transition flex-shrink-0`}
-          >
-            {foto ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={foto.startsWith("blob:") ? foto : `${foto}?t=${timestamp}`}
-                alt="Foto de perfil"
-                className="w-full h-full object-cover"
-                onError={() => {
-                  console.error("Erro ao carregar imagem:", foto);
-                  setFoto(null);
-                }}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full bg-[#2a1810]">
-                <UserCircle className="text-[#C9A882]/50" size={80} />
-              </div>
-            )}
-
+          {/* Foto de perfil com borda de nível */}
+          <div onClick={session ? handleFotoClick : undefined}>
+            <ProfileAvatar
+              foto={foto}
+              nivel={nivelInfo.nivel}
+              size="large"
+              timestamp={timestamp}
+              imagemBorda={nivelInfo.imagemBorda}
+              usarBordaCustomizada={true}
+              showLevelBadge={false}
+            />
             <input
               type="file"
               accept="image/*"
@@ -382,8 +333,8 @@ export default function PerfilPage() {
             
             {session && (
               <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-center md:justify-start gap-2 text-white/80">
-                  <Mail size={18} className="text-[#C9A882] flex-shrink-0" />
+                <div className="flex items-center justify-center md:justify-start gap-2 text-white">
+                  <Mail size={18} className="text-white flex-shrink-0" />
                   <p className="text-sm truncate" title={session.user.email || ""}>
                     {getShortEmail(session.user.email)}
                   </p>
@@ -391,36 +342,49 @@ export default function PerfilPage() {
               </div>
             )}
 
-            {/* Card de fidelidade */}
+            {/* Card de nível baseado em conquistas */}
             {session && (
-              <div className="bg-[#2a1810] rounded-xl p-5 shadow-inner space-y-3 border border-[#C9A882]/20">
+              <div className="bg-black/50 rounded-xl p-5 shadow-inner space-y-3 border border-[#C9A882]/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <Trophy size={22} className="text-[#C9A882]" />
-                  <div className="text-lg font-bold text-[#C9A882]">{titulo}</div>
+                  <nivelInfo.icon size={22} style={{ color: nivelInfo.iconColor }} />
+                  <div className="text-lg font-bold text-[#C9A882]">
+                    {nivelInfo.titulo}
+                  </div>
                 </div>
 
-                {proximo && (
+                <div className="flex items-center gap-2 text-sm text-white">
+                  <span>
+                    {conquistasDesbloqueadas} conquista{conquistasDesbloqueadas !== 1 ? 's' : ''} desbloqueada{conquistasDesbloqueadas !== 1 ? 's' : ''}
+                  </span>
+                </div>
+
+                {nivelInfo.conquistasProximoNivel !== null && (
                   <>
-                    <p className="text-sm text-white/70">
-                      Faltam <span className="text-[#C9A882] font-semibold">{restante}</span> cupons para alcançar{" "}
-                      <span className="text-white font-semibold">{proximo}</span>
+                    <p className="text-sm text-white">
+                      Faltam <span className="font-semibold">
+                        {nivelInfo.conquistasProximoNivel - conquistasDesbloqueadas}
+                      </span> conquista{(nivelInfo.conquistasProximoNivel - conquistasDesbloqueadas) !== 1 ? 's' : ''} para o próximo nível
                     </p>
                     <div className="w-full bg-black/50 h-2.5 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
-                          width: `${Math.floor(
-                            ((total - restante) / total) * 100
-                          )}%`,
+                          width: `${nivelInfo.progresso}%`,
                         }}
                         transition={{ duration: 0.8 }}
-                        className="h-full bg-gradient-to-r from-[#8B4513] to-[#C9A882]"
+                        className={`h-full bg-gradient-to-r ${nivelInfo.gradiente}`}
                       />
                     </div>
-                    <p className="text-xs text-white/60 text-right">
-                      {Math.floor(((total - restante) / total) * 100)}% completo
+                    <p className="text-xs text-white text-right">
+                      {nivelInfo.progresso}% completo
                     </p>
                   </>
+                )}
+
+                {nivelInfo.nivel === 5 && (
+                  <p className="text-sm text-[#FF4500] font-semibold text-center">
+                    🎉 Nível Máximo Alcançado! 🎉
+                  </p>
                 )}
               </div>
             )}
@@ -455,7 +419,7 @@ export default function PerfilPage() {
           <div className="mt-4 text-center">
             <button
               onClick={() => setModalEncerrarAberto(true)}
-              className="text-white/60 text-xs underline hover:text-red-500 transition"
+              className="text-white/80 text-xs underline hover:text-red-500 transition"
             >
               Encerrar conta
             </button>

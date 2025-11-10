@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const pontosGanhos = 100;
+    const pontosGanhos = 1000;
 
     await prisma.$executeRaw`
       INSERT INTO qr_scans (usuario_id, codigo_qr, pontos_ganhos, data_scan)
