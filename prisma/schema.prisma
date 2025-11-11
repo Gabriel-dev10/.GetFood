@@ -18,12 +18,13 @@ model produtos {
 }
 
 model recompensas_disponiveis {
-  id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  titulo       String    @db.VarChar(100)
-  descricao    String?   @db.VarChar(255)
-  pontos       Int       @db.UnsignedInt
-  ativo        Boolean?  @default(true)
-  data_criacao DateTime? @default(now()) @db.Timestamp(0)
+  id           Int        @id @default(autoincrement()) @db.UnsignedInt
+  titulo       String     @db.VarChar(100)
+  descricao    String?    @db.VarChar(255)
+  pontos       Int        @db.UnsignedInt
+  ativo        Boolean?   @default(true)
+  data_criacao DateTime?  @default(now()) @db.Timestamp(0)
+  resgates     resgates[] @relation("RecompensaResgates")
 }
 
 model User {
@@ -56,6 +57,7 @@ model User {
   atividades_usuario    atividades_usuario[]
   estatisticas_usuario  estatisticas_usuario?
   qr_scans              qr_scans[]
+  resgates              resgates[]            @relation("UsuarioResgates")
   usuarios_conquistas   usuarios_conquistas[]
 
   @@map("users") // Mapeia o modelo "usuarios" para a tabela "users" no banco (ou mantenha "usuarios" e configure o adapter)
@@ -172,4 +174,16 @@ model Session {
   @@map("sessions")
 }
 
+
+model resgates {
+  id                      Int                     @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id              Int                     @db.UnsignedInt
+  recompensa_id           Int                     @db.UnsignedInt
+  data_resgate            DateTime?               @default(now()) @db.Timestamp(0)
+  recompensas_disponiveis recompensas_disponiveis @relation("RecompensaResgates", fields: [recompensa_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_recompensa_resgates")
+  usuarios                usuarios                @relation("UsuarioResgates", fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_usuario_resgates")
+
+  @@index([usuario_id], map: "idx_usuario_resgates")
+  @@index([recompensa_id], map: "idx_recompensa_resgates")
+}
 

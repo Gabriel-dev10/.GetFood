@@ -14,6 +14,7 @@ import RecompensaModal from "@/components/RecompensaModal";
 import RecompensaResgatadaModal from "@/components/RecompensaResgatadaModal";
 import CelebracaoResgate from "@/components/CelebracaoResgate";
 import { Gift, Calendar, CheckCircle } from "lucide-react";
+import PopupLogin from "@/components/PopupLogin";
 
 export interface RecompensaResgatada {
   id: number;
@@ -190,44 +191,37 @@ export default function PagPontos() {
 
   const handleResgatar = async (recompensaId: number) => {
     try {
-      // TODO: Implementar chamada para API de resgate quando o backend estiver pronto
-      // const response = await fetch('/api/recompensas/resgatar', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ recompensaId }),
-      // });
+      const response = await fetch('/api/recompensas/resgatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recompensaId }),
+      });
 
-      // const data = await response.json();
+      const data = await response.json();
 
-      // Simulação temporária - remover quando a API estiver pronta
-      console.log('Resgatando recompensa:', recompensaId);
-      
-      // Fechar modal de resgate
-      setIsModalOpen(false);
-      
-      // Mostrar celebração
-      const recompensa = recompensas.find(r => r.id === recompensaId);
-      if (recompensa) {
-        setRecompensaResgatadaTitulo(recompensa.titulo);
-        setShowCelebracao(true);
-      }
-
-      // Quando a API estiver pronta, descomentar o código abaixo:
-      /*
       if (response.ok) {
         // Fechar modal de resgate
         setIsModalOpen(false);
-        
+
         // Atualizar pontos do usuário
-        setPontos(data.pontosRestantes);
-        
+        if (data.pontosRestantes !== undefined) {
+          setPontos(data.pontosRestantes);
+        } else {
+          // Buscar pontos atualizados da API caso não venha na resposta
+          const pontosResponse = await fetch('/api/usuarios/pontos');
+          if (pontosResponse.ok) {
+            const pontosData = await pontosResponse.json();
+            setPontos(pontosData.pontos_total || 0);
+          }
+        }
+
         // Mostrar celebração
         const recompensa = recompensas.find(r => r.id === recompensaId);
         if (recompensa) {
           setRecompensaResgatadaTitulo(recompensa.titulo);
           setShowCelebracao(true);
         }
-        
+
         // Recarregar lista de recompensas resgatadas
         const resgatadas = await fetch("/api/recompensas/resgatadas");
         if (resgatadas.ok) {
@@ -238,18 +232,17 @@ export default function PagPontos() {
         setAlertType("error");
         setAlertMessage(`Erro: ${data.error || 'Não foi possível resgatar a recompensa'}`);
         setShowAlert(true);
-        
+
         setTimeout(() => {
           setShowAlert(false);
         }, 3000);
       }
-      */
     } catch (error) {
       console.error('Erro ao resgatar recompensa:', error);
       setAlertType("error");
       setAlertMessage('Erro ao processar resgate');
       setShowAlert(true);
-      
+
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
@@ -419,6 +412,12 @@ export default function PagPontos() {
             setIsScanning(false);
           }}
         />
+      )}
+
+      {!session && (
+        <div>
+          <PopupLogin />
+        </div>
       )}
     </main>
   );
