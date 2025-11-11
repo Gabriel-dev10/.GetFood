@@ -23,7 +23,7 @@
  */
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
@@ -47,7 +47,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const user = await prisma.usuarios.findUnique({
+    const user = await prisma.User.findUnique({
       where: { id: Number(session.user.id) },
     });
 
@@ -74,7 +74,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    await prisma.usuarios.delete({
+    await prisma.User.delete({
       where: { id: Number(session.user.id) },
     });
 

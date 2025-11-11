@@ -33,7 +33,7 @@
  */
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
@@ -56,7 +56,7 @@ export async function PATCH(req: Request) {
     }
 
     // Verifica se o email já existe para outro usuário
-    const existingUser = await prisma.usuarios.findFirst({
+    const existingUser = await prisma.User.findFirst({
       where: {
         email: email,
         id: { not: Number(session.user.id) },
@@ -70,7 +70,7 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const updatedUser = await prisma.usuarios.update({
+    const updatedUser = await prisma.User.update({
       where: { id: Number(session.user.id) },
       data: {
         nome,

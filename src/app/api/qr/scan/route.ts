@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 
 export async function POST(request: Request) {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const usuario = await prisma.usuarios.findUnique({
+    const usuario = await prisma.User.findUnique({
       where: { email: session.user.email },
       select: { id: true, pontos_total: true },
     });
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       VALUES (${usuario.id}, ${codigoQR}, ${pontosGanhos}, NOW())
     `;
 
-    const usuarioAtualizado = await prisma.usuarios.update({
+    const usuarioAtualizado = await prisma.User.update({
       where: { id: usuario.id },
       data: {
         pontos_total: {
@@ -131,7 +131,7 @@ export async function GET() {
       );
     }
 
-    const usuario = await prisma.usuarios.findUnique({
+    const usuario = await prisma.User.findUnique({
       where: { email: session.user.email },
       select: { id: true },
     });

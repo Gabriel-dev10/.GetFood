@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 
 /**
@@ -17,130 +18,41 @@ export async function GET() {
       );
     }
 
-    // Lista fixa das 13 conquistas do sistema
-    // TODO: Buscar do banco e calcular desbloqueadas baseado em:
-    // - QR Scans (tabela qr_scans)
-    // - Resgates (tabela atividades_usuario tipo='resgate')
-    // - Pontos (soma histórica de atividades_usuario.pontos_ganhos)
-    const conquistas = [
-      {
-        id: 1,
-        titulo: "Escaneie seu primeiro QR Code",
-        descricao: "Faça seu primeiro scan de QR Code",
-        icone: "Coffee",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
+    const usuario = await prisma.User.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
+    if (!usuario) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const conquistas = await prisma.conquistas.findMany({
+      where: { ativo: true },
+      include: {
+        usuarios_conquistas: {
+          where: { usuario_id: usuario.id },
+        },
       },
-      {
-        id: 2,
-        titulo: "Resgate sua primeira recompensa",
-        descricao: "Resgate sua primeira recompensa no sistema",
-        icone: "Gift",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 3,
-        titulo: "Escaneie 5 QR Codes",
-        descricao: "Escaneie 5 QR Codes diferentes",
-        icone: "QrCode",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 4,
-        titulo: "Escaneie 10 QR Codes",
-        descricao: "Escaneie 10 QR Codes diferentes",
-        icone: "Scan",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 5,
-        titulo: "Resgate 5 recompensas",
-        descricao: "Resgate 5 recompensas no sistema",
-        icone: "Package",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 6,
-        titulo: "Acumule 100 pontos",
-        descricao: "Acumule 100 pontos no total",
-        icone: "Coins",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 7,
-        titulo: "Resgate 10 recompensas",
-        descricao: "Resgate 10 recompensas no sistema",
-        icone: "ShoppingBag",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 8,
-        titulo: "Escaneie 25 QR Codes",
-        descricao: "Escaneie 25 QR Codes diferentes",
-        icone: "Medal",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 9,
-        titulo: "Acumule 250 pontos",
-        descricao: "Acumule 250 pontos no total",
-        icone: "Wallet",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 10,
-        titulo: "Resgate 20 recompensas",
-        descricao: "Resgate 20 recompensas no sistema",
-        icone: "Award",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 11,
-        titulo: "Escaneie 50 QR Codes",
-        descricao: "Escaneie 50 QR Codes diferentes",
-        icone: "Trophy",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 12,
-        titulo: "Acumule 500 pontos",
-        descricao: "Acumule 500 pontos no total",
-        icone: "DollarSign",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-      {
-        id: 13,
-        titulo: "Acumule 1000 pontos",
-        descricao: "Acumule 1000 pontos no total",
-        icone: "Flame",
-        pontos_necessarios: 0,
-        desbloqueada: false,
-        data_desbloqueio: null,
-      },
-    ];
+      orderBy: { pontos_necessarios: "asc" },
+    });
+
+    const conquistasFormatadas = conquistas.map((conquista) => ({
+      id: conquista.id,
+      titulo: conquista.titulo,
+      descricao: conquista.descricao,
+      icone: conquista.icone,
+      pontos_necessarios: conquista.pontos_necessarios,
+      desbloqueada: conquista.usuarios_conquistas.length > 0 
+        ? conquista.usuarios_conquistas[0].desbloqueada 
+        : false,
+      data_desbloqueio: conquista.usuarios_conquistas.length > 0
+        ? conquista.usuarios_conquistas[0].data_desbloqueio
+        : null,
+    }));
 
     return NextResponse.json(conquistas);
   } catch (error) {
