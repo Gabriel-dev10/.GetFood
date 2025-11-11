@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 
 export async function POST(request: Request) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const usuario = await prisma.usuarios.findUnique({
+    const usuario = await prisma.User.findUnique({
       where: { email: session.user.email },
       select: { id: true },
     });
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const conquistaUsuario = await prisma.usuarios_conquistas.findUnique({
+    const conquistaUsuario = await prisma.User_conquistas.findUnique({
       where: {
         usuario_id_conquista_id: {
           usuario_id: usuario.id,

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextRequest,NextResponse } from "next/server";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest){
             return NextResponse.json({ error: "E-mail é onbrigatório" }, { status: 400 });
         }
 
-        const user = await prisma.usuarios.findUnique({
+        const user = await prisma.User.findUnique({
             where: { email },
         });
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest){
 
         const passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000)
 
-        await prisma.usuarios.update({
+        await prisma.User.update({
             where: { email },
             data: {
                 tokenSenha: passwordResetToken,

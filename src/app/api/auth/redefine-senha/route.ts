@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"; // Verifique o caminho
+import prisma from "@/lib/prisma"; // Verifique o caminho
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
@@ -24,7 +24,7 @@ export async function POST(req:NextRequest) {
 
         console.log("BUSCANDO NO DB (token hash):", hashedToken);
 
-        const user = await prisma.usuarios.findFirst({
+        const user = await prisma.User.findFirst({
             where: {
                 tokenSenha: hashedToken,
                 dataSenha: {
@@ -39,7 +39,7 @@ export async function POST(req:NextRequest) {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        await prisma.usuarios.update({
+        await prisma.User.update({
             where: {id:user.id},
             data: {
                 senha: hashedPassword,

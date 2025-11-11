@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import path from "path";
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     const url = `/api/images/uploads/profile/${fileName}`;
 
-    await prisma.usuarios.update({
+    await prisma.User.update({
       where: { email: session.user.email },
       data: { foto: url },
     });

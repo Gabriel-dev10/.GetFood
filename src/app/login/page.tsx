@@ -1,3 +1,5 @@
+// login/page.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,6 +9,7 @@ import { validateEmail } from "@/utils/validators";
 import { useSession } from "next-auth/react";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc"; // Importação do ícone do Google
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +21,14 @@ export default function Login() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const { data: session, status } = useSession();
+
+  // Handler para login com Google
+  const handleGoogleLogin = async () => {
+    setError("");
+    setIsLoading(true);
+    // Chama o signIn com o provedor 'google'. A callbackUrl '/' redireciona para a home
+    await signIn("google", { callbackUrl: "/" });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +92,8 @@ export default function Login() {
     } else if (isBlocked && secondsLeft === 0) {
       setIsBlocked(false);
       setError("");
-      window.location.href = "/login/esqueceu-senha";
+      // Redireciona para o fluxo de recuperação de senha após o bloqueio expirar
+      window.location.href = "/login/esqueceu-senha"; 
     }
     return () => clearInterval(timer);
   }, [isBlocked, secondsLeft]);
@@ -190,6 +202,30 @@ export default function Login() {
               : "Entrar"}
           </button>
         </form>
+        
+        {/* Separador e Botão Google */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-700" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-[#2b2b2b] text-gray-400">
+              Ou entre com
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleGoogleLogin}
+          type="button"
+          className={`w-full flex items-center justify-center space-x-2 bg-[#363636] hover:bg-[#4a4a4a] text-white font-semibold py-3 rounded-full border border-gray-600 transition-all shadow-md ${
+            isLoading || isBlocked ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isLoading || isBlocked}
+        >
+          <FcGoogle size={24} />
+          <span>Continuar com Google</span>
+        </button>
 
         <div className="mt-6 text-center text-sm text-gray-400">
           <p>

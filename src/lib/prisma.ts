@@ -1,19 +1,22 @@
+// lib/prisma.ts (Garanta que este é o seu arquivo)
+
 import { PrismaClient } from "@prisma/client";
 
-/**
- * Objeto global para armazenar a instância do Prisma Client.
- * Evita múltiplas conexões em ambiente de desenvolvimento.
- */
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+// Cria uma função para inicializar o Prisma Client
+const prismaClientSingleton = () => {
+  return new PrismaClient();
 };
 
-/**
- * Instância singleton do Prisma Client para acesso ao banco de dados.
- */
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-// Em desenvolvimento, armazena a instância no objeto global para evitar múltiplas conexões.
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+// Declara o objeto global para armazenar a instância
+declare global {
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
+
+// Usa a instância global ou cria uma nova
+const prisma = globalThis.prisma ?? prismaClientSingleton();
+
+// Exporta o cliente como default
+export default prisma;
+
+// Em desenvolvimento, armazena no objeto global para reutilização
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
