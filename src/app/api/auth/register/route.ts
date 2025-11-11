@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 
 
 export async function POST(req: Request) {
-  const { nome, email, senha } = await req.json();
+  const { name, email, senha } = await req.json();
 
   if (!email || !senha) {
     return NextResponse.json({ error: "Email e senha são obrigatórios" }, { status: 400 });
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   await prisma.user.create({
     data: {
-      name: nome,
+      name,
       email,
       senha: hashed,
       token,

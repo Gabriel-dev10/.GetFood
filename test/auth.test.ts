@@ -10,7 +10,7 @@ describe("POST /api/auth/register", () => {
     const res = await request(baseURL)
       .post("/api/auth/register")
       .send({
-        nome: "Administrador",
+        name: "Administrador",
         email: "adm@tes1.com.br",
         senha: "1",
       });
@@ -28,7 +28,7 @@ describe("POST /api/auth/register", () => {
     const res = await request(baseURL)
       .post("/api/auth/register")
       .send({
-        nome: "Administrador",
+        name: "Administrador",
         email: "adm@tes1.com.br",
         senha: "1",
       });

@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model produtos {
@@ -49,6 +50,7 @@ model User {
   qr_scans              qr_scans[]
   resgates              resgates[]            @relation("UsuarioResgates")
   usuarios_conquistas   usuarios_conquistas[]
+  accounts              Account[]             @relation(name: "UserAccounts")
 
   @@map("users")
 }
@@ -144,6 +146,8 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
+
+  user              User    @relation(fields: [userId], references: [id], name: "UserAccounts")
 
   @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
   @@map("accounts")

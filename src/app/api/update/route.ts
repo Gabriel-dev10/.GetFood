@@ -15,7 +15,7 @@
  *                 example: "123"
  *               data:
  *                 type: object
- *                 example: { "nome": "Novo nome" }
+ *                 example: { "name": "Novo nome" }
  *     responses:
  *       200:
  *         description: Atualização realizada com sucesso
@@ -35,6 +35,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(req: Request) {
   const session = await getServerSession(authOptions);
@@ -77,6 +78,9 @@ export async function PATCH(req: Request) {
         email,
       },
     });
+
+    // Revalidate the perfil page to refresh the session data
+    revalidatePath("/perfil");
 
     return NextResponse.json({
       message: "Usuário atualizado com sucesso",

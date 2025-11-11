@@ -35,7 +35,7 @@ export function validateTelefone(telefone: string): boolean {
 }
 
 export interface FormData {
-  nome: string;
+  name: string;
   email: string;
   telefone: string;
   cpf: string;
@@ -44,8 +44,8 @@ export interface FormData {
 export function validateForm(data: FormData): Record<string, string> {
   const errors: Record<string, string> = {};
 
-  if (!data.nome.trim()) {
-    errors.nome = "O nome completo é obrigatório.";
+  if (!data.name.trim()) {
+    errors.name = "O nome completo é obrigatório.";
   }
 
   if (!data.email.trim()) {

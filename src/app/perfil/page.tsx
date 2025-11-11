@@ -185,11 +185,15 @@ export default function PerfilPage() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errorData = await res.json().catch(() => ({ error: "Erro desconhecido" }));
         throw new Error(errorData.error || "Falha no upload");
       }
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({ url: null }));
+
+      if (!data.url) {
+        throw new Error("URL da imagem não retornada");
+      }
 
       URL.revokeObjectURL(previewUrl);
 
@@ -233,7 +237,7 @@ export default function PerfilPage() {
     try {
       const res = await fetch("/api/update", {
         method: "PATCH",
-        body: JSON.stringify({ nome: nomeEdit, email: emailEdit }),
+        body: JSON.stringify({ name: nomeEdit, email: emailEdit }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -280,6 +284,33 @@ export default function PerfilPage() {
       throw error;
     }
   };
+
+  // Novo trecho para obter o token CSRF
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const csrfResponse = await fetch("/api/auth/csrf");
+
+        if (!csrfResponse.ok) {
+          console.error("Erro ao obter CSRF token");
+          return;
+        }
+
+        const csrfData = await csrfResponse.json().catch(() => ({ error: "Erro desconhecido" }));
+
+        if (csrfData.error) {
+          console.error("Erro na resposta CSRF:", csrfData.error);
+          return;
+        }
+
+        console.log("CSRF token obtido com sucesso:", csrfData);
+      } catch (error) {
+        console.error("Erro ao processar CSRF token:", error);
+      }
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   if (status === "loading") {
     return (
