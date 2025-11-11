@@ -13,11 +13,11 @@ export async function GET() {
       );
     }
 
-    const usuario = await prisma.User.findUnique({
+    const usuario = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: {
         id: true,
-        nome: true,
+        name: true,
         email: true,
         pontos_total: true,
       },

@@ -47,7 +47,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const user = await prisma.User.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: Number(session.user.id) },
     });
 
@@ -74,7 +74,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    await prisma.User.delete({
+    await prisma.user.delete({
       where: { id: Number(session.user.id) },
     });
 

@@ -199,9 +199,8 @@ export default function ConquistasList({
 }
 
 // Helper para renderizar ícones do Lucide React baseado no nome
-function getIconComponent(iconName: string) {
-  const icons: { [key: string]: any } = {
-    // Ícones das 13 conquistas principais
+function getIconComponent(iconName: string): React.FC<{ size: number; className?: string }> {
+  const icons: { [key: string]: React.FC<{ size: number; className?: string }> } = {
     Coffee: Coffee,
     Gift: Gift,
     QrCode: QrCode,
@@ -215,12 +214,10 @@ function getIconComponent(iconName: string) {
     Trophy: Trophy,
     DollarSign: DollarSign,
     Flame: Flame,
-    // Ícones adicionais/legado
     Star: Star,
     Lock: Lock,
     CheckCircle2: CheckCircle2,
   };
 
-  // Retorna o ícone correspondente ou Trophy como padrão
   return icons[iconName] || Trophy;
 }

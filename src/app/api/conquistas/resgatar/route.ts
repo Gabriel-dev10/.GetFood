@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const usuario = await prisma.User.findUnique({
+    const usuario = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: { id: true },
     });
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const conquistaUsuario = await prisma.User_conquistas.findUnique({
+    const conquistaUsuario = await prisma.usuarios_conquistas.findUnique({
       where: {
         usuario_id_conquista_id: {
           usuario_id: usuario.id,

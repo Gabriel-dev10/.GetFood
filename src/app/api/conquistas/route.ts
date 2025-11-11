@@ -18,7 +18,7 @@ export async function GET() {
       );
     }
 
-    const usuario = await prisma.User.findUnique({
+    const usuario = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: { id: true },
     });
@@ -39,20 +39,6 @@ export async function GET() {
       },
       orderBy: { pontos_necessarios: "asc" },
     });
-
-    const conquistasFormatadas = conquistas.map((conquista) => ({
-      id: conquista.id,
-      titulo: conquista.titulo,
-      descricao: conquista.descricao,
-      icone: conquista.icone,
-      pontos_necessarios: conquista.pontos_necessarios,
-      desbloqueada: conquista.usuarios_conquistas.length > 0 
-        ? conquista.usuarios_conquistas[0].desbloqueada 
-        : false,
-      data_desbloqueio: conquista.usuarios_conquistas.length > 0
-        ? conquista.usuarios_conquistas[0].data_desbloqueio
-        : null,
-    }));
 
     return NextResponse.json(conquistas);
   } catch (error) {

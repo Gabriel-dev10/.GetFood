@@ -11,7 +11,7 @@ export async function POST(req: NextRequest){
             return NextResponse.json({ error: "E-mail é onbrigatório" }, { status: 400 });
         }
 
-        const user = await prisma.User.findUnique({
+        const user = await prisma.user.findUnique({
             where: { email },
         });
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest){
 
         const passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000)
 
-        await prisma.User.update({
+        await prisma.user.update({
             where: { email },
             data: {
                 tokenSenha: passwordResetToken,

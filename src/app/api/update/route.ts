@@ -46,9 +46,9 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const { nome, email } = await req.json();
+    const { name, email } = await req.json();
 
-    if (!email || !nome) {
+    if (!email || !name) {
       return NextResponse.json(
         { error: "Campos obrigatórios faltando" },
         { status: 400 }
@@ -56,7 +56,7 @@ export async function PATCH(req: Request) {
     }
 
     // Verifica se o email já existe para outro usuário
-    const existingUser = await prisma.User.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: {
         email: email,
         id: { not: Number(session.user.id) },
@@ -70,10 +70,10 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const updatedUser = await prisma.User.update({
+    const updatedUser = await prisma.user.update({
       where: { id: Number(session.user.id) },
       data: {
-        nome,
+        name,
         email,
       },
     });
@@ -82,7 +82,7 @@ export async function PATCH(req: Request) {
       message: "Usuário atualizado com sucesso",
       user: {
         id: updatedUser.id,
-        name: updatedUser.nome,
+        name: updatedUser.name,
         email: updatedUser.email,
       },
     });

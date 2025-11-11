@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const usuario = await prisma.User.findUnique({
+    const usuario = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: { id: true, pontos_total: true },
     });
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       VALUES (${usuario.id}, ${codigoQR}, ${pontosGanhos}, NOW())
     `;
 
-    const usuarioAtualizado = await prisma.User.update({
+    const usuarioAtualizado = await prisma.user.update({
       where: { id: usuario.id },
       data: {
         pontos_total: {
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       },
       select: {
         id: true,
-        nome: true,
+        name: true,
         pontos_total: true,
       },
     });
@@ -131,7 +131,7 @@ export async function GET() {
       );
     }
 
-    const usuario = await prisma.User.findUnique({
+    const usuario = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: { id: true },
     });

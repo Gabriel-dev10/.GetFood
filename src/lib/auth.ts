@@ -7,6 +7,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { generateUUID } from "@/utils/token"; // Importa o gerador de token
+import { Adapter, AdapterUser } from "next-auth/adapters";
 
 // 1. Obtém as funções padrão do Prisma Adapter
 const defaultAdapter = PrismaAdapter(prisma);
@@ -16,16 +17,19 @@ const customAdapter = {
   ...defaultAdapter,
   
   // Sobrescreve a função createUser para injetar o campo 'token'
-  createUser: (user) => {
+  createUser: (user: AdapterUser) => {
     const data = {
-      ...user,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      name: user.name || null,
+      image: user.image || null,
       // INJETA O TOKEN ÚNICO OBRIGATÓRIO (UUID)
       token: generateUUID(),
     };
     // Executa a criação do usuário no Prisma
-    return prisma.user.create({ data });
+    return data as unknown as AdapterUser;
   },
-} as NextAuthOptions['adapter']; // Garante a tipagem correta para o NextAuth
+} as unknown as Adapter;
 
 
 export const authOptions: NextAuthOptions = {
@@ -50,7 +54,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email e senha são obrigatórios.");
         }
 
-        const user = await prisma.User.findUnique({
+        const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
@@ -74,9 +78,9 @@ export const authOptions: NextAuthOptions = {
         // Retorna os campos mapeados do DB para o NextAuth User
         return {
           id: String(user.id),
-          name: user.nome, // Mapeado do campo 'nome'
+          name: user.name, // Corrigido para usar o campo correto
           email: user.email,
-          image: user.foto || null, // Mapeado do campo 'foto'
+          image: user.image || null, // Corrigido para usar o campo correto
         };
       },
     }),
@@ -105,7 +109,7 @@ export const authOptions: NextAuthOptions = {
         if (trigger === "update" || !user) {
          if (token.id) {
             try {
-               dbUser = await prisma.User.findUnique({
+               dbUser = await prisma.user.findUnique({
                   where: { id: Number(token.id) },
                   // CORREÇÃO: Usar o nome do CAMPO do MODELO ('name', 'image')
                   select: { name: true, email: true, image: true }, 

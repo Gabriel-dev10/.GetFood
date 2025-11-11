@@ -46,9 +46,9 @@ export async function POST(req: Request) {
 
     const url = `/api/images/uploads/profile/${fileName}`;
 
-    await prisma.User.update({
+    await prisma.user.update({
       where: { email: session.user.email },
-      data: { foto: url },
+      data: { image: url },
     });
 
     return NextResponse.json({ url, success: true });

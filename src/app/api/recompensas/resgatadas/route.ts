@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -24,10 +24,23 @@ export async function GET() {
     });
 
     // Formatar dados para o frontend
-    const recompensasResgatadas = resgates.map((resgate) => ({
+    const recompensasResgatadas = resgates.map((resgate: {
+      id: number;
+      usuario_id: number;
+      recompensa_id: number;
+      data_resgate: Date | null;
+      recompensas_disponiveis: {
+        id: number;
+        titulo: string;
+        descricao: string | null;
+        pontos: number;
+        ativo: boolean | null;
+        data_criacao: Date | null;
+      };
+    }) => ({
       id: resgate.id,
       titulo: resgate.recompensas_disponiveis.titulo,
-      descricao: resgate.recompensas_disponiveis.descricao,
+      descricao: resgate.recompensas_disponiveis.descricao || '',
       pontos_gastos: resgate.recompensas_disponiveis.pontos,
       data_resgate: resgate.data_resgate,
       utilizado: false, // Por padrão, não está utilizado (pode ser implementado no futuro)

@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Email e senha são obrigatórios" }, { status: 400 });
   }
 
-  const existingUser = await prisma.User.findUnique({ where: { email } });
+  const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
     return NextResponse.json({ error: "Usuário já existe" }, { status: 400 });
@@ -22,9 +22,9 @@ export async function POST(req: Request) {
   const hashed = await bcrypt.hash(senha, 10);
   const token = randomBytes(6).toString("hex");
 
-  await prisma.User.create({
+  await prisma.user.create({
     data: {
-      nome,
+      name: nome,
       email,
       senha: hashed,
       token,

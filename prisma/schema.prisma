@@ -5,7 +5,6 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model produtos {
@@ -28,41 +27,31 @@ model recompensas_disponiveis {
 }
 
 model User {
-  id                    Int      @id @default(autoincrement()) @db.UnsignedInt
-  // O NextAuth (com adapter) espera os campos: name, email, emailVerified, image
-  name                  String?  @map("nome") @db.VarChar(60) // Mapeado para 'nome'
-  email                 String   @unique(map: "email") @db.VarChar(255)
-  emailVerified         DateTime? @map("email_verified") // Novo campo necessário
-  image                 String?  @map("foto") @db.VarChar(255) // Mapeado para 'foto'
-  
-  // Campos existentes
-  token                 String   @unique(map: "token") @db.VarChar(12)
-  dataNascimento        DateTime? @db.Date
-  senha                 String?  @db.VarChar(64) // Campo mantido para login com Credenciais
-  telefone              String?  @db.VarChar(45)
-  status                String   @default("ATIVO") @db.VarChar(15)
-  dataUltimoAcesso      DateTime? @db.DateTime(0)
-  dataUltimaModificacao DateTime @default(now()) @db.Timestamp(0)
-  tokenSenha            String?  @db.VarChar(100)
-  dataSenha             DateTime? @db.Timestamp(0)
-  data                  DateTime @default(now()) @db.Timestamp(0)
-  dataExclusao          DateTime? @db.Timestamp(0)
-  pontos_total          Int      @default(0) @db.UnsignedInt
-
-  // Relacionamentos com o NextAuth Adapter
-  accounts Account[]
-  sessions Session[]
-
-  // Outros relacionamentos existentes
+  id                    Int                   @id @default(autoincrement()) @db.UnsignedInt
+  token                 String                @unique(map: "token") @db.VarChar(12)
+  name                  String?               @map("nome") @db.VarChar(60)
+  dataNascimento        DateTime?             @db.Date
+  email                 String                @unique(map: "email") @db.VarChar(255)
+  senha                 String?               @db.VarChar(64)
+  telefone              String?               @db.VarChar(45)
+  image                 String?               @map("foto") @db.VarChar(255)
+  status                String                @default("ATIVO") @db.VarChar(15)
+  dataUltimoAcesso      DateTime?             @db.DateTime(0)
+  dataUltimaModificacao DateTime              @default(now()) @db.Timestamp(0)
+  tokenSenha            String?               @db.VarChar(100)
+  dataSenha             DateTime?             @db.Timestamp(0)
+  data                  DateTime              @default(now()) @db.Timestamp(0)
+  dataExclusao          DateTime?             @db.Timestamp(0)
+  pontos_total          Int                   @default(0) @db.UnsignedInt
+  emailVerified         DateTime?             @map("email_verified")
   atividades_usuario    atividades_usuario[]
   estatisticas_usuario  estatisticas_usuario?
   qr_scans              qr_scans[]
   resgates              resgates[]            @relation("UsuarioResgates")
   usuarios_conquistas   usuarios_conquistas[]
 
-  @@map("users") // Mapeia o modelo "usuarios" para a tabela "users" no banco (ou mantenha "usuarios" e configure o adapter)
+  @@map("users")
 }
-
 
 model VerificationToken {
   identifier String
@@ -91,7 +80,7 @@ model usuarios_conquistas {
   desbloqueada     Boolean    @default(false)
   data_desbloqueio DateTime?  @db.Timestamp(0)
   conquistas       conquistas @relation(fields: [conquista_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user             User   @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user             User       @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([usuario_id, conquista_id])
   @@index([usuario_id], map: "idx_usuario_conquistas")
@@ -112,7 +101,7 @@ model atividades_usuario {
   descricao      String?  @db.VarChar(255)
   pontos_ganhos  Int?     @default(0) @db.UnsignedInt
   data_atividade DateTime @default(now()) @db.Timestamp(0)
-  user       User @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "atividades_usuario_id_fkey")
+  user           User     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "atividades_usuario_id_fkey")
 
   @@index([data_atividade], map: "idx_data_atividade")
   @@index([tipo_atividade], map: "idx_tipo_atividade")
@@ -120,14 +109,12 @@ model atividades_usuario {
 }
 
 model estatisticas_usuario {
-  id                Int       @id @default(autoincrement()) @db.UnsignedInt
-  usuario_id        Int       @unique(map: "usuario_id") @db.UnsignedInt
-  total_qr_scans    Int?      @default(0) @db.UnsignedInt
-  total_resgates    Int?      @default(0) @db.UnsignedInt
-  dias_consecutivos Int?      @default(0) @db.UnsignedInt
-  ultima_atividade  DateTime? @db.Timestamp(0)
-  atualizado_em     DateTime  @default(now()) @db.Timestamp(0)
-  user          User  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "estatisticas_usuario_id_fkey")
+  id               Int       @id @default(autoincrement()) @db.UnsignedInt
+  usuario_id       Int       @unique(map: "usuario_id") @db.UnsignedInt
+  total_qr_scans   Int?      @default(0) @db.UnsignedInt
+  ultima_atividade DateTime? @db.Timestamp(0)
+  atualizado_em    DateTime  @default(now()) @db.Timestamp(0)
+  user             User      @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "estatisticas_usuario_id_fkey")
 
   @@index([usuario_id], map: "idx_usuario_stats")
 }
@@ -138,7 +125,7 @@ model qr_scans {
   codigo_qr     String   @db.VarChar(255)
   pontos_ganhos Int?     @default(10) @db.UnsignedInt
   data_scan     DateTime @default(now()) @db.Timestamp(0)
-  user          User @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  user          User     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: Restrict)
 
   @@index([data_scan], map: "idx_data_scan")
   @@index([usuario_id], map: "idx_usuario_scans")
@@ -146,7 +133,7 @@ model qr_scans {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            Int     @map("user_id") @db.UnsignedInt // Relacionamento com o seu modelo "usuarios"
+  userId            Int     @map("user_id") @db.UnsignedInt
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
@@ -158,8 +145,6 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
   @@map("accounts")
 }
@@ -167,13 +152,11 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
-  userId       Int      @map("user_id") @db.UnsignedInt // Relacionamento com o seu modelo "usuarios"
+  userId       Int      @map("user_id") @db.UnsignedInt
   expires      DateTime
-  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
-
 
 model resgates {
   id                      Int                     @id @default(autoincrement()) @db.UnsignedInt
@@ -181,9 +164,8 @@ model resgates {
   recompensa_id           Int                     @db.UnsignedInt
   data_resgate            DateTime?               @default(now()) @db.Timestamp(0)
   recompensas_disponiveis recompensas_disponiveis @relation("RecompensaResgates", fields: [recompensa_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_recompensa_resgates")
-  usuarios                usuarios                @relation("UsuarioResgates", fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_usuario_resgates")
+  usuarios                User                    @relation("UsuarioResgates", fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_usuario_resgates")
 
   @@index([usuario_id], map: "idx_usuario_resgates")
   @@index([recompensa_id], map: "idx_recompensa_resgates")
 }
-

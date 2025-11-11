@@ -137,7 +137,7 @@ export default function CelebracaoResgate({
               <div className="flex items-center justify-center gap-2 text-white/70">
                 <Gift size={20} />
                 <p className="text-sm">
-                  Acesse "Minhas Recompensas" para visualizar
+                  Acesse &quot;Minhas Recompensas&quot; para visualizar
                 </p>
               </div>
             </motion.div>
