@@ -119,6 +119,7 @@ export default function CriarConta() {
       email: form.email,
       telefone: form.telefone,
       cpf: form.cpf,
+      name: form.nome, // Corrigido para usar 'name' em vez de 'nome'
     });
 
     // Verificação da senha
